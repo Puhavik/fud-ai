@@ -852,22 +852,28 @@ struct HomeView: View {
                     Menu {
                             Button(action: {
 
-                                cameraMode = .snapFood
-                                showCamera = true
+                                requireAIConsent {
+                                    cameraMode = .snapFood
+                                    showCamera = true
+                                }
                             }) {
                                 Label("Camera", systemImage: "camera.fill")
                             }
                             Button(action: {
 
-                                cameraMode = .snapFoodWithContext
-                                showCamera = true
+                                requireAIConsent {
+                                    cameraMode = .snapFoodWithContext
+                                    showCamera = true
+                                }
                             }) {
                                 Label("Camera + Note", systemImage: "camera.badge.ellipsis")
                             }
                             Button(action: {
 
-                                cameraMode = .nutritionLabel
-                                showCamera = true
+                                requireAIConsent {
+                                    cameraMode = .nutritionLabel
+                                    showCamera = true
+                                }
                             }) {
                                 Label("Nutrition Label", systemImage: "text.viewfinder")
                             }
@@ -879,29 +885,37 @@ struct HomeView: View {
                             }
                             Button(action: {
 
-                                cameraMode = .snapFood
-                                photoPickerMode = .snapFood
-                                showPhotoPicker = true
+                                requireAIConsent {
+                                    cameraMode = .snapFood
+                                    photoPickerMode = .snapFood
+                                    showPhotoPicker = true
+                                }
                             }) {
                                 Label("From Photos", systemImage: "photo.on.rectangle")
                             }
                             Button(action: {
 
-                                cameraMode = .snapFoodWithContext
-                                photoPickerMode = .snapFoodWithContext
-                                showPhotoPicker = true
+                                requireAIConsent {
+                                    cameraMode = .snapFoodWithContext
+                                    photoPickerMode = .snapFoodWithContext
+                                    showPhotoPicker = true
+                                }
                             }) {
                                 Label("From Photos + Note", systemImage: "photo.badge.plus")
                             }
                             Button(action: {
 
-                                showTextPopover = true
+                                requireAIConsent {
+                                    showTextPopover = true
+                                }
                             }) {
                                 Label("Text Input", systemImage: "character.cursor.ibeam")
                             }
                             Button(action: {
 
-                                showVoicePopover = true
+                                requireAIConsent {
+                                    showVoicePopover = true
+                                }
                             }) {
                                 Label("Voice", systemImage: "mic.fill")
                             }
@@ -1183,6 +1197,14 @@ struct HomeView: View {
         }
     }
 
+
+    private func requireAIConsent(_ action: () -> Void) {
+        guard aiConsentGiven else {
+            showAIConsent = true
+            return
+        }
+        action()
+    }
 
     private func startAnalysis(image: UIImage, mode: CameraMode, description: String? = nil) {
         guard aiConsentGiven else { showAIConsent = true; return }
