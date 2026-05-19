@@ -945,7 +945,7 @@ private fun SettingsSheets(
         onDismissRequest = onDismiss,
         sheetState = state,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        containerColor = if (isDark) Color(0xF2141416) else Color.White.copy(alpha = 0.98f)
+        containerColor = if (isDark) Color(0xF2141416) else Color(0xFFFAF3EE)
     ) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
             when (sheet) {
@@ -1323,12 +1323,12 @@ private fun OptionalNutrientGoalsSheet(
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
     )
     Spacer(Modifier.height(12.dp))
-    Button(
+    FudGlassPrimaryButton(
+        text = "Estimate with AI",
         onClick = onEstimate,
         enabled = !estimating,
-        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie),
-        modifier = Modifier.fillMaxWidth().height(50.dp),
-        shape = RoundedCornerShape(14.dp)
+        modifier = Modifier.fillMaxWidth(),
+        height = 50.dp
     ) {
         if (estimating) {
             CircularProgressIndicator(
@@ -1339,7 +1339,7 @@ private fun OptionalNutrientGoalsSheet(
             Spacer(Modifier.width(10.dp))
             Text("Estimating...")
         } else {
-            Text("Estimate with AI")
+            Text("Estimate with AI", color = Color.White, fontWeight = FontWeight.SemiBold)
         }
     }
     if (!error.isNullOrBlank()) {
@@ -1423,6 +1423,7 @@ private fun ThemeColorSheet(
     selected: AppThemeColor,
     onSelect: (AppThemeColor) -> Unit
 ) {
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     Text(stringResource(R.string.sheet_theme_color), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
     Spacer(Modifier.height(12.dp))
     LazyColumn(Modifier.fillMaxWidth().heightIn(max = 420.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -1432,7 +1433,11 @@ private fun ThemeColorSheet(
                 Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+                    .background(
+                        if (isSel) AppColors.Calorie.copy(alpha = 0.13f)
+                        else if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
+                        else Color(0xFFEDE3DD).copy(alpha = 0.78f)
+                    )
                     .clickable { onSelect(themeColor) }
                     .padding(horizontal = 14.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -1485,6 +1490,7 @@ private fun <T> ListSheet(
     footer: String? = null,
     customField: ((String) -> Unit)? = null
 ) {
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
     Spacer(Modifier.height(12.dp))
     LazyColumn(Modifier.fillMaxWidth().heightIn(max = 420.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -1499,14 +1505,15 @@ private fun <T> ListSheet(
                     .clip(shape)
                     .background(
                         if (isSel) AppColors.Calorie.copy(alpha = 0.13f)
-                        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
+                        else if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
+                        else Color(0xFFEDE3DD).copy(alpha = 0.76f)
                     )
                     .background(
                         Brush.verticalGradient(
                             listOf(
-                                Color.White.copy(alpha = 0.08f),
-                                Color.White.copy(alpha = 0.02f),
-                                AppColors.Calorie.copy(alpha = if (isSel) 0.055f else 0.025f)
+                                Color.White.copy(alpha = if (isDark) 0.08f else 0.18f),
+                                Color.White.copy(alpha = if (isDark) 0.02f else 0.04f),
+                                AppColors.Calorie.copy(alpha = if (isSel) 0.065f else if (isDark) 0.025f else 0.050f)
                             )
                         )
                     )
@@ -1514,8 +1521,8 @@ private fun <T> ListSheet(
                         0.7.dp,
                         Brush.linearGradient(
                             listOf(
-                                Color.White.copy(alpha = 0.16f),
-                                AppColors.Calorie.copy(alpha = if (isSel) 0.20f else 0.08f)
+                                Color.White.copy(alpha = if (isDark) 0.16f else 0.46f),
+                                AppColors.Calorie.copy(alpha = if (isSel) 0.22f else if (isDark) 0.08f else 0.16f)
                             )
                         ),
                         shape
@@ -1693,6 +1700,7 @@ private fun GoalBodyFatSheet(currentGoal: Double?, currentBodyFat: Double?, onSa
 
 @Composable
 private fun GoalSpeedSheet(current: Double, goal: WeightGoal, useMetric: Boolean, onSave: (Double) -> Unit) {
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     Text("Weekly Change", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
     Spacer(Modifier.height(12.dp))
     val unit = if (goal == WeightGoal.LOSE) "loss" else "gain"
@@ -1708,7 +1716,11 @@ private fun GoalSpeedSheet(current: Double, goal: WeightGoal, useMetric: Boolean
                 Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+                    .background(
+                        if (isSel) AppColors.Calorie.copy(alpha = 0.13f)
+                        else if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
+                        else Color(0xFFEDE3DD).copy(alpha = 0.78f)
+                    )
                     .clickable { onSave(kg) }
                     .padding(horizontal = 14.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -2175,11 +2187,21 @@ private fun GradientSaveButton(
     onClick: () -> Unit
 ) {
     val brush = Brush.linearGradient(listOf(AppColors.CalorieStart, AppColors.CalorieEnd))
+    val shape = RoundedCornerShape(14.dp)
     Box(
         modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
+            .clip(shape)
             .background(if (enabled) brush else Brush.linearGradient(listOf(AppColors.Calorie.copy(alpha = 0.4f), AppColors.Calorie.copy(alpha = 0.4f))))
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color.White.copy(alpha = 0.24f),
+                        Color.White.copy(alpha = 0.04f)
+                    )
+                )
+            )
+            .border(0.7.dp, Color.White.copy(alpha = 0.22f), shape)
             .clickable(enabled = enabled, onClick = onClick)
             .padding(vertical = 14.dp),
         contentAlignment = Alignment.Center

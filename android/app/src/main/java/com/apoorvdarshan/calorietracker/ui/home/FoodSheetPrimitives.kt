@@ -136,19 +136,19 @@ internal fun SheetPillRow(
     val rowFill = if (isDark) {
         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
     } else {
-        Color(0xFFEDE3DD).copy(alpha = 0.74f)
+        Color(0xFFE9DCD5).copy(alpha = 0.82f)
     }
     val rowSheen = Brush.verticalGradient(
         listOf(
-            Color.White.copy(alpha = if (isDark) 0.075f else 0.24f),
-            Color.White.copy(alpha = if (isDark) 0.018f else 0.06f),
-            AppColors.Calorie.copy(alpha = if (isDark) 0.022f else 0.040f)
+            Color.White.copy(alpha = if (isDark) 0.075f else 0.18f),
+            Color.White.copy(alpha = if (isDark) 0.018f else 0.04f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.022f else 0.060f)
         )
     )
     val rowBorder = Brush.linearGradient(
         listOf(
-            Color.White.copy(alpha = if (isDark) 0.14f else 0.60f),
-            AppColors.Calorie.copy(alpha = if (isDark) 0.07f else 0.14f)
+            Color.White.copy(alpha = if (isDark) 0.14f else 0.50f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.07f else 0.18f)
         )
     )
     val base = Modifier
@@ -172,19 +172,19 @@ internal fun SheetPillCard(content: @Composable ColumnScope.() -> Unit) {
     val cardFill = if (isDark) {
         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
     } else {
-        Color(0xFFEDE3DD).copy(alpha = 0.74f)
+        Color(0xFFE9DCD5).copy(alpha = 0.82f)
     }
     val cardSheen = Brush.verticalGradient(
         listOf(
-            Color.White.copy(alpha = if (isDark) 0.075f else 0.24f),
-            Color.White.copy(alpha = if (isDark) 0.018f else 0.06f),
-            AppColors.Calorie.copy(alpha = if (isDark) 0.022f else 0.040f)
+            Color.White.copy(alpha = if (isDark) 0.075f else 0.18f),
+            Color.White.copy(alpha = if (isDark) 0.018f else 0.04f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.022f else 0.060f)
         )
     )
     val cardBorder = Brush.linearGradient(
         listOf(
-            Color.White.copy(alpha = if (isDark) 0.14f else 0.60f),
-            AppColors.Calorie.copy(alpha = if (isDark) 0.07f else 0.14f)
+            Color.White.copy(alpha = if (isDark) 0.14f else 0.50f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.07f else 0.18f)
         )
     )
     Column(

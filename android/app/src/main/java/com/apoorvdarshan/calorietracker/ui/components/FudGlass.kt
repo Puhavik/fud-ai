@@ -271,9 +271,23 @@ fun FudGlassTextButton(
     modifier: Modifier = Modifier,
     color: Color = AppColors.Calorie
 ) {
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val shape = RoundedCornerShape(14.dp)
+    val fill = if (isDark) {
+        Color.White.copy(alpha = 0.035f)
+    } else {
+        Color(0xFFEDE3DD).copy(alpha = 0.42f)
+    }
+    val border = if (isDark) {
+        Color.White.copy(alpha = 0.08f)
+    } else {
+        Color.White.copy(alpha = 0.38f)
+    }
     Box(
         modifier
-            .clip(RoundedCornerShape(14.dp))
+            .clip(shape)
+            .background(fill)
+            .border(0.6.dp, border, shape)
             .clickable(onClick = onClick)
             .padding(horizontal = 14.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center

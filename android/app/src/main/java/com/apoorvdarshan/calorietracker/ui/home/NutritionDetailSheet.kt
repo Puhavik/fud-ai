@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -93,6 +94,8 @@ fun NutritionDetailSheet(
     val cholesterol = entries.sumOf { it.cholesterol ?: 0.0 }
     val sodium = entries.sumOf { it.sodium ?: 0.0 }
     val potassium = entries.sumOf { it.potassium ?: 0.0 }
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val sheetSurface = if (isDark) MaterialTheme.colorScheme.surface else Color(0xFFFAF3EE)
 
     fun fmt(v: Double): String = if (v == 0.0) "—" else String.format("%.1f", v)
 
@@ -100,7 +103,7 @@ fun NutritionDetailSheet(
         onDismissRequest = onDismiss,
         sheetState = state,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = sheetSurface
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 16.dp),
@@ -189,7 +192,7 @@ private fun SectionHeader(title: String) {
         fontSize = 12.sp,
         fontWeight = FontWeight.SemiBold,
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
-        letterSpacing = 0.6.sp,
+        letterSpacing = 0.sp,
         modifier = Modifier.padding(start = 14.dp, top = 6.dp, bottom = 4.dp)
     )
 }
@@ -257,20 +260,22 @@ private fun HomeTopNutrientPickerDialog(
             items(HomeTopNutrient.values().toList()) { nutrient ->
                 val checked = nutrient in draft
                 val shape = RoundedCornerShape(16.dp)
+                val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
                 Row(
                     Modifier
                         .fillMaxWidth()
                         .clip(shape)
                         .background(
                             if (checked) AppColors.Calorie.copy(alpha = 0.11f)
-                            else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.36f)
+                            else if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.36f)
+                            else Color(0xFFEDE3DD).copy(alpha = 0.76f)
                         )
                         .background(
                             Brush.verticalGradient(
                                 listOf(
-                                    Color.White.copy(alpha = 0.08f),
-                                    Color.White.copy(alpha = 0.02f),
-                                    AppColors.Calorie.copy(alpha = if (checked) 0.055f else 0.025f)
+                                    Color.White.copy(alpha = if (isDark) 0.08f else 0.18f),
+                                    Color.White.copy(alpha = if (isDark) 0.02f else 0.04f),
+                                    AppColors.Calorie.copy(alpha = if (checked) 0.065f else if (isDark) 0.025f else 0.050f)
                                 )
                             )
                         )
@@ -278,8 +283,8 @@ private fun HomeTopNutrientPickerDialog(
                             0.7.dp,
                             Brush.linearGradient(
                                 listOf(
-                                    Color.White.copy(alpha = 0.16f),
-                                    AppColors.Calorie.copy(alpha = if (checked) 0.20f else 0.08f)
+                                    Color.White.copy(alpha = if (isDark) 0.16f else 0.46f),
+                                    AppColors.Calorie.copy(alpha = if (checked) 0.22f else if (isDark) 0.08f else 0.16f)
                                 )
                             ),
                             shape

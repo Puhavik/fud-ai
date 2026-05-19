@@ -205,7 +205,7 @@ private fun WheelSelectionHighlight(modifier: Modifier = Modifier) {
     val fill = if (isDark) {
         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f)
     } else {
-        Color(0xFFEAE0DA).copy(alpha = 0.92f)
+        Color(0xFFE2D6CF).copy(alpha = 0.96f)
     }
     val sheen = Brush.verticalGradient(
         colors = if (isDark) {
@@ -216,9 +216,9 @@ private fun WheelSelectionHighlight(modifier: Modifier = Modifier) {
             )
         } else {
             listOf(
-                Color.White.copy(alpha = 0.38f),
-                Color.White.copy(alpha = 0.10f),
-                AppColors.Calorie.copy(alpha = 0.050f)
+                Color.White.copy(alpha = 0.22f),
+                Color.White.copy(alpha = 0.06f),
+                AppColors.Calorie.copy(alpha = 0.070f)
             )
         }
     )
@@ -230,8 +230,8 @@ private fun WheelSelectionHighlight(modifier: Modifier = Modifier) {
             )
         } else {
             listOf(
-                Color.White.copy(alpha = 0.70f),
-                AppColors.Calorie.copy(alpha = 0.18f)
+                Color.White.copy(alpha = 0.50f),
+                AppColors.Calorie.copy(alpha = 0.22f)
             )
         }
     )

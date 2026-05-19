@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,6 +63,7 @@ import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialog
 import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialogActions
 import com.apoorvdarshan.calorietracker.ui.components.FudGlassPrimaryButton
 import com.apoorvdarshan.calorietracker.ui.components.FudGlassSurface
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassTextButton
 import com.apoorvdarshan.calorietracker.ui.components.FudIconBubble
 import com.apoorvdarshan.calorietracker.ui.components.SplitDecimalWheelPicker
 import androidx.annotation.StringRes
@@ -306,30 +308,40 @@ private fun TimeRangePicker(selected: TimeRange, onSelect: (TimeRange) -> Unit) 
     // active segment drawn as a slightly raised darker pill, active text uses
     // the primary on-background colour (white in dark mode), not the brand pink.
     val shape = RoundedCornerShape(16.dp)
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val trackFill = if (isDark) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.34f)
+    } else {
+        Color(0xFFE5DAD3).copy(alpha = 0.88f)
+    }
+    val shadowAlpha = if (isDark) 0.16f else 0.06f
     Row(
         Modifier
             .fillMaxWidth()
             .shadow(
-                elevation = 10.dp,
+                elevation = if (isDark) 10.dp else 4.dp,
                 shape = shape,
-                ambientColor = Color.Black.copy(alpha = 0.16f),
-                spotColor = Color.Black.copy(alpha = 0.16f)
+                ambientColor = Color.Black.copy(alpha = shadowAlpha),
+                spotColor = Color.Black.copy(alpha = shadowAlpha)
             )
             .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.34f))
+            .background(trackFill)
             .background(
                 Brush.verticalGradient(
                     listOf(
-                        Color.White.copy(alpha = 0.08f),
-                        Color.White.copy(alpha = 0.02f),
-                        AppColors.Calorie.copy(alpha = 0.025f)
+                        Color.White.copy(alpha = if (isDark) 0.08f else 0.20f),
+                        Color.White.copy(alpha = if (isDark) 0.02f else 0.05f),
+                        AppColors.Calorie.copy(alpha = if (isDark) 0.025f else 0.045f)
                     )
                 )
             )
             .border(
                 0.7.dp,
                 Brush.linearGradient(
-                    listOf(Color.White.copy(alpha = 0.15f), AppColors.Calorie.copy(alpha = 0.08f))
+                    listOf(
+                        Color.White.copy(alpha = if (isDark) 0.15f else 0.50f),
+                        AppColors.Calorie.copy(alpha = if (isDark) 0.08f else 0.16f)
+                    )
                 ),
                 shape
             )
@@ -806,11 +818,13 @@ private fun AllWeightHistorySheet(
 ) {
     val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val fmt = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.US).withZone(ZoneId.systemDefault())
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val sheetSurface = if (isDark) MaterialTheme.colorScheme.surface else Color(0xFFFAF3EE)
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = state,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = sheetSurface
     ) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -889,9 +903,11 @@ private fun AddWeightDialog(
             )
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.action_cancel), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f))
-            }
+            FudGlassTextButton(
+                text = stringResource(R.string.action_cancel),
+                onClick = onDismiss,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f)
+            )
             Spacer(Modifier.width(8.dp))
             FudGlassPrimaryButton(
                 text = stringResource(R.string.action_save),
@@ -915,30 +931,40 @@ private fun BodyMetricToggle(selected: BodyMetric, onSelect: (BodyMetric) -> Uni
     val labelWeight = stringResource(R.string.progress_metric_weight)
     val labelBodyFat = stringResource(R.string.progress_metric_body_fat)
     val shape = RoundedCornerShape(18.dp)
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val trackFill = if (isDark) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.34f)
+    } else {
+        Color(0xFFE5DAD3).copy(alpha = 0.88f)
+    }
+    val shadowAlpha = if (isDark) 0.14f else 0.05f
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(
-                elevation = 10.dp,
+                elevation = if (isDark) 10.dp else 4.dp,
                 shape = shape,
-                ambientColor = Color.Black.copy(alpha = 0.14f),
-                spotColor = Color.Black.copy(alpha = 0.14f)
+                ambientColor = Color.Black.copy(alpha = shadowAlpha),
+                spotColor = Color.Black.copy(alpha = shadowAlpha)
             )
             .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.34f))
+            .background(trackFill)
             .background(
                 Brush.verticalGradient(
                     listOf(
-                        Color.White.copy(alpha = 0.08f),
-                        Color.White.copy(alpha = 0.02f),
-                        AppColors.Calorie.copy(alpha = 0.025f)
+                        Color.White.copy(alpha = if (isDark) 0.08f else 0.20f),
+                        Color.White.copy(alpha = if (isDark) 0.02f else 0.05f),
+                        AppColors.Calorie.copy(alpha = if (isDark) 0.025f else 0.045f)
                     )
                 )
             )
             .border(
                 0.7.dp,
                 Brush.linearGradient(
-                    listOf(Color.White.copy(alpha = 0.15f), AppColors.Calorie.copy(alpha = 0.08f))
+                    listOf(
+                        Color.White.copy(alpha = if (isDark) 0.15f else 0.50f),
+                        AppColors.Calorie.copy(alpha = if (isDark) 0.08f else 0.16f)
+                    )
                 ),
                 shape
             )
@@ -1142,9 +1168,11 @@ private fun AddBodyFatDialog(
             unit = stringResource(R.string.unit_percent)
         )
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.action_cancel), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f))
-            }
+            FudGlassTextButton(
+                text = stringResource(R.string.action_cancel),
+                onClick = onDismiss,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f)
+            )
             Spacer(Modifier.width(8.dp))
             FudGlassPrimaryButton(
                 text = stringResource(R.string.action_save),
