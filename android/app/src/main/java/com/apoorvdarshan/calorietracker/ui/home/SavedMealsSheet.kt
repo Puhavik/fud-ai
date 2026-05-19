@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -53,6 +52,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.key
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -87,7 +87,7 @@ enum class SavedTab { RECENTS, FREQUENT, FAVORITES }
  *   - per-segment empty state: 32sp pink-tinted icon + secondary message text
  *
  * Favorites segment additionally supports:
- *   - swipe-left to remove (mirrors iOS `swipeActions` with destructive role)
+ *   - swipe-left to unfavorite
  *   - long-press the drag handle and slide vertically to reorder (mirrors iOS
  *     EditButton + .onMove). Drag delta is converted to an index offset using
  *     a fixed row pitch — favorites lists are short so an estimated pitch is
@@ -347,7 +347,7 @@ private fun <T> SavedList(items: List<T>, row: @Composable (T) -> Unit) {
 }
 
 /**
- * Favorites-only list with swipe-left-to-remove and tap-based ↑/↓ reorder.
+ * Favorites-only list with swipe-left-to-unfavorite and tap-based ↑/↓ reorder.
  *
  * The original drag-to-reorder using long-press + pointerInput was unreliable
  * because the favorites list lives inside a ModalBottomSheet (vertical drag
@@ -374,36 +374,39 @@ private fun FavoritesReorderableList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         favorites.forEachIndexed { idx, entry ->
-            val swipeState = rememberSwipeToDismissBoxState(
-                confirmValueChange = { value ->
-                    if (value == SwipeToDismissBoxValue.EndToStart) {
-                        onRemove(entry); true
-                    } else false
-                }
-            )
-
-            SwipeToDismissBox(
-                state = swipeState,
-                backgroundContent = { FavoriteRemoveBackground(swipeState) },
-                enableDismissFromStartToEnd = false,
-                enableDismissFromEndToStart = true,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                SavedMealRow(
-                    entry = entry,
-                    isFavorite = true,
-                    subtitle = null,
-                    imageStore = imageStore,
-                    onClick = { onTap(entry) },
-                    trailing = {
-                        MoveButtons(
-                            canMoveUp = idx > 0,
-                            canMoveDown = idx < favorites.size - 1,
-                            onMoveUp = { onMove(idx, idx - 1) },
-                            onMoveDown = { onMove(idx, idx + 1) }
-                        )
+            key(entry.favoriteKey) {
+                val swipeState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = { value ->
+                        if (value == SwipeToDismissBoxValue.EndToStart) {
+                            onRemove(entry)
+                        }
+                        false
                     }
                 )
+
+                SwipeToDismissBox(
+                    state = swipeState,
+                    backgroundContent = { FavoriteUnfavoriteBackground(swipeState) },
+                    enableDismissFromStartToEnd = false,
+                    enableDismissFromEndToStart = true,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    SavedMealRow(
+                        entry = entry,
+                        isFavorite = true,
+                        subtitle = null,
+                        imageStore = imageStore,
+                        onClick = { onTap(entry) },
+                        trailing = {
+                            MoveButtons(
+                                canMoveUp = idx > 0,
+                                canMoveDown = idx < favorites.size - 1,
+                                onMoveUp = { onMove(idx, idx - 1) },
+                                onMoveDown = { onMove(idx, idx + 1) }
+                            )
+                        }
+                    )
+                }
             }
         }
     }
@@ -462,14 +465,14 @@ private fun MoveButtons(
 }
 
 /**
- * iOS Mail-style trailing reveal: the red Delete panel is pinned to the
+ * iOS Mail-style trailing reveal: the Unfavorite panel is pinned to the
  * right edge and its width tracks the swipe distance, so only the area
- * that's been "revealed" by the foreground sliding left turns red — the
+ * that's been "revealed" by the foreground sliding left is tinted — the
  * still-visible portion of the row stays its normal color.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun FavoriteRemoveBackground(state: SwipeToDismissBoxState) {
+private fun FavoriteUnfavoriteBackground(state: SwipeToDismissBoxState) {
     val active = state.dismissDirection == SwipeToDismissBoxValue.EndToStart
     val rawOffset = runCatching { state.requireOffset() }.getOrDefault(0f)
     // For EndToStart the offset is negative — its absolute value is the
@@ -484,11 +487,11 @@ private fun FavoriteRemoveBackground(state: SwipeToDismissBoxState) {
                 .align(Alignment.CenterEnd)
                 .fillMaxHeight()
                 .width(revealWidthDp)
-                .background(Color(0xFFD32F2F)),
+                .background(AppColors.Calorie),
             contentAlignment = Alignment.Center
         ) {
             if (active && revealWidthPx > 24f) {
-                Icon(Icons.Filled.Delete, contentDescription = "Remove favorite", tint = Color.White)
+                Icon(Icons.Outlined.Favorite, contentDescription = "Unfavorite", tint = Color.White)
             }
         }
     }
