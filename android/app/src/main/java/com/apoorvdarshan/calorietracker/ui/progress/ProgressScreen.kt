@@ -293,27 +293,27 @@ private fun TimeRangePicker(selected: TimeRange, onSelect: (TimeRange) -> Unit) 
             .fillMaxWidth()
             .shadow(
                 elevation = 8.dp,
-                shape = RoundedCornerShape(15.dp),
+                shape = RoundedCornerShape(9.dp),
                 ambientColor = Color.Black.copy(alpha = 0.16f),
                 spotColor = Color.Black.copy(alpha = 0.16f)
             )
-            .clip(RoundedCornerShape(15.dp))
+            .clip(RoundedCornerShape(9.dp))
             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.82f))
             .background(AppColors.Calorie.copy(alpha = 0.035f))
-            .padding(3.dp)
+            .padding(2.dp)
     ) {
         for (r in TimeRange.values()) {
             val isSel = r == selected
             Box(
                 Modifier
                     .weight(1f)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(7.dp))
                     .then(
                         if (isSel) Modifier.background(AppColors.CalorieGradient)
                         else Modifier.background(Color.Transparent)
                     )
                     .clickable { onSelect(r) }
-                    .padding(vertical = 7.dp),
+                    .padding(vertical = 6.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -331,7 +331,7 @@ private fun TimeRangePicker(selected: TimeRange, onSelect: (TimeRange) -> Unit) 
 private fun CardSection(content: @Composable () -> Unit) {
     FudGlassSurface(
         modifier = Modifier.fillMaxWidth(),
-        cornerRadius = 24.dp,
+        cornerRadius = 16.dp,
         padding = 16.dp
     ) { content() }
 }
@@ -521,14 +521,14 @@ private fun WeightHistoryLink(count: Int, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        cornerRadius = 22.dp,
+        cornerRadius = 16.dp,
         padding = 14.dp
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             FudIconBubble(
                 icon = Icons.AutoMirrored.Filled.ListAlt,
-                size = 36.dp,
-                iconSize = 20.dp
+                size = 28.dp,
+                iconSize = 16.dp
             )
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -865,14 +865,13 @@ private fun BodyMetricToggle(selected: BodyMetric, onSelect: (BodyMetric) -> Uni
             .fillMaxWidth()
             .shadow(
                 elevation = 8.dp,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(12.dp),
                 ambientColor = Color.Black.copy(alpha = 0.14f),
                 spotColor = Color.Black.copy(alpha = 0.14f)
             )
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.84f))
-            .background(AppColors.Calorie.copy(alpha = 0.035f))
-            .padding(3.dp),
+            .background(AppColors.Calorie.copy(alpha = 0.035f)),
         horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         listOf(BodyMetric.WEIGHT to labelWeight, BodyMetric.BODY_FAT to labelBodyFat).forEach { (metric, label) ->
@@ -880,13 +879,13 @@ private fun BodyMetricToggle(selected: BodyMetric, onSelect: (BodyMetric) -> Uni
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(RoundedCornerShape(13.dp))
+                    .clip(RoundedCornerShape(10.dp))
                     .then(
                         if (isSelected) Modifier.background(AppColors.CalorieGradient)
                         else Modifier.background(Color.Transparent)
                     )
                     .clickable { onSelect(metric) }
-                    .padding(vertical = 9.dp),
+                    .padding(vertical = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(

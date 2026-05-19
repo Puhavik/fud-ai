@@ -219,7 +219,7 @@ private fun openPlayStore(context: Context) {
 private fun CardSection(content: @Composable () -> Unit) {
     FudGlassSurface(
         modifier = Modifier.fillMaxWidth(),
-        cornerRadius = 24.dp,
+        cornerRadius = 12.dp,
         padding = 0.dp
     ) {
         Column { content() }
@@ -304,8 +304,8 @@ private fun AboutRow(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(Modifier.size(36.dp)) {
-            FudIconBubble(icon = icon, size = 36.dp, iconSize = 19.dp)
+        Box(Modifier.size(22.dp)) {
+            FudIconBubble(icon = icon, size = 22.dp, iconSize = 15.dp)
             if (showDot) {
                 Box(
                     Modifier
@@ -316,7 +316,7 @@ private fun AboutRow(
                 )
             }
         }
-        Spacer(Modifier.width(14.dp))
+        Spacer(Modifier.width(16.dp))
         Column(Modifier.weight(1f)) {
             Text(label, fontSize = 17.sp, color = MaterialTheme.colorScheme.onSurface)
             if (!subtitle.isNullOrBlank()) {
@@ -338,7 +338,7 @@ private fun AboutRow(
 private fun Hairline() {
     Box(
         Modifier
-            .padding(start = 66.dp)
+            .padding(start = 54.dp)
             .fillMaxWidth()
             .height(0.5.dp)
             .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))

@@ -394,8 +394,8 @@ fun SettingsScreen(container: AppContainer, nav: NavHostController) {
                             .padding(horizontal = 16.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        FudIconBubble(icon = Icons.Outlined.Refresh, size = 34.dp, iconSize = 18.dp)
-                        Spacer(Modifier.width(12.dp))
+                        FudIconBubble(icon = Icons.Outlined.Refresh, size = 22.dp, iconSize = 14.dp)
+                        Spacer(Modifier.width(14.dp))
                         Text(
                             stringResource(R.string.settings_recalculate_goals),
                             color = AppColors.Calorie,
@@ -561,8 +561,8 @@ fun SettingsScreen(container: AppContainer, nav: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val warning = Color(0xFFFF9500)
-                    FudIconBubble(icon = Icons.Outlined.DeleteSweep, size = 34.dp, iconSize = 18.dp, tint = warning)
-                    Spacer(Modifier.width(12.dp))
+                    FudIconBubble(icon = Icons.Outlined.DeleteSweep, size = 22.dp, iconSize = 14.dp, tint = warning)
+                    Spacer(Modifier.width(14.dp))
                     Text(
                         stringResource(R.string.settings_clear_food_log),
                         color = warning,
@@ -579,8 +579,8 @@ fun SettingsScreen(container: AppContainer, nav: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val destructive = Color(0xFFFF3B30)
-                    FudIconBubble(icon = Icons.Outlined.DeleteForever, size = 34.dp, iconSize = 18.dp, tint = destructive)
-                    Spacer(Modifier.width(12.dp))
+                    FudIconBubble(icon = Icons.Outlined.DeleteForever, size = 22.dp, iconSize = 14.dp, tint = destructive)
+                    Spacer(Modifier.width(14.dp))
                     Text(
                         stringResource(R.string.settings_delete_all_data),
                         color = destructive,
@@ -1238,8 +1238,8 @@ private fun <T> ListSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (rowIcon != null) {
-                    FudIconBubble(rowIcon, size = 34.dp, iconSize = 18.dp)
-                    Spacer(Modifier.width(12.dp))
+                    FudIconBubble(rowIcon, size = 22.dp, iconSize = 14.dp)
+                    Spacer(Modifier.width(14.dp))
                 }
                 Column(Modifier.weight(1f)) {
                     Text(
@@ -1614,7 +1614,7 @@ private fun SectionCard(title: String, content: @Composable () -> Unit) {
         )
         FudGlassSurface(
             modifier = Modifier.fillMaxWidth(),
-            cornerRadius = 22.dp,
+            cornerRadius = 18.dp,
             padding = 0.dp
         ) {
             Column(Modifier.padding(vertical = 4.dp)) { content() }
@@ -1641,8 +1641,8 @@ private fun SettingRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {
-            FudIconBubble(icon = icon, size = 34.dp, iconSize = 18.dp)
-            Spacer(Modifier.width(12.dp))
+            FudIconBubble(icon = icon, size = 22.dp, iconSize = 14.dp)
+            Spacer(Modifier.width(14.dp))
         }
         Text(
             label,
@@ -1687,8 +1687,8 @@ private fun MacroSettingRow(
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FudIconBubble(icon = Icons.Outlined.DataUsage, size = 34.dp, iconSize = 18.dp)
-        Spacer(Modifier.width(12.dp))
+        FudIconBubble(icon = Icons.Outlined.DataUsage, size = 22.dp, iconSize = 14.dp)
+        Spacer(Modifier.width(14.dp))
         Text(
             label,
             modifier = Modifier.weight(1f),
@@ -1772,8 +1772,8 @@ private fun ToggleRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {
-            FudIconBubble(icon = icon, size = 34.dp, iconSize = 18.dp)
-            Spacer(Modifier.width(12.dp))
+            FudIconBubble(icon = icon, size = 22.dp, iconSize = 14.dp)
+            Spacer(Modifier.width(14.dp))
         }
         Text(
             label,
