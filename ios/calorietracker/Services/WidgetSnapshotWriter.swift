@@ -85,6 +85,32 @@ enum WidgetSnapshotWriter {
             return sum(foods, \.sodium)
         case .potassium:
             return sum(foods, \.potassium)
+        case .transFat:
+            return sum(foods, \.transFat)
+        case .calcium:
+            return sum(foods, \.calcium)
+        case .iron:
+            return sum(foods, \.iron)
+        case .magnesium:
+            return sum(foods, \.magnesium)
+        case .zinc:
+            return sum(foods, \.zinc)
+        case .vitaminA:
+            return sum(foods, \.vitaminA)
+        case .vitaminC:
+            return sum(foods, \.vitaminC)
+        case .vitaminD:
+            return sum(foods, \.vitaminD)
+        case .vitaminB12:
+            return sum(foods, \.vitaminB12)
+        case .vitaminE:
+            return sum(foods, \.vitaminE)
+        case .vitaminK:
+            return sum(foods, \.vitaminK)
+        case .folate:
+            return sum(foods, \.folate)
+        case .omega3:
+            return sum(foods, \.omega3)
         }
     }
 

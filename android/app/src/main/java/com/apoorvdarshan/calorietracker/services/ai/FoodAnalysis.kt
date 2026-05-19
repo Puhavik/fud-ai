@@ -264,7 +264,20 @@ internal object FoodJsonParser {
             saturatedFat = optInt("saturated_fat", "saturatedFat", "saturated_fat_g", fallback = OptionalNutrientGoals.Default.saturatedFat),
             cholesterol = optInt("cholesterol", "cholesterol_mg", fallback = OptionalNutrientGoals.Default.cholesterol),
             sodium = optInt("sodium", "sodium_mg", fallback = OptionalNutrientGoals.Default.sodium),
-            potassium = optInt("potassium", "potassium_mg", fallback = OptionalNutrientGoals.Default.potassium)
+            potassium = optInt("potassium", "potassium_mg", fallback = OptionalNutrientGoals.Default.potassium),
+            transFat = optInt("trans_fat", "transFat", "trans_fat_g", fallback = OptionalNutrientGoals.Default.transFat),
+            calcium = optInt("calcium", "calcium_mg", fallback = OptionalNutrientGoals.Default.calcium),
+            iron = optInt("iron", "iron_mg", fallback = OptionalNutrientGoals.Default.iron),
+            magnesium = optInt("magnesium", "magnesium_mg", fallback = OptionalNutrientGoals.Default.magnesium),
+            zinc = optInt("zinc", "zinc_mg", fallback = OptionalNutrientGoals.Default.zinc),
+            vitaminA = optInt("vitamin_a", "vitaminA", "vitamin_a_mcg", fallback = OptionalNutrientGoals.Default.vitaminA),
+            vitaminC = optInt("vitamin_c", "vitaminC", "vitamin_c_mg", fallback = OptionalNutrientGoals.Default.vitaminC),
+            vitaminD = optInt("vitamin_d", "vitaminD", "vitamin_d_mcg", fallback = OptionalNutrientGoals.Default.vitaminD),
+            vitaminB12 = optInt("vitamin_b12", "vitaminB12", "vitamin_b12_mcg", fallback = OptionalNutrientGoals.Default.vitaminB12),
+            vitaminE = optInt("vitamin_e", "vitaminE", "vitamin_e_mg", fallback = OptionalNutrientGoals.Default.vitaminE),
+            vitaminK = optInt("vitamin_k", "vitaminK", "vitamin_k_mcg", fallback = OptionalNutrientGoals.Default.vitaminK),
+            folate = optInt("folate", "folate_mcg", fallback = OptionalNutrientGoals.Default.folate),
+            omega3 = optInt("omega_3", "omega3", "omega_3_g", fallback = OptionalNutrientGoals.Default.omega3)
         )
     }
 

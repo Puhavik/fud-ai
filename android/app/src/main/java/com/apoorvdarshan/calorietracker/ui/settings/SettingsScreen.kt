@@ -2102,14 +2102,40 @@ private fun OptionalNutrient.pickerRange(): IntRange = when (this) {
     OptionalNutrient.CHOLESTEROL -> 0..1000
     OptionalNutrient.SODIUM -> 0..5000
     OptionalNutrient.POTASSIUM -> 0..7000
+    OptionalNutrient.TRANS_FAT -> 0..10
+    OptionalNutrient.CALCIUM -> 300..2000
+    OptionalNutrient.IRON -> 5..45
+    OptionalNutrient.MAGNESIUM -> 100..800
+    OptionalNutrient.ZINC -> 3..40
+    OptionalNutrient.VITAMIN_A -> 300..3000
+    OptionalNutrient.VITAMIN_C -> 20..500
+    OptionalNutrient.VITAMIN_D -> 5..100
+    OptionalNutrient.VITAMIN_B12 -> 1..20
+    OptionalNutrient.VITAMIN_E -> 5..100
+    OptionalNutrient.VITAMIN_K -> 30..300
+    OptionalNutrient.FOLATE -> 100..1000
+    OptionalNutrient.OMEGA3 -> 0..10
 }
 
 private fun OptionalNutrient.pickerStep(): Int = when (this) {
     OptionalNutrient.FIBER,
-    OptionalNutrient.SATURATED_FAT -> 1
+    OptionalNutrient.SATURATED_FAT,
+    OptionalNutrient.TRANS_FAT,
+    OptionalNutrient.IRON,
+    OptionalNutrient.ZINC,
+    OptionalNutrient.VITAMIN_D,
+    OptionalNutrient.VITAMIN_B12,
+    OptionalNutrient.VITAMIN_E,
+    OptionalNutrient.OMEGA3 -> 1
     OptionalNutrient.CHOLESTEROL -> 25
     OptionalNutrient.SODIUM,
-    OptionalNutrient.POTASSIUM -> 50
+    OptionalNutrient.POTASSIUM,
+    OptionalNutrient.CALCIUM,
+    OptionalNutrient.VITAMIN_A,
+    OptionalNutrient.FOLATE -> 50
+    OptionalNutrient.MAGNESIUM -> 25
+    OptionalNutrient.VITAMIN_C,
+    OptionalNutrient.VITAMIN_K -> 10
     OptionalNutrient.SUGAR,
     OptionalNutrient.ADDED_SUGAR -> 5
 }

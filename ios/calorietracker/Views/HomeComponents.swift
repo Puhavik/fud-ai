@@ -128,6 +128,19 @@ enum HomeTopNutrient: String, CaseIterable, Identifiable {
     case cholesterol
     case sodium
     case potassium
+    case transFat
+    case calcium
+    case iron
+    case magnesium
+    case zinc
+    case vitaminA
+    case vitaminC
+    case vitaminD
+    case vitaminB12
+    case vitaminE
+    case vitaminK
+    case folate
+    case omega3
 
     static let storageKey = "homeTopNutrients"
     static let defaultSelection: [HomeTopNutrient] = [.protein, .carbs, .fat]
@@ -143,6 +156,19 @@ enum HomeTopNutrient: String, CaseIterable, Identifiable {
         case .cholesterol: .cholesterol
         case .sodium: .sodium
         case .potassium: .potassium
+        case .transFat: .transFat
+        case .calcium: .calcium
+        case .iron: .iron
+        case .magnesium: .magnesium
+        case .zinc: .zinc
+        case .vitaminA: .vitaminA
+        case .vitaminC: .vitaminC
+        case .vitaminD: .vitaminD
+        case .vitaminB12: .vitaminB12
+        case .vitaminE: .vitaminE
+        case .vitaminK: .vitaminK
+        case .folate: .folate
+        case .omega3: .omega3
         case .protein, .carbs, .fat: nil
         }
     }
@@ -156,7 +182,9 @@ enum HomeTopNutrient: String, CaseIterable, Identifiable {
         case .protein: return "Protein"
         case .carbs: return "Carbs"
         case .fat: return "Fat"
-        case .fiber, .sugar, .addedSugar, .saturatedFat, .cholesterol, .sodium, .potassium:
+        case .fiber, .sugar, .addedSugar, .saturatedFat, .cholesterol, .sodium, .potassium,
+             .transFat, .calcium, .iron, .magnesium, .zinc, .vitaminA, .vitaminC, .vitaminD,
+             .vitaminB12, .vitaminE, .vitaminK, .folate, .omega3:
             return optionalNutrient?.shortDisplayName ?? rawValue
         }
     }
@@ -168,7 +196,9 @@ enum HomeTopNutrient: String, CaseIterable, Identifiable {
 
         switch self {
         case .protein, .carbs, .fat: return "g"
-        case .fiber, .sugar, .addedSugar, .saturatedFat, .cholesterol, .sodium, .potassium:
+        case .fiber, .sugar, .addedSugar, .saturatedFat, .cholesterol, .sodium, .potassium,
+             .transFat, .calcium, .iron, .magnesium, .zinc, .vitaminA, .vitaminC, .vitaminD,
+             .vitaminB12, .vitaminE, .vitaminK, .folate, .omega3:
             return optionalNutrient?.unit ?? "g"
         }
     }
@@ -182,7 +212,9 @@ enum HomeTopNutrient: String, CaseIterable, Identifiable {
         case .protein: return "fork.knife"
         case .carbs: return "leaf"
         case .fat: return "drop.fill"
-        case .fiber, .sugar, .addedSugar, .saturatedFat, .cholesterol, .sodium, .potassium:
+        case .fiber, .sugar, .addedSugar, .saturatedFat, .cholesterol, .sodium, .potassium,
+             .transFat, .calcium, .iron, .magnesium, .zinc, .vitaminA, .vitaminC, .vitaminD,
+             .vitaminB12, .vitaminE, .vitaminK, .folate, .omega3:
             return optionalNutrient?.iconName ?? "circle"
         }
     }
@@ -212,6 +244,19 @@ enum HomeTopNutrient: String, CaseIterable, Identifiable {
         case .cholesterol: foodStore.cholesterol(for: date)
         case .sodium: foodStore.sodium(for: date)
         case .potassium: foodStore.potassium(for: date)
+        case .transFat: foodStore.transFat(for: date)
+        case .calcium: foodStore.calcium(for: date)
+        case .iron: foodStore.iron(for: date)
+        case .magnesium: foodStore.magnesium(for: date)
+        case .zinc: foodStore.zinc(for: date)
+        case .vitaminA: foodStore.vitaminA(for: date)
+        case .vitaminC: foodStore.vitaminC(for: date)
+        case .vitaminD: foodStore.vitaminD(for: date)
+        case .vitaminB12: foodStore.vitaminB12(for: date)
+        case .vitaminE: foodStore.vitaminE(for: date)
+        case .vitaminK: foodStore.vitaminK(for: date)
+        case .folate: foodStore.folate(for: date)
+        case .omega3: foodStore.omega3(for: date)
         }
     }
 
@@ -220,7 +265,9 @@ enum HomeTopNutrient: String, CaseIterable, Identifiable {
         case .protein: return Double(profile.effectiveProtein)
         case .carbs: return Double(profile.effectiveCarbs)
         case .fat: return Double(profile.effectiveFat)
-        case .fiber, .sugar, .addedSugar, .saturatedFat, .cholesterol, .sodium, .potassium:
+        case .fiber, .sugar, .addedSugar, .saturatedFat, .cholesterol, .sodium, .potassium,
+             .transFat, .calcium, .iron, .magnesium, .zinc, .vitaminA, .vitaminC, .vitaminD,
+             .vitaminB12, .vitaminE, .vitaminK, .folate, .omega3:
             guard let optionalNutrient else { return 0 }
             return Double(optionalGoals.goal(for: optionalNutrient))
         }

@@ -424,12 +424,14 @@ struct GeminiService {
         let prompt = """
         You are setting daily non-macro nutrient goals for a food tracking app.
         Return ONLY valid JSON with these exact numeric keys:
-        {"fiber":30,"sugar":50,"added_sugar":25,"saturated_fat":20,"cholesterol":300,"sodium":2300,"potassium":3500}
+        {"fiber":30,"sugar":50,"added_sugar":25,"saturated_fat":20,"cholesterol":300,"sodium":2300,"potassium":3500,"trans_fat":0,"calcium":1000,"iron":18,"magnesium":400,"zinc":11,"vitamin_a":900,"vitamin_c":90,"vitamin_d":20,"vitamin_b12":3,"vitamin_e":15,"vitamin_k":120,"folate":400,"omega_3":2}
 
         Do not include calories, protein, carbs, or fat. Do not change calorie or macro targets.
         Use reasonable general-adult nutrition targets unless the user's profile strongly suggests a small adjustment.
-        Treat fiber and potassium as target/minimum style goals. Treat sugar, added sugar, saturated fat, cholesterol, and sodium as daily limit-style goals.
+        Treat fiber, potassium, calcium, iron, magnesium, zinc, vitamins, folate, and omega-3 as target/minimum style goals. Treat sugar, added sugar, saturated fat, trans fat, cholesterol, and sodium as daily limit-style goals.
+        Units: sugar, added_sugar, fiber, saturated_fat, trans_fat, and omega_3 are grams; cholesterol, sodium, potassium, calcium, iron, magnesium, zinc, vitamin_c, and vitamin_e are milligrams; vitamin_a, vitamin_d, vitamin_b12, vitamin_k, and folate are micrograms.
         Keep values in normal consumer-tracker ranges and round to practical app-friendly numbers.
+        Use integers only.
 
         User profile:
         - Gender: \(profile.gender.displayName)

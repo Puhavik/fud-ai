@@ -40,18 +40,19 @@ class FoodAnalysisService(
             $profileContext
 
             Return ONLY JSON in this exact shape:
-            {"sugar":50,"added_sugar":25,"fiber":30,"saturated_fat":20,"cholesterol":300,"sodium":2300,"potassium":3500}
+            {"sugar":50,"added_sugar":25,"fiber":30,"saturated_fat":20,"cholesterol":300,"sodium":2300,"potassium":3500,"trans_fat":0,"calcium":1000,"iron":18,"magnesium":400,"zinc":11,"vitamin_a":900,"vitamin_c":90,"vitamin_d":20,"vitamin_b12":3,"vitamin_e":15,"vitamin_k":120,"folate":400,"omega_3":2}
 
             Rules:
             - Do not return calories, protein, carbs, or fat.
-            - Keep this independent from macro calculation; only estimate the seven listed optional nutrient goals.
-            - sugar, added_sugar, fiber, and saturated_fat are grams per day.
-            - cholesterol, sodium, and potassium are milligrams per day.
+            - Keep this independent from macro calculation; only estimate the listed optional nutrient goals.
+            - sugar, added_sugar, fiber, saturated_fat, trans_fat, and omega_3 are grams per day.
+            - cholesterol, sodium, potassium, calcium, iron, magnesium, zinc, vitamin_c, and vitamin_e are milligrams per day.
+            - vitamin_a, vitamin_d, vitamin_b12, vitamin_k, and folate are micrograms per day.
             - Use realistic non-medical nutrition targets for an average adult adjusted by profile and calorie target.
             - Keep added_sugar and saturated_fat near or below 10% of calories when possible.
             - Fiber should generally scale around 14g per 1000 kcal, with a practical adult range.
             - Sodium should usually stay near general adult guidance unless the profile strongly suggests otherwise.
-            - Potassium should use a practical daily target, not food-log intake.
+            - Potassium, calcium, iron, magnesium, zinc, vitamins, folate, and omega-3 should use practical daily targets, not food-log intake.
             - Use integers only.
         """.trimIndent()
         return FoodJsonParser.parseOptionalNutrientGoals(callAi(prompt, imageBytes = null))
