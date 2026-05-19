@@ -1,6 +1,7 @@
 package com.apoorvdarshan.calorietracker.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,20 +10,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.filled.WaterDrop
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +40,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,6 +50,9 @@ import com.apoorvdarshan.calorietracker.models.FoodEntry
 import com.apoorvdarshan.calorietracker.models.HomeTopNutrient
 import com.apoorvdarshan.calorietracker.models.OptionalNutrientGoals
 import com.apoorvdarshan.calorietracker.models.UserProfile
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialog
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialogActions
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassSurface
 import com.apoorvdarshan.calorietracker.ui.theme.AppColors
 
 /**
@@ -166,12 +173,13 @@ fun NutritionDetailSheet(
 
 @Composable
 private fun Card(content: @Composable () -> Unit) {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-    ) { content() }
+    FudGlassSurface(
+        modifier = Modifier.fillMaxWidth(),
+        cornerRadius = 20.dp,
+        padding = 0.dp
+    ) {
+        Column { content() }
+    }
 }
 
 @Composable
@@ -233,54 +241,105 @@ private fun HomeTopNutrientPickerDialog(
         }
     }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Home Nutrient Cards") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    "Choose up to 3 cards for the top of Home.",
-                    fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
-                Spacer(Modifier.height(4.dp))
-                HomeTopNutrient.values().forEach { nutrient ->
-                    val checked = nutrient in draft
-                    Row(
+    FudGlassDialog(onDismissRequest = onDismiss) {
+        Text("Home Nutrient Cards", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+        Text(
+            "Choose up to 3 cards for the top of Home.",
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
+        )
+        LazyColumn(
+            Modifier
+                .fillMaxWidth()
+                .heightIn(max = 430.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(HomeTopNutrient.values().toList()) { nutrient ->
+                val checked = nutrient in draft
+                val shape = RoundedCornerShape(16.dp)
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(shape)
+                        .background(
+                            if (checked) AppColors.Calorie.copy(alpha = 0.11f)
+                            else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.36f)
+                        )
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color.White.copy(alpha = 0.08f),
+                                    Color.White.copy(alpha = 0.02f),
+                                    AppColors.Calorie.copy(alpha = if (checked) 0.055f else 0.025f)
+                                )
+                            )
+                        )
+                        .border(
+                            0.7.dp,
+                            Brush.linearGradient(
+                                listOf(
+                                    Color.White.copy(alpha = 0.16f),
+                                    AppColors.Calorie.copy(alpha = if (checked) 0.20f else 0.08f)
+                                )
+                            ),
+                            shape
+                        )
+                        .clickable { toggle(nutrient) }
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
                         Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .clickable { toggle(nutrient) }
-                            .padding(vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .size(28.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                if (checked) Brush.linearGradient(listOf(AppColors.CalorieStart, AppColors.CalorieEnd))
+                                else Brush.linearGradient(
+                                    listOf(
+                                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+                                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.32f)
+                                    )
+                                )
+                            )
+                            .border(
+                                1.dp,
+                                if (checked) AppColors.Calorie.copy(alpha = 0.40f)
+                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.24f),
+                                RoundedCornerShape(8.dp)
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Checkbox(checked = checked, onCheckedChange = { toggle(nutrient) })
-                        Column(Modifier.weight(1f)) {
-                            Text(nutrient.displayName, fontWeight = FontWeight.Medium)
-                            Text(
-                                nutrient.unit,
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+                        if (checked) {
+                            Icon(
+                                Icons.Filled.Check,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
+                    Spacer(Modifier.width(14.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(nutrient.displayName, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                        Text(
+                            nutrient.unit,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
+                        )
+                    }
                 }
             }
-        },
-        confirmButton = {
-            TextButton(onClick = {
+        }
+        FudGlassDialogActions(
+            primaryText = "Done",
+            onPrimary = {
                 onSave(HomeTopNutrient.normalized(draft))
                 onDismiss()
-            }) {
-                Text("Done", color = AppColors.Calorie)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
+            },
+            dismissText = "Cancel",
+            onDismiss = onDismiss
+        )
+    }
 }
 
 /**

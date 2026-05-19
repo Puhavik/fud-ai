@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -42,7 +43,11 @@ class ProgressViewModel(private val container: AppContainer) : ViewModel() {
             val event = container.weightRepository.addEntry(WeightEntry(weightKg = kg))
             if (event != null) {
                 _ui.value = _ui.value.copy(goalReached = true)
-                container.notifications.showGoalReached()
+                if (container.prefs.notificationsEnabled.first() &&
+                    container.prefs.goalReachedNotificationsEnabled.first()
+                ) {
+                    container.notifications.showGoalReached()
+                }
             }
         }
     }

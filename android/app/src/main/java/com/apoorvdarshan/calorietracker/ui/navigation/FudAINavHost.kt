@@ -2,6 +2,7 @@ package com.apoorvdarshan.calorietracker.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +26,7 @@ import com.apoorvdarshan.calorietracker.ui.coach.CoachScreen
 import com.apoorvdarshan.calorietracker.ui.home.HomeScreen
 import com.apoorvdarshan.calorietracker.ui.onboarding.OnboardingScreen
 import com.apoorvdarshan.calorietracker.ui.progress.ProgressScreen
+import com.apoorvdarshan.calorietracker.ui.settings.OptionalNutrientGoalsScreen
 import com.apoorvdarshan.calorietracker.ui.settings.SettingsScreen
 
 @Composable
@@ -74,8 +76,8 @@ fun FudAINavHost(
                 )
             }
         }
-    ) {
-        Box(Modifier.fillMaxSize()) {
+    ) { padding ->
+        Box(Modifier.fillMaxSize().padding(padding)) {
             NavHost(
                 navController = nav,
                 startDestination = if (startOnboarding) FudAIRoutes.ONBOARDING else FudAIRoutes.HOME
@@ -92,6 +94,9 @@ fun FudAINavHost(
                 composable(FudAIRoutes.PROGRESS) { ProgressScreen(container = container) }
                 composable(FudAIRoutes.COACH) { CoachScreen(container = container) }
                 composable(FudAIRoutes.SETTINGS) { SettingsScreen(container = container, nav = nav) }
+                composable(FudAIRoutes.OPTIONAL_NUTRIENT_GOALS) {
+                    OptionalNutrientGoalsScreen(container = container, onBack = { nav.popBackStack() })
+                }
                 composable(FudAIRoutes.ABOUT) { AboutScreen(container = container) }
             }
         }

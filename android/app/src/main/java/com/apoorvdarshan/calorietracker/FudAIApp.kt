@@ -48,15 +48,34 @@ class FudAIApp : Application() {
             if (container.prefs.notificationsEnabled.first() &&
                 container.notifications.canPostNotifications()
             ) {
-                container.notifications.scheduleWeightReminder()
+                if (container.prefs.streakReminderEnabled.first()) {
+                    container.notifications.scheduleStreakReminder(
+                        container.prefs.streakReminderHour.first(),
+                        container.prefs.streakReminderMinute.first()
+                    )
+                } else {
+                    container.notifications.cancelStreakReminder()
+                }
+                if (container.prefs.dailySummaryEnabled.first()) {
+                    container.notifications.scheduleDailySummary(
+                        container.prefs.dailySummaryHour.first(),
+                        container.prefs.dailySummaryMinute.first()
+                    )
+                } else {
+                    container.notifications.cancelDailySummary()
+                }
+                if (container.prefs.weightReminderEnabled.first()) {
+                    container.notifications.scheduleWeightReminder()
+                } else {
+                    container.notifications.cancelWeightReminder()
+                }
                 // Body-fat reminder only fires for users who've actually opted
-                // into body-fat tracking — the toggle in Settings is the same
-                // master Notifications switch, but the body-fat ping is gated
-                // on the profile having a current body-fat value so we don't
-                // ping users who haven't entered one.
+                // into body-fat tracking and left that notification type on.
                 val profile = container.profileRepository.current()
-                if (profile?.bodyFatPercentage != null) {
+                if (container.prefs.bodyFatReminderEnabled.first() && profile?.bodyFatPercentage != null) {
                     container.notifications.scheduleBodyFatReminder()
+                } else {
+                    container.notifications.cancelBodyFatReminder()
                 }
             }
         }

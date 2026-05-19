@@ -29,6 +29,11 @@ data class SettingsUiState(
     val useMetric: Boolean = true,
     val profile: UserProfile? = null,
     val notificationsEnabled: Boolean = false,
+    val streakReminderEnabled: Boolean = false,
+    val dailySummaryEnabled: Boolean = false,
+    val weightReminderEnabled: Boolean = true,
+    val bodyFatReminderEnabled: Boolean = true,
+    val goalReachedNotificationsEnabled: Boolean = true,
     val healthConnectEnabled: Boolean = false,
     val apiKeyMasked: String = "",
     val speechApiKeyMasked: String = "",
@@ -58,6 +63,11 @@ class SettingsViewModel(val container: AppContainer) : ViewModel() {
             val useMetric = container.prefs.useMetric.first()
             val profile = container.profileRepository.current()
             val notif = container.prefs.notificationsEnabled.first()
+            val streakReminder = container.prefs.streakReminderEnabled.first()
+            val dailySummary = container.prefs.dailySummaryEnabled.first()
+            val weightReminder = container.prefs.weightReminderEnabled.first()
+            val bodyFatReminder = container.prefs.bodyFatReminderEnabled.first()
+            val goalReachedNotifications = container.prefs.goalReachedNotificationsEnabled.first()
             val hc = container.prefs.healthConnectEnabled.first()
             val masked = maskKey(container.keyStore.apiKey(provider))
             val speechMasked = maskKey(container.keyStore.speechApiKey(speech))
@@ -78,6 +88,11 @@ class SettingsViewModel(val container: AppContainer) : ViewModel() {
                 useMetric = useMetric,
                 profile = profile,
                 notificationsEnabled = notif,
+                streakReminderEnabled = streakReminder,
+                dailySummaryEnabled = dailySummary,
+                weightReminderEnabled = weightReminder,
+                bodyFatReminderEnabled = bodyFatReminder,
+                goalReachedNotificationsEnabled = goalReachedNotifications,
                 healthConnectEnabled = hc,
                 apiKeyMasked = masked,
                 speechApiKeyMasked = speechMasked,
@@ -257,24 +272,89 @@ class SettingsViewModel(val container: AppContainer) : ViewModel() {
     fun setNotificationsEnabled(v: Boolean) {
         viewModelScope.launch {
             container.prefs.setNotificationsEnabled(v)
-            // Arm/disarm the weight-log reminder alongside the master toggle.
-            // canPostNotifications() guards against scheduling alarms whose
-            // posted notification would be silently dropped on API 33+ when
-            // POST_NOTIFICATIONS hasn't been granted.
-            if (v && container.notifications.canPostNotifications()) {
-                container.notifications.scheduleWeightReminder()
-                // Body-fat reminder only arms for users who've opted into
-                // body-fat tracking — gated on profile.bodyFatPercentage so
-                // we don't ping users who never entered one.
-                val profile = container.profileRepository.current()
-                if (profile?.bodyFatPercentage != null) {
-                    container.notifications.scheduleBodyFatReminder()
-                }
-            } else {
-                container.notifications.cancelWeightReminder()
-                container.notifications.cancelBodyFatReminder()
-            }
+            syncNotificationSchedules()
             _ui.value = _ui.value.copy(notificationsEnabled = v)
+        }
+    }
+
+    fun setStreakReminderEnabled(v: Boolean) {
+        viewModelScope.launch {
+            container.prefs.setStreakReminderEnabled(v)
+            syncNotificationSchedules()
+            _ui.value = _ui.value.copy(streakReminderEnabled = v)
+        }
+    }
+
+    fun setDailySummaryEnabled(v: Boolean) {
+        viewModelScope.launch {
+            container.prefs.setDailySummaryEnabled(v)
+            syncNotificationSchedules()
+            _ui.value = _ui.value.copy(dailySummaryEnabled = v)
+        }
+    }
+
+    fun setWeightReminderEnabled(v: Boolean) {
+        viewModelScope.launch {
+            container.prefs.setWeightReminderEnabled(v)
+            syncNotificationSchedules()
+            _ui.value = _ui.value.copy(weightReminderEnabled = v)
+        }
+    }
+
+    fun setBodyFatReminderEnabled(v: Boolean) {
+        viewModelScope.launch {
+            container.prefs.setBodyFatReminderEnabled(v)
+            syncNotificationSchedules()
+            _ui.value = _ui.value.copy(bodyFatReminderEnabled = v)
+        }
+    }
+
+    fun setGoalReachedNotificationsEnabled(v: Boolean) {
+        viewModelScope.launch {
+            container.prefs.setGoalReachedNotificationsEnabled(v)
+            _ui.value = _ui.value.copy(goalReachedNotificationsEnabled = v)
+        }
+    }
+
+    private suspend fun syncNotificationSchedules() {
+        val enabled = container.prefs.notificationsEnabled.first()
+        if (!enabled || !container.notifications.canPostNotifications()) {
+            container.notifications.cancelStreakReminder()
+            container.notifications.cancelDailySummary()
+            container.notifications.cancelWeightReminder()
+            container.notifications.cancelBodyFatReminder()
+            return
+        }
+
+        if (container.prefs.streakReminderEnabled.first()) {
+            container.notifications.scheduleStreakReminder(
+                container.prefs.streakReminderHour.first(),
+                container.prefs.streakReminderMinute.first()
+            )
+        } else {
+            container.notifications.cancelStreakReminder()
+        }
+
+        if (container.prefs.dailySummaryEnabled.first()) {
+            container.notifications.scheduleDailySummary(
+                container.prefs.dailySummaryHour.first(),
+                container.prefs.dailySummaryMinute.first()
+            )
+        } else {
+            container.notifications.cancelDailySummary()
+        }
+
+        if (container.prefs.weightReminderEnabled.first()) {
+            container.notifications.scheduleWeightReminder()
+        } else {
+            container.notifications.cancelWeightReminder()
+        }
+
+        val profile = container.profileRepository.current()
+        if (container.prefs.bodyFatReminderEnabled.first() && profile?.bodyFatPercentage != null) {
+            container.notifications.scheduleBodyFatReminder()
+        } else {
+            container.notifications.cancelBodyFatReminder()
         }
     }
 

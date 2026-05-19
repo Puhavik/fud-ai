@@ -46,6 +46,10 @@ import com.apoorvdarshan.calorietracker.R
 import com.apoorvdarshan.calorietracker.models.FoodEntry
 import com.apoorvdarshan.calorietracker.models.MealType
 import com.apoorvdarshan.calorietracker.models.ServingUnitOption
+import com.apoorvdarshan.calorietracker.ui.components.DateWheelPicker
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialog
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialogActions
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassTextField
 import com.apoorvdarshan.calorietracker.ui.theme.AppColors
 import java.time.Instant
 import java.time.LocalDate
@@ -375,28 +379,25 @@ fun EditFoodEntrySheet(
     }
 
     if (showDatePicker) {
-        val pickerState = rememberDatePickerState(
-            initialSelectedDateMillis = loggedDate.atStartOfDay()
-                .toInstant(ZoneOffset.UTC)
-                .toEpochMilli()
-        )
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    pickerState.selectedDateMillis?.let { millis ->
-                        loggedDate = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
-                    }
+        var pickedDate by remember(loggedDate) { mutableStateOf(loggedDate) }
+        FudGlassDialog(onDismissRequest = { showDatePicker = false }) {
+            Text("Date", fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            DateWheelPicker(
+                selected = pickedDate,
+                onSelect = { pickedDate = it },
+                minYear = LocalDate.now().year - 10,
+                maxYear = LocalDate.now().year,
+                modifier = Modifier.fillMaxWidth()
+            )
+            FudGlassDialogActions(
+                primaryText = "Done",
+                onPrimary = {
+                    loggedDate = pickedDate
                     showDatePicker = false
-                }) {
-                    Text("Done", color = AppColors.Calorie)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
-            }
-        ) {
-            DatePicker(state = pickerState)
+                },
+                dismissText = "Cancel",
+                onDismiss = { showDatePicker = false }
+            )
         }
     }
 
@@ -421,38 +422,33 @@ private fun EditFoodTimeDialog(
     var hourText by remember(initialTime) { mutableStateOf(initialTime.hour.toString().padStart(2, '0')) }
     var minuteText by remember(initialTime) { mutableStateOf(initialTime.minute.toString().padStart(2, '0')) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Time") },
-        text = {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = hourText,
-                    onValueChange = { hourText = it.filter(Char::isDigit).take(2) },
-                    label = { Text("Hour") },
-                    singleLine = true,
-                    modifier = Modifier.weight(1f)
-                )
-                OutlinedTextField(
-                    value = minuteText,
-                    onValueChange = { minuteText = it.filter(Char::isDigit).take(2) },
-                    label = { Text("Minute") },
-                    singleLine = true,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = {
+    FudGlassDialog(onDismissRequest = onDismiss) {
+        Text("Time", fontSize = 21.sp, fontWeight = FontWeight.Bold)
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            FudGlassTextField(
+                value = hourText,
+                onValueChange = { hourText = it.filter(Char::isDigit).take(2) },
+                placeholder = "Hour",
+                singleLine = true,
+                modifier = Modifier.weight(1f)
+            )
+            FudGlassTextField(
+                value = minuteText,
+                onValueChange = { minuteText = it.filter(Char::isDigit).take(2) },
+                placeholder = "Minute",
+                singleLine = true,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        FudGlassDialogActions(
+            primaryText = "Done",
+            onPrimary = {
                 val hour = hourText.toIntOrNull()?.coerceIn(0, 23) ?: initialTime.hour
                 val minute = minuteText.toIntOrNull()?.coerceIn(0, 59) ?: initialTime.minute
                 onConfirm(LocalTime.of(hour, minute))
-            }) {
-                Text("Done", color = AppColors.Calorie)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
-        }
-    )
+            },
+            dismissText = "Cancel",
+            onDismiss = onDismiss
+        )
+    }
 }

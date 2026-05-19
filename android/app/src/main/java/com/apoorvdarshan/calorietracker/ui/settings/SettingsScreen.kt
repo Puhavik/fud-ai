@@ -50,6 +50,7 @@ import androidx.compose.material.icons.outlined.Female
 import androidx.compose.material.icons.outlined.Male
 import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material.icons.automirrored.filled.TrendingFlat
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Brightness6
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Cake
@@ -139,7 +140,13 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import com.apoorvdarshan.calorietracker.ui.components.DecimalWheelPicker
+import com.apoorvdarshan.calorietracker.ui.components.DateWheelPicker
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialog
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialogActions
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassPrimaryButton
 import com.apoorvdarshan.calorietracker.ui.components.FudGlassSurface
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassTextButton
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassTextField
 import com.apoorvdarshan.calorietracker.ui.components.FudIconBubble
 import com.apoorvdarshan.calorietracker.ui.components.FeetInchesWheelPicker
 import com.apoorvdarshan.calorietracker.ui.components.NumericWheelPicker
@@ -147,6 +154,7 @@ import com.apoorvdarshan.calorietracker.ui.components.SplitDecimalWheelPicker
 import com.apoorvdarshan.calorietracker.ui.components.UnitToggle
 import com.apoorvdarshan.calorietracker.ui.theme.AppColors
 import com.apoorvdarshan.calorietracker.ui.theme.AppThemeColor
+import com.apoorvdarshan.calorietracker.ui.navigation.FudAIRoutes
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.util.Locale
@@ -387,7 +395,7 @@ fun SettingsScreen(container: AppContainer, nav: NavHostController) {
                         "Other Nutrient Goals",
                         optionalNutrientSummary(ui.optionalNutrientGoals),
                         icon = Icons.Outlined.DataUsage
-                    ) { sheet = SettingsSheet.OPTIONAL_NUTRIENTS }
+                    ) { nav.navigate(FudAIRoutes.OPTIONAL_NUTRIENT_GOALS) }
                     HorizontalDivider()
                     Row(
                         Modifier
@@ -436,6 +444,8 @@ fun SettingsScreen(container: AppContainer, nav: NavHostController) {
                 HorizontalDivider()
                 ToggleRow(stringResource(R.string.settings_notifications), ui.notificationsEnabled, icon = Icons.Outlined.Notifications, onChange = ::onNotificationsToggle)
                 if (ui.notificationsEnabled) {
+                    HorizontalDivider()
+                    NotificationTypeRows(ui = ui, vm = vm)
                     HorizontalDivider()
                     SettingRow(
                         stringResource(R.string.settings_battery_opt),
@@ -607,74 +617,316 @@ fun SettingsScreen(container: AppContainer, nav: NavHostController) {
     }
 
     if (showClearFoodDialog) {
-        AlertDialog(
-            onDismissRequest = { showClearFoodDialog = false },
-            title = { Text(stringResource(R.string.settings_clear_food_title)) },
-            text = { Text(stringResource(R.string.settings_clear_food_message)) },
-            confirmButton = {
-                TextButton(onClick = { vm.clearFoodLog(); showClearFoodDialog = false }) {
-                    Text(stringResource(R.string.action_clear), color = Color(0xFFD32F2F))
-                }
-            },
-            dismissButton = { TextButton(onClick = { showClearFoodDialog = false }) { Text(stringResource(R.string.action_cancel)) } }
-        )
+        FudGlassDialog(onDismissRequest = { showClearFoodDialog = false }) {
+            Text(stringResource(R.string.settings_clear_food_title), fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            Text(
+                stringResource(R.string.settings_clear_food_message),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f)
+            )
+            FudGlassDialogActions(
+                primaryText = stringResource(R.string.action_clear),
+                onPrimary = {
+                    vm.clearFoodLog()
+                    showClearFoodDialog = false
+                },
+                dismissText = stringResource(R.string.action_cancel),
+                onDismiss = { showClearFoodDialog = false },
+                destructive = true
+            )
+        }
     }
 
     if (showDeleteDialog) {
         val context = LocalContext.current
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = { Text(stringResource(R.string.settings_delete_all_title)) },
-            text = { Text(stringResource(R.string.settings_delete_all_message)) },
-            confirmButton = {
-                TextButton(onClick = {
+        FudGlassDialog(onDismissRequest = { showDeleteDialog = false }) {
+            Text(stringResource(R.string.settings_delete_all_title), fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            Text(
+                stringResource(R.string.settings_delete_all_message),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f)
+            )
+            FudGlassDialogActions(
+                primaryText = stringResource(R.string.action_delete),
+                onPrimary = {
                     vm.deleteAllData {
                         showDeleteDialog = false
                         (context as? android.app.Activity)?.recreate()
                     }
-                }) {
-                    Text(stringResource(R.string.action_delete), color = Color(0xFFD32F2F))
-                }
-            },
-            dismissButton = { TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.action_cancel)) } }
-        )
+                },
+                dismissText = stringResource(R.string.action_cancel),
+                onDismiss = { showDeleteDialog = false },
+                destructive = true
+            )
+        }
     }
 
     if (showMaxPinnedAlert) {
-        AlertDialog(
-            onDismissRequest = { showMaxPinnedAlert = false },
-            title = { Text(stringResource(R.string.settings_max_pinned_title)) },
-            text = { Text(stringResource(R.string.settings_max_pinned_message)) },
-            confirmButton = { TextButton(onClick = { showMaxPinnedAlert = false }) { Text(stringResource(R.string.action_ok)) } }
-        )
+        FudGlassDialog(onDismissRequest = { showMaxPinnedAlert = false }) {
+            Text(stringResource(R.string.settings_max_pinned_title), fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            Text(
+                stringResource(R.string.settings_max_pinned_message),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f)
+            )
+            FudGlassDialogActions(
+                primaryText = stringResource(R.string.action_ok),
+                onPrimary = { showMaxPinnedAlert = false }
+            )
+        }
     }
 
     if (showRecalcDialog) {
-        AlertDialog(
-            onDismissRequest = { showRecalcDialog = false },
-            title = { Text(stringResource(R.string.settings_recalc_title)) },
-            text = { Text(stringResource(R.string.settings_recalc_message)) },
-            confirmButton = { TextButton(onClick = { vm.recalculateGoals(); showRecalcDialog = false }) { Text(stringResource(R.string.settings_recalc_confirm)) } },
-            dismissButton = { TextButton(onClick = { showRecalcDialog = false }) { Text(stringResource(R.string.action_cancel)) } }
-        )
+        FudGlassDialog(onDismissRequest = { showRecalcDialog = false }) {
+            Text(stringResource(R.string.settings_recalc_title), fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            Text(
+                stringResource(R.string.settings_recalc_message),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f)
+            )
+            FudGlassDialogActions(
+                primaryText = stringResource(R.string.settings_recalc_confirm),
+                onPrimary = {
+                    vm.recalculateGoals()
+                    showRecalcDialog = false
+                },
+                dismissText = stringResource(R.string.action_cancel),
+                onDismiss = { showRecalcDialog = false }
+            )
+        }
     }
 
     invalidGoalWeightMessage?.let { msg ->
-        AlertDialog(
-            onDismissRequest = { invalidGoalWeightMessage = null },
-            title = { Text(stringResource(R.string.settings_invalid_goal_title)) },
-            text = { Text(msg) },
-            confirmButton = { TextButton(onClick = { invalidGoalWeightMessage = null }) { Text(stringResource(R.string.action_ok)) } }
-        )
+        FudGlassDialog(onDismissRequest = { invalidGoalWeightMessage = null }) {
+            Text(stringResource(R.string.settings_invalid_goal_title), fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            Text(msg, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f))
+            FudGlassDialogActions(
+                primaryText = stringResource(R.string.action_ok),
+                onPrimary = { invalidGoalWeightMessage = null }
+            )
+        }
     }
 
     permissionDeniedMessage?.let { msg ->
-        AlertDialog(
-            onDismissRequest = { permissionDeniedMessage = null },
-            title = { Text(stringResource(R.string.settings_permission_title)) },
-            text = { Text(msg) },
-            confirmButton = { TextButton(onClick = { permissionDeniedMessage = null }) { Text(stringResource(R.string.action_ok)) } }
+        FudGlassDialog(onDismissRequest = { permissionDeniedMessage = null }) {
+            Text(stringResource(R.string.settings_permission_title), fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            Text(msg, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f))
+            FudGlassDialogActions(
+                primaryText = stringResource(R.string.action_ok),
+                onPrimary = { permissionDeniedMessage = null }
+            )
+        }
+    }
+}
+
+@Composable
+private fun NotificationTypeRows(ui: SettingsUiState, vm: SettingsViewModel) {
+    Text(
+        "Notification types",
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+    )
+    ToggleRow(
+        "Food log reminders",
+        ui.streakReminderEnabled,
+        icon = Icons.Outlined.LocalDining,
+        onChange = vm::setStreakReminderEnabled
+    )
+    HorizontalDivider()
+    ToggleRow(
+        "Daily summary",
+        ui.dailySummaryEnabled,
+        icon = Icons.Outlined.GraphicEq,
+        onChange = vm::setDailySummaryEnabled
+    )
+    HorizontalDivider()
+    ToggleRow(
+        "Weight log reminder",
+        ui.weightReminderEnabled,
+        icon = Icons.Outlined.MonitorWeight,
+        onChange = vm::setWeightReminderEnabled
+    )
+    HorizontalDivider()
+    ToggleRow(
+        "Body fat reminder",
+        ui.bodyFatReminderEnabled,
+        icon = Icons.Outlined.Percent,
+        onChange = vm::setBodyFatReminderEnabled
+    )
+    HorizontalDivider()
+    ToggleRow(
+        "Goal reached alerts",
+        ui.goalReachedNotificationsEnabled,
+        icon = Icons.Outlined.TrackChanges,
+        onChange = vm::setGoalReachedNotificationsEnabled
+    )
+    val noneSelected = !ui.streakReminderEnabled &&
+        !ui.dailySummaryEnabled &&
+        !ui.weightReminderEnabled &&
+        !ui.bodyFatReminderEnabled &&
+        !ui.goalReachedNotificationsEnabled
+    if (noneSelected) {
+        Text(
+            "No notification type is selected. You can leave notifications allowed and keep every app reminder off.",
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
         )
+    }
+}
+
+@Composable
+fun OptionalNutrientGoalsScreen(
+    container: AppContainer,
+    onBack: () -> Unit
+) {
+    val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory(container))
+    val ui by vm.ui.collectAsState()
+    var editing by remember { mutableStateOf<OptionalNutrient?>(null) }
+    val editingNutrient = editing
+
+    Scaffold(containerColor = MaterialTheme.colorScheme.background) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            item {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable {
+                                if (editing != null) editing = null else onBack()
+                            }
+                            .padding(horizontal = 2.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = AppColors.Calorie,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            if (editing != null) "Other Nutrients" else "Settings",
+                            color = AppColors.Calorie,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+
+            if (editingNutrient != null) {
+                item {
+                    FudGlassSurface(
+                        modifier = Modifier.fillMaxWidth(),
+                        cornerRadius = 22.dp,
+                        padding = 18.dp
+                    ) {
+                        Column {
+                            NutritionPickerSheet(
+                                label = editingNutrient.displayName,
+                                unit = editingNutrient.unit,
+                                currentValue = ui.optionalNutrientGoals.valueFor(editingNutrient),
+                                range = editingNutrient.pickerRange(),
+                                step = editingNutrient.pickerStep(),
+                                onSave = { value ->
+                                    vm.setOptionalNutrientGoals(
+                                        ui.optionalNutrientGoals.withValue(editingNutrient, value)
+                                    )
+                                    editing = null
+                                }
+                            )
+                        }
+                    }
+                }
+            } else {
+                item {
+                    Text(
+                        "Other Nutrient Goals",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        "Separate from calories, protein, carbs, and fat. These targets are only used for the extra nutrient cards and details.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.62f)
+                    )
+                }
+
+                item {
+                    FudGlassPrimaryButton(
+                        text = "Estimate with AI",
+                        enabled = !ui.estimatingOptionalNutrientGoals,
+                        onClick = vm::estimateOptionalNutrientGoals
+                    ) {
+                        if (ui.estimatingOptionalNutrientGoals) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                strokeWidth = 2.dp,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(Modifier.width(10.dp))
+                            Text("Estimating...", color = Color.White, fontWeight = FontWeight.SemiBold)
+                        } else {
+                            Text("Estimate with AI", color = Color.White, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+                    ui.optionalNutrientGoalError?.takeIf { it.isNotBlank() }?.let { message ->
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            message,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFFFF453A)
+                        )
+                    }
+                }
+
+                item {
+                    Text(
+                        "Nutrients",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f),
+                        modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                    )
+                }
+                item {
+                    FudGlassSurface(
+                        modifier = Modifier.fillMaxWidth(),
+                        cornerRadius = 22.dp,
+                        padding = 0.dp
+                    ) {
+                        Column {
+                            OptionalNutrient.values().forEachIndexed { index, nutrient ->
+                                OptionalNutrientGoalRow(
+                                    nutrient = nutrient,
+                                    value = ui.optionalNutrientGoals.valueFor(nutrient),
+                                    onClick = { editing = nutrient }
+                                )
+                                if (index != OptionalNutrient.values().lastIndex) {
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                                }
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    FudGlassTextButton(
+                        text = "Reset to Defaults",
+                        onClick = { vm.setOptionalNutrientGoals(OptionalNutrientGoals.Default) },
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -1130,23 +1382,32 @@ private fun OptionalNutrientGoalRow(
     Row(
         Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
             .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
+        FudIconBubble(
             Icons.Outlined.DataUsage,
-            contentDescription = null,
-            tint = AppColors.Calorie,
-            modifier = Modifier.size(22.dp)
+            size = 22.dp,
+            iconSize = 15.dp
         )
         Spacer(Modifier.width(14.dp))
-        Text(nutrient.displayName, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+        Column(Modifier.weight(1f)) {
+            Text(
+                nutrient.displayName,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                nutrient.unit,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.48f)
+            )
+        }
         Text(
             "$value${nutrient.unit}",
             style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
         )
         Spacer(Modifier.width(8.dp))
@@ -1302,18 +1563,18 @@ private fun <T> ListSheet(
         }
         var custom by remember { mutableStateOf("") }
         Spacer(Modifier.height(8.dp))
-        OutlinedTextField(
+        FudGlassTextField(
             value = custom,
             onValueChange = { custom = it },
-            placeholder = { Text(stringResource(R.string.sheet_any_model_id)) },
+            placeholder = stringResource(R.string.sheet_any_model_id),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(8.dp))
-        Button(
+        FudGlassPrimaryButton(
+            text = stringResource(R.string.action_save),
             onClick = { if (custom.isNotBlank()) customField(custom.trim()) },
-            colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie),
             modifier = Modifier.fillMaxWidth()
-        ) { Text(stringResource(R.string.action_save), color = Color.White) }
+        )
     }
 }
 
@@ -1322,21 +1583,21 @@ private fun ApiKeySheet(title: String, placeholder: String, onSave: (String) -> 
     var value by remember { mutableStateOf("") }
     Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
     Spacer(Modifier.height(12.dp))
-    OutlinedTextField(
+    FudGlassTextField(
         value = value,
         onValueChange = { value = it },
-        placeholder = { Text(placeholder) },
+        placeholder = placeholder,
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
         modifier = Modifier.fillMaxWidth()
     )
     Spacer(Modifier.height(12.dp))
-    Button(
+    FudGlassPrimaryButton(
+        text = stringResource(R.string.action_save),
         onClick = { onSave(value) },
-        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie),
         modifier = Modifier.fillMaxWidth()
-    ) { Text(stringResource(R.string.action_save), color = Color.White) }
+    )
     Spacer(Modifier.height(4.dp))
     TextButton(onClick = { onSave("") }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.settings_clear_key)) }
 }
@@ -1346,19 +1607,19 @@ private fun TextFieldSheet(title: String, initial: String, placeholder: String, 
     var value by remember { mutableStateOf(initial) }
     Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
     Spacer(Modifier.height(12.dp))
-    OutlinedTextField(
+    FudGlassTextField(
         value = value,
         onValueChange = { value = it },
-        placeholder = { Text(placeholder) },
+        placeholder = placeholder,
         singleLine = true,
         modifier = Modifier.fillMaxWidth()
     )
     Spacer(Modifier.height(12.dp))
-    Button(
+    FudGlassPrimaryButton(
+        text = stringResource(R.string.action_save),
         onClick = { onSave(value.trim()) },
-        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie),
         modifier = Modifier.fillMaxWidth()
-    ) { Text(stringResource(R.string.action_save), color = Color.White) }
+    )
 }
 
 @Composable
@@ -1613,11 +1874,10 @@ private fun MacroField(
     onPin: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        OutlinedTextField(
+        FudGlassTextField(
             value = value,
             onValueChange = onChange,
-            label = { Text(label) },
-            suffix = { Text(unit) },
+            placeholder = "$label ($unit)",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
             modifier = Modifier.weight(1f)
@@ -1754,12 +2014,13 @@ private fun CustomInstructionsBlock(
     var saved by remember(initial) { mutableStateOf(initial) }
     val hasChanges = text != saved
     Column(Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
-        OutlinedTextField(
+        FudGlassTextField(
             value = text,
             onValueChange = { text = it },
-            placeholder = { Text(placeholder, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)) },
+            placeholder = placeholder,
             modifier = Modifier.fillMaxWidth().heightIn(min = 110.dp),
-            shape = RoundedCornerShape(12.dp),
+            singleLine = false,
+            minLines = 4,
             maxLines = 6
         )
         Spacer(Modifier.height(8.dp))
@@ -1858,31 +2119,18 @@ private fun BirthdaySheet(current: Instant, onSave: (Instant) -> Unit) {
     // birthdays as a local-zone Instant. Round-trip both sides through the
     // user's local date to avoid an off-by-one when the user is east of UTC.
     val localDate = current.atZone(ZoneId.systemDefault()).toLocalDate()
-    val initialMillis = localDate.atStartOfDay(java.time.ZoneOffset.UTC)
-        .toInstant().toEpochMilli()
-    val state = rememberDatePickerState(initialSelectedDateMillis = initialMillis)
+    var pickedDate by remember(current) { mutableStateOf(localDate) }
     Text("Birthday", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
     Spacer(Modifier.height(8.dp))
-    DatePicker(
-        state = state,
-        title = null,
-        headline = null,
-        showModeToggle = false,
-        colors = DatePickerDefaults.colors(
-            selectedDayContainerColor = AppColors.Calorie,
-            todayDateBorderColor = AppColors.Calorie,
-            currentYearContentColor = AppColors.Calorie,
-            selectedYearContainerColor = AppColors.Calorie
-        )
+    DateWheelPicker(
+        selected = pickedDate,
+        onSelect = { pickedDate = it },
+        maxYear = LocalDate.now().year,
+        modifier = Modifier.fillMaxWidth()
     )
     Spacer(Modifier.height(12.dp))
     GradientSaveButton {
-        val millis = state.selectedDateMillis ?: return@GradientSaveButton
-        // Picker millis is UTC-midnight of the selected calendar day —
-        // pull the LocalDate via UTC, then convert to local-zone Instant.
-        val newDate = Instant.ofEpochMilli(millis)
-            .atZone(java.time.ZoneOffset.UTC).toLocalDate()
-        val newInstant = newDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
+        val newInstant = pickedDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
         onSave(newInstant)
     }
     Spacer(Modifier.height(8.dp))

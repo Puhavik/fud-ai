@@ -76,16 +76,37 @@ internal fun SheetReviewToolbar(
 
 @Composable
 private fun SheetToolbarPill(label: String, bold: Boolean = false, onClick: () -> Unit) {
-    Box(
+    val shape = CircleShape
+    val modifier = if (bold) {
         Modifier
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f))
+            .clip(shape)
+            .background(Brush.linearGradient(listOf(AppColors.CalorieStart, AppColors.CalorieEnd)))
+    } else {
+        Modifier
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f))
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color.White.copy(alpha = 0.08f),
+                        Color.White.copy(alpha = 0.02f)
+                    )
+                )
+            )
+            .border(
+                0.7.dp,
+                Color.White.copy(alpha = 0.10f),
+                shape
+            )
+    }
+    Box(
+        modifier
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(
             label,
-            color = AppColors.Calorie,
+            color = if (bold) Color.White else AppColors.Calorie,
             fontSize = 16.sp,
             fontWeight = if (bold) FontWeight.SemiBold else FontWeight.Medium
         )
@@ -108,13 +129,33 @@ internal fun SheetPillRow(
     onClick: (() -> Unit)? = null,
     content: @Composable RowScope.() -> Unit
 ) {
+    val shape = RoundedCornerShape(24.dp)
     val base = Modifier
         .fillMaxWidth()
-        .clip(RoundedCornerShape(28.dp))
-        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        .clip(shape)
+        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f))
+        .background(
+            Brush.verticalGradient(
+                listOf(
+                    Color.White.copy(alpha = 0.075f),
+                    Color.White.copy(alpha = 0.018f),
+                    AppColors.Calorie.copy(alpha = 0.022f)
+                )
+            )
+        )
+        .border(
+            0.7.dp,
+            Brush.linearGradient(
+                listOf(
+                    Color.White.copy(alpha = 0.14f),
+                    AppColors.Calorie.copy(alpha = 0.07f)
+                )
+            ),
+            shape
+        )
     val withClick = if (onClick != null) base.clickable(onClick = onClick) else base
     Row(
-        withClick.padding(horizontal = 18.dp, vertical = 16.dp),
+        withClick.padding(horizontal = 18.dp, vertical = 15.dp),
         verticalAlignment = Alignment.CenterVertically,
         content = content
     )
@@ -122,11 +163,31 @@ internal fun SheetPillRow(
 
 @Composable
 internal fun SheetPillCard(content: @Composable ColumnScope.() -> Unit) {
+    val shape = RoundedCornerShape(24.dp)
     Column(
         Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(28.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f))
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color.White.copy(alpha = 0.075f),
+                        Color.White.copy(alpha = 0.018f),
+                        AppColors.Calorie.copy(alpha = 0.022f)
+                    )
+                )
+            )
+            .border(
+                0.7.dp,
+                Brush.linearGradient(
+                    listOf(
+                        Color.White.copy(alpha = 0.14f),
+                        AppColors.Calorie.copy(alpha = 0.07f)
+                    )
+                ),
+                shape
+            )
             .padding(vertical = 4.dp),
         content = content
     )

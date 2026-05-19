@@ -77,6 +77,15 @@ class PreferencesStore(private val context: Context) {
     val dailySummaryMinute: Flow<Int> = ds.data.map { it[Keys.DAILY_MINUTE] ?: 0 }
     suspend fun setDailySummaryMinute(v: Int) { ds.edit { it[Keys.DAILY_MINUTE] = v } }
 
+    val weightReminderEnabled: Flow<Boolean> = ds.data.map { it[Keys.WEIGHT_REMINDER_ENABLED] ?: true }
+    suspend fun setWeightReminderEnabled(v: Boolean) { ds.edit { it[Keys.WEIGHT_REMINDER_ENABLED] = v } }
+
+    val bodyFatReminderEnabled: Flow<Boolean> = ds.data.map { it[Keys.BODY_FAT_REMINDER_ENABLED] ?: true }
+    suspend fun setBodyFatReminderEnabled(v: Boolean) { ds.edit { it[Keys.BODY_FAT_REMINDER_ENABLED] = v } }
+
+    val goalReachedNotificationsEnabled: Flow<Boolean> = ds.data.map { it[Keys.GOAL_REACHED_NOTIFICATIONS_ENABLED] ?: true }
+    suspend fun setGoalReachedNotificationsEnabled(v: Boolean) { ds.edit { it[Keys.GOAL_REACHED_NOTIFICATIONS_ENABLED] = v } }
+
     // -- Health Connect ---------------------------------------------------
     val healthConnectEnabled: Flow<Boolean> = ds.data.map { it[Keys.HEALTH_CONNECT_ENABLED] ?: false }
     suspend fun setHealthConnectEnabled(v: Boolean) { ds.edit { it[Keys.HEALTH_CONNECT_ENABLED] = v } }
@@ -326,6 +335,9 @@ class PreferencesStore(private val context: Context) {
         val DAILY_ENABLED = booleanPreferencesKey("dailySummaryEnabled")
         val DAILY_HOUR = intPreferencesKey("dailySummaryHour")
         val DAILY_MINUTE = intPreferencesKey("dailySummaryMinute")
+        val WEIGHT_REMINDER_ENABLED = booleanPreferencesKey("weightReminderEnabled")
+        val BODY_FAT_REMINDER_ENABLED = booleanPreferencesKey("bodyFatReminderEnabled")
+        val GOAL_REACHED_NOTIFICATIONS_ENABLED = booleanPreferencesKey("goalReachedNotificationsEnabled")
         val HEALTH_CONNECT_ENABLED = booleanPreferencesKey("healthConnectEnabled")
         val HEALTH_TYPES_VERSION = intPreferencesKey("healthTypesVersion")
         val USE_METRIC = booleanPreferencesKey("useMetric")

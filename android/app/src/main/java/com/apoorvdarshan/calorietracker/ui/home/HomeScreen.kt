@@ -117,6 +117,12 @@ import com.apoorvdarshan.calorietracker.models.FoodEntry
 import com.apoorvdarshan.calorietracker.models.MealType
 import com.apoorvdarshan.calorietracker.ui.components.InAppCameraCaptureDialog
 import com.apoorvdarshan.calorietracker.ui.components.MacroCard
+import com.apoorvdarshan.calorietracker.ui.components.DateWheelPicker
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialog
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialogActions
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassPrimaryButton
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassSurface
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassTextField
 import com.apoorvdarshan.calorietracker.ui.components.WeekEnergyStrip
 import com.apoorvdarshan.calorietracker.ui.theme.AppColors
 import java.time.DayOfWeek
@@ -653,12 +659,14 @@ fun HomeScreen(container: AppContainer) {
     }
 
     ui.error?.let { err ->
-        AlertDialog(
-            onDismissRequest = { vm.dismissPending() },
-            title = { Text("Something went wrong") },
-            text = { Text(err) },
-            confirmButton = { TextButton(onClick = { vm.dismissPending() }) { Text("OK") } }
-        )
+        FudGlassDialog(onDismissRequest = { vm.dismissPending() }) {
+            Text("Something went wrong", fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            Text(err, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f))
+            FudGlassDialogActions(
+                primaryText = "OK",
+                onPrimary = { vm.dismissPending() }
+            )
+        }
     }
 }
 
@@ -902,11 +910,14 @@ private fun MenuRow(label: String, icon: ImageVector, onClick: () -> Unit) {
 
 @Composable
 private fun ViewMoreButton() {
+    val shape = CircleShape
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .clip(CircleShape)
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .clip(shape)
+            .background(AppColors.Calorie.copy(alpha = 0.08f))
+            .border(0.6.dp, AppColors.Calorie.copy(alpha = 0.15f), shape)
+            .padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
         Text(
             "View More",
@@ -1437,22 +1448,13 @@ private fun CopyFromDaySheet(
                 }
             } else {
                 item {
-                    Button(
+                    FudGlassPrimaryButton(
+                        text = "Copy ${sourceEntries.size} food${if (sourceEntries.size == 1) "" else "s"} to $targetText",
                         onClick = { onCopy(sourceEntries) },
-                        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie),
-                        shape = RoundedCornerShape(18.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 20.dp)
-                            .height(50.dp)
-                    ) {
-                        Text(
-                            "Copy ${sourceEntries.size} food${if (sourceEntries.size == 1) "" else "s"} to $targetText",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+                    )
                 }
 
                 groups.forEach { group ->
@@ -1460,21 +1462,28 @@ private fun CopyFromDaySheet(
                         MealSectionHeader(meal = group.meal)
                     }
                     item(key = "copy-meal-${group.id}") {
-                        Button(
-                            onClick = { onCopy(group.entries) },
-                            colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie.copy(alpha = 0.12f)),
-                            shape = RoundedCornerShape(18.dp),
+                        FudGlassSurface(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .height(46.dp)
+                                .padding(horizontal = 16.dp),
+                            cornerRadius = 18.dp,
+                            padding = 0.dp
                         ) {
-                            Text(
-                                "Copy ${stringResource(group.meal.displayNameRes)}",
-                                color = AppColors.Calorie,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onCopy(group.entries) }
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    "Copy ${stringResource(group.meal.displayNameRes)}",
+                                    color = AppColors.Calorie,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                         }
                     }
                     items(group.entries, key = { "copy-entry-${it.id}" }) { entry ->
@@ -1492,30 +1501,25 @@ private fun CopyFromDaySheet(
     }
 
     if (showDatePicker) {
-        val pickerState = rememberDatePickerState(
-            initialSelectedDateMillis = sourceDate.atStartOfDay()
-                .toInstant(ZoneOffset.UTC)
-                .toEpochMilli()
-        )
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    pickerState.selectedDateMillis?.let { millis ->
-                        sourceDate = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
-                    }
+        var pickedDate by remember(sourceDate) { mutableStateOf(sourceDate) }
+        FudGlassDialog(onDismissRequest = { showDatePicker = false }) {
+            Text("Copy From", fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            DateWheelPicker(
+                selected = pickedDate,
+                onSelect = { pickedDate = it },
+                minYear = LocalDate.now().year - 10,
+                maxYear = LocalDate.now().year,
+                modifier = Modifier.fillMaxWidth()
+            )
+            FudGlassDialogActions(
+                primaryText = "Done",
+                onPrimary = {
+                    sourceDate = pickedDate
                     showDatePicker = false
-                }) {
-                    Text("Done", color = AppColors.Calorie)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            DatePicker(state = pickerState)
+                },
+                dismissText = "Cancel",
+                onDismiss = { showDatePicker = false }
+            )
         }
     }
 }
@@ -1583,18 +1587,16 @@ private fun AnalysisResultDialog(
     onSave: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        shape = RoundedCornerShape(24.dp),
-        title = { Text("${analysis.emoji ?: "🍽"}  ${analysis.name}", fontWeight = FontWeight.SemiBold) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("${analysis.calories} kcal", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+    FudGlassDialog(onDismissRequest = onDismiss) {
+        Text("${analysis.emoji ?: "🍽"}  ${analysis.name}", fontSize = 21.sp, fontWeight = FontWeight.Bold)
+        FudGlassSurface(modifier = Modifier.fillMaxWidth(), cornerRadius = 20.dp, padding = 16.dp) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("${analysis.calories} kcal", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = AppColors.Calorie)
                 Text("Protein: ${analysis.protein}g")
                 Text("Carbs: ${analysis.carbs}g")
                 Text("Fat: ${analysis.fat}g")
                 if (analysis.fiber != null || analysis.sugar != null || analysis.sodium != null) {
-                    Spacer(Modifier.height(4.dp))
+                    Spacer(Modifier.height(2.dp))
                     analysis.fiber?.let { Text("Fiber: ${it}g", fontSize = 12.sp) }
                     analysis.sugar?.let { Text("Sugar: ${it}g", fontSize = 12.sp) }
                     analysis.saturatedFat?.let { Text("Sat fat: ${it}g", fontSize = 12.sp) }
@@ -1608,10 +1610,14 @@ private fun AnalysisResultDialog(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
                 )
             }
-        },
-        confirmButton = { Button(onClick = onSave, colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie)) { Text("Save", color = Color.White) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Discard") } }
-    )
+        }
+        FudGlassDialogActions(
+            primaryText = "Save",
+            onPrimary = onSave,
+            dismissText = "Discard",
+            onDismiss = onDismiss
+        )
+    }
 }
 
 @Composable
@@ -1632,51 +1638,29 @@ private fun TextInputDialog(onDismiss: () -> Unit, onSubmit: (String) -> Unit) {
             if (input.isEmpty()) placeholderIdx = (placeholderIdx + 1) % placeholders.size
         }
     }
-    androidx.compose.ui.window.Dialog(
-        onDismissRequest = onDismiss,
-        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Box(
-            Modifier
-                .padding(horizontal = 20.dp)
-                .clip(RoundedCornerShape(24.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(horizontal = 20.dp, vertical = 24.dp)
-        ) {
-            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                OutlinedTextField(
-                    value = input,
-                    onValueChange = { input = it },
-                    placeholder = {
-                        androidx.compose.animation.Crossfade(
-                            targetState = placeholderIdx,
-                            animationSpec = androidx.compose.animation.core.tween(300),
-                            label = "placeholder"
-                        ) { idx ->
-                            Text(
-                                placeholders[idx],
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                                fontSize = 15.sp
-                            )
-                        }
-                    },
-                    minLines = 2,
-                    maxLines = 5,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Button(
-                    onClick = { if (input.isNotBlank()) onSubmit(input.trim()) },
-                    enabled = input.isNotBlank(),
-                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie),
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.fillMaxWidth().height(52.dp)
-                ) {
-                    Text("Analyze", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-                }
-                TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                }
-            }
+    FudGlassDialog(onDismissRequest = onDismiss) {
+        androidx.compose.animation.Crossfade(
+            targetState = placeholderIdx,
+            animationSpec = androidx.compose.animation.core.tween(300),
+            label = "placeholder"
+        ) { idx ->
+            FudGlassTextField(
+                value = input,
+                onValueChange = { input = it },
+                placeholder = placeholders[idx],
+                singleLine = false,
+                minLines = 3,
+                maxLines = 5,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        FudGlassPrimaryButton(
+            text = "Analyze",
+            onClick = { if (input.isNotBlank()) onSubmit(input.trim()) },
+            enabled = input.isNotBlank()
+        )
+        TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
+            Text("Cancel", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
         }
     }
 }
@@ -1696,25 +1680,13 @@ private fun ManualEntryDialog(
 
     val canSave = name.isNotBlank() && calories.toIntOrNull() != null
 
-    androidx.compose.ui.window.Dialog(
-        onDismissRequest = onDismiss,
-        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Box(
-            Modifier
-                .padding(horizontal = 20.dp)
-                .clip(RoundedCornerShape(24.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(horizontal = 20.dp, vertical = 20.dp)
-        ) {
-            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    FudGlassDialog(onDismissRequest = onDismiss) {
                 Text("Manual Entry", fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
 
-                OutlinedTextField(
+                FudGlassTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name") },
-                    placeholder = { Text("e.g. Homemade salad", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)) },
+                    placeholder = "e.g. Homemade salad",
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -1777,7 +1749,8 @@ private fun ManualEntryDialog(
                     }
                 }
 
-                Button(
+                FudGlassPrimaryButton(
+                    text = "Save",
                     onClick = {
                         onSave(
                             name.trim(),
@@ -1789,27 +1762,20 @@ private fun ManualEntryDialog(
                         )
                     },
                     enabled = canSave,
-                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie),
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.fillMaxWidth().height(52.dp)
-                ) {
-                    Text("Save", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-                }
+                    modifier = Modifier.fillMaxWidth()
+                )
                 TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
                     Text("Cancel", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                 }
-            }
-        }
     }
 }
 
 @Composable
 private fun NumberField(label: String, value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
-    OutlinedTextField(
+    FudGlassTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
-        placeholder = { Text("0", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)) },
+        placeholder = label,
         singleLine = true,
         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
         modifier = modifier

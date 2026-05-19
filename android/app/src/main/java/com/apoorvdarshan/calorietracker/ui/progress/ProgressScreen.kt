@@ -2,6 +2,7 @@ package com.apoorvdarshan.calorietracker.ui.progress
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,11 +13,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ListAlt
@@ -55,6 +58,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.apoorvdarshan.calorietracker.ui.components.DecimalWheelPicker
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialog
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialogActions
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassPrimaryButton
 import com.apoorvdarshan.calorietracker.ui.components.FudGlassSurface
 import com.apoorvdarshan.calorietracker.ui.components.FudIconBubble
 import com.apoorvdarshan.calorietracker.ui.components.SplitDecimalWheelPicker
@@ -272,12 +278,17 @@ fun ProgressScreen(container: AppContainer) {
         )
     }
     if (ui.goalReached) {
-        AlertDialog(
-            onDismissRequest = { vm.dismissGoalReached() },
-            title = { Text(stringResource(R.string.progress_goal_reached_title), fontWeight = FontWeight.SemiBold) },
-            text = { Text(stringResource(R.string.progress_goal_reached_message)) },
-            confirmButton = { TextButton(onClick = { vm.dismissGoalReached() }) { Text(stringResource(R.string.action_keep_going)) } }
-        )
+        FudGlassDialog(onDismissRequest = { vm.dismissGoalReached() }) {
+            Text(stringResource(R.string.progress_goal_reached_title), fontSize = 21.sp, fontWeight = FontWeight.Bold)
+            Text(
+                stringResource(R.string.progress_goal_reached_message),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f)
+            )
+            FudGlassDialogActions(
+                primaryText = stringResource(R.string.action_keep_going),
+                onPrimary = { vm.dismissGoalReached() }
+            )
+        }
     }
 }
 
@@ -288,32 +299,48 @@ private fun TimeRangePicker(selected: TimeRange, onSelect: (TimeRange) -> Unit) 
     // iOS .pickerStyle(.segmented): a track tinted with the system fill colour,
     // active segment drawn as a slightly raised darker pill, active text uses
     // the primary on-background colour (white in dark mode), not the brand pink.
+    val shape = RoundedCornerShape(16.dp)
     Row(
         Modifier
             .fillMaxWidth()
             .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(9.dp),
+                elevation = 10.dp,
+                shape = shape,
                 ambientColor = Color.Black.copy(alpha = 0.16f),
                 spotColor = Color.Black.copy(alpha = 0.16f)
             )
-            .clip(RoundedCornerShape(9.dp))
-            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.82f))
-            .background(AppColors.Calorie.copy(alpha = 0.035f))
-            .padding(2.dp)
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.34f))
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color.White.copy(alpha = 0.08f),
+                        Color.White.copy(alpha = 0.02f),
+                        AppColors.Calorie.copy(alpha = 0.025f)
+                    )
+                )
+            )
+            .border(
+                0.7.dp,
+                Brush.linearGradient(
+                    listOf(Color.White.copy(alpha = 0.15f), AppColors.Calorie.copy(alpha = 0.08f))
+                ),
+                shape
+            )
+            .padding(3.dp)
     ) {
         for (r in TimeRange.values()) {
             val isSel = r == selected
             Box(
                 Modifier
                     .weight(1f)
-                    .clip(RoundedCornerShape(7.dp))
+                    .clip(RoundedCornerShape(13.dp))
                     .then(
                         if (isSel) Modifier.background(AppColors.CalorieGradient)
                         else Modifier.background(Color.Transparent)
                     )
                     .clickable { onSelect(r) }
-                    .padding(vertical = 6.dp),
+                    .padding(vertical = 7.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -776,30 +803,51 @@ private fun AllWeightHistorySheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = state,
-        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        containerColor = MaterialTheme.colorScheme.surface
     ) {
-        Column(Modifier.fillMaxWidth().padding(20.dp)) {
+        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.progress_weight_history), fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
                 Spacer(Modifier.weight(1f))
                 TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_done), color = AppColors.Calorie) }
             }
             Spacer(Modifier.height(12.dp))
-            entries.forEach { entry ->
-                Row(
-                    Modifier.fillMaxWidth().padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+            FudGlassSurface(
+                modifier = Modifier.fillMaxWidth(),
+                cornerRadius = 22.dp,
+                padding = 0.dp
+            ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 560.dp)
+                        .padding(vertical = 4.dp)
                 ) {
-                    Column(Modifier.weight(1f)) {
-                        Text(formatWeight(entry.weightKg, useMetric), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                        Text(fmt.format(entry.date), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f))
-                    }
-                    IconButton(onClick = { onDelete(entry.id) }) {
-                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_delete), tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f), modifier = Modifier.size(18.dp))
+                    items(entries, key = { it.id }) { entry ->
+                        Row(
+                            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(Modifier.weight(1f)) {
+                                Text(formatWeight(entry.weightKg, useMetric), fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+                                Spacer(Modifier.height(2.dp))
+                                Text(fmt.format(entry.date), fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f))
+                            }
+                            IconButton(onClick = { onDelete(entry.id) }) {
+                                Icon(
+                                    Icons.Filled.Delete,
+                                    contentDescription = stringResource(R.string.action_delete),
+                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.42f),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                        Box(Modifier.padding(start = 16.dp).fillMaxWidth().height(0.5.dp).background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)))
                     }
                 }
-                Box(Modifier.fillMaxWidth().height(0.5.dp).background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)))
             }
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
@@ -814,38 +862,38 @@ private fun AddWeightDialog(
     // Wheel picker matches Settings → Goal Weight + the onboarding height/weight
     // step — split-decimal so users land on e.g. 72.4 without typing.
     var pickerKg by remember { mutableStateOf(initialKg) }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        shape = RoundedCornerShape(24.dp),
-        title = { Text(stringResource(R.string.progress_log_weight_title), fontWeight = FontWeight.SemiBold) },
-        text = {
-            if (useMetric) {
-                SplitDecimalWheelPicker(
-                    value = pickerKg.coerceIn(30.0, 250.0),
-                    onValueChange = { pickerKg = it },
-                    min = 30,
-                    max = 250,
-                    unit = stringResource(R.string.unit_kg)
-                )
-            } else {
-                val lbs = (pickerKg * 2.20462).coerceIn(60.0, 500.0)
-                SplitDecimalWheelPicker(
-                    value = lbs,
-                    onValueChange = { newLbs -> pickerKg = newLbs / 2.20462 },
-                    min = 60,
-                    max = 500,
-                    unit = stringResource(R.string.unit_lbs)
-                )
+    FudGlassDialog(onDismissRequest = onDismiss) {
+        Text(stringResource(R.string.progress_log_weight_title), fontSize = 21.sp, fontWeight = FontWeight.Bold)
+        if (useMetric) {
+            SplitDecimalWheelPicker(
+                value = pickerKg.coerceIn(30.0, 250.0),
+                onValueChange = { pickerKg = it },
+                min = 30,
+                max = 250,
+                unit = stringResource(R.string.unit_kg)
+            )
+        } else {
+            val lbs = (pickerKg * 2.20462).coerceIn(60.0, 500.0)
+            SplitDecimalWheelPicker(
+                value = lbs,
+                onValueChange = { newLbs -> pickerKg = newLbs / 2.20462 },
+                min = 60,
+                max = 500,
+                unit = stringResource(R.string.unit_lbs)
+            )
+        }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f))
             }
-        },
-        confirmButton = {
-            Button(
+            Spacer(Modifier.width(8.dp))
+            FudGlassPrimaryButton(
+                text = stringResource(R.string.action_save),
                 onClick = { onSubmit(pickerKg) },
-                colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie)
-            ) { Text(stringResource(R.string.action_save), color = Color.White) }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } }
-    )
+                modifier = Modifier.width(132.dp)
+            )
+        }
+    }
 }
 
 private fun formatWeight(kg: Double, useMetric: Boolean): String =
@@ -860,18 +908,35 @@ enum class BodyMetric { WEIGHT, BODY_FAT }
 private fun BodyMetricToggle(selected: BodyMetric, onSelect: (BodyMetric) -> Unit) {
     val labelWeight = stringResource(R.string.progress_metric_weight)
     val labelBodyFat = stringResource(R.string.progress_metric_body_fat)
+    val shape = RoundedCornerShape(18.dp)
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(12.dp),
+                elevation = 10.dp,
+                shape = shape,
                 ambientColor = Color.Black.copy(alpha = 0.14f),
                 spotColor = Color.Black.copy(alpha = 0.14f)
             )
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.84f))
-            .background(AppColors.Calorie.copy(alpha = 0.035f)),
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.34f))
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color.White.copy(alpha = 0.08f),
+                        Color.White.copy(alpha = 0.02f),
+                        AppColors.Calorie.copy(alpha = 0.025f)
+                    )
+                )
+            )
+            .border(
+                0.7.dp,
+                Brush.linearGradient(
+                    listOf(Color.White.copy(alpha = 0.15f), AppColors.Calorie.copy(alpha = 0.08f))
+                ),
+                shape
+            )
+            .padding(3.dp),
         horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         listOf(BodyMetric.WEIGHT to labelWeight, BodyMetric.BODY_FAT to labelBodyFat).forEach { (metric, label) ->
@@ -879,7 +944,7 @@ private fun BodyMetricToggle(selected: BodyMetric, onSelect: (BodyMetric) -> Uni
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(15.dp))
                     .then(
                         if (isSelected) Modifier.background(AppColors.CalorieGradient)
                         else Modifier.background(Color.Transparent)
@@ -1060,28 +1125,28 @@ private fun AddBodyFatDialog(
     // Whole-percent wheel — body fat measurements rarely justify 0.1% resolution
     // given the noise of calipers / smart scales (matches iOS LogBodyFatSheet).
     var pct by remember { mutableStateOf(initialFraction * 100) }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        shape = RoundedCornerShape(24.dp),
-        title = { Text(stringResource(R.string.progress_log_body_fat_title), fontWeight = FontWeight.SemiBold) },
-        text = {
-            DecimalWheelPicker(
-                value = pct.coerceIn(3.0, 60.0),
-                onValueChange = { pct = it },
-                min = 3.0,
-                max = 60.0,
-                step = 0.5,
-                unit = stringResource(R.string.unit_percent)
-            )
-        },
-        confirmButton = {
-            Button(
+    FudGlassDialog(onDismissRequest = onDismiss) {
+        Text(stringResource(R.string.progress_log_body_fat_title), fontSize = 21.sp, fontWeight = FontWeight.Bold)
+        DecimalWheelPicker(
+            value = pct.coerceIn(3.0, 60.0),
+            onValueChange = { pct = it },
+            min = 3.0,
+            max = 60.0,
+            step = 0.5,
+            unit = stringResource(R.string.unit_percent)
+        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.68f))
+            }
+            Spacer(Modifier.width(8.dp))
+            FudGlassPrimaryButton(
+                text = stringResource(R.string.action_save),
                 onClick = { onSubmit(pct / 100.0) },
-                colors = ButtonDefaults.buttonColors(containerColor = AppColors.Calorie)
-            ) { Text(stringResource(R.string.action_save), color = Color.White) }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } }
-    )
+                modifier = Modifier.width(132.dp)
+            )
+        }
+    }
 }
 
 private fun formatPercent(fraction: Double): String =
