@@ -58,6 +58,15 @@
 # survive R8, but defensively keep WeightRecord / NutritionRecord field access.
 -keep class androidx.health.connect.client.records.** { *; }
 
+# ─── ML Kit barcode scanner ───────────────────────────────────────────────────
+# ML Kit discovers these registrars by class name at runtime. Release minification
+# can strip their no-arg constructors, which crashes the barcode scanner on open.
+-keep class * implements com.google.firebase.components.ComponentRegistrar { *; }
+-keep class com.google.mlkit.common.internal.CommonComponentRegistrar { *; }
+-keep class com.google.mlkit.vision.common.internal.VisionCommonRegistrar { *; }
+-keep class com.google.mlkit.vision.barcode.internal.BarcodeRegistrar { *; }
+-keep class com.google.android.gms.internal.mlkit_** { *; }
+
 # ─── Crash reporting ──────────────────────────────────────────────────────────
 # Keep line numbers so Play Console crash reports stay readable, but rename
 # the original source file name so we don't leak internal file structure.
