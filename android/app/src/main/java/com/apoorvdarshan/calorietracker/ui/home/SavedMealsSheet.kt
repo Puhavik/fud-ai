@@ -3,8 +3,11 @@ package com.apoorvdarshan.calorietracker.ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -41,16 +45,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxState
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,12 +65,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -79,6 +82,7 @@ import com.apoorvdarshan.calorietracker.models.FoodEntry
 import com.apoorvdarshan.calorietracker.services.FoodImageStore
 import com.apoorvdarshan.calorietracker.ui.theme.AppColors
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 enum class SavedTab { RECENTS, FREQUENT, FAVORITES }
 
@@ -347,7 +351,6 @@ private fun <T> SavedList(items: List<T>, row: @Composable (T) -> Unit) {
  * accessibility shortcut order, etc.) is per-row up/down arrow buttons; we
  * use that here.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FavoritesReorderableList(
     favorites: List<FoodEntry>,
@@ -367,21 +370,9 @@ private fun FavoritesReorderableList(
     ) {
         favorites.forEachIndexed { idx, entry ->
             key(entry.favoriteKey) {
-                val swipeState = rememberSwipeToDismissBoxState(
-                    confirmValueChange = { value ->
-                        if (value == SwipeToDismissBoxValue.EndToStart) {
-                            onRemove(entry)
-                        }
-                        false
-                    }
-                )
-
-                SwipeToDismissBox(
-                    state = swipeState,
-                    backgroundContent = { FavoriteUnfavoriteBackground(swipeState) },
-                    enableDismissFromStartToEnd = false,
-                    enableDismissFromEndToStart = true,
-                    modifier = Modifier.fillMaxWidth()
+                FavoriteSwipeToUnfavoriteRow(
+                    entry = entry,
+                    onUnfavorite = { onRemove(entry) }
                 ) {
                     SavedMealRow(
                         entry = entry,
@@ -399,6 +390,46 @@ private fun FavoritesReorderableList(
                         }
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FavoriteSwipeToUnfavoriteRow(
+    entry: FoodEntry,
+    onUnfavorite: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    val density = LocalDensity.current
+    val triggerPx = with(density) { 120.dp.toPx() }
+    var offsetPx by remember(entry.favoriteKey) { mutableFloatStateOf(0f) }
+
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        val maxSwipePx = with(density) { maxWidth.toPx() * 0.55f }
+        Box(Modifier.fillMaxWidth()) {
+            FavoriteUnfavoriteBackground(offsetPx)
+            Box(
+                modifier = Modifier
+                    .offset { IntOffset(offsetPx.roundToInt(), 0) }
+                    .pointerInput(entry.favoriteKey, maxSwipePx) {
+                        detectHorizontalDragGestures(
+                            onHorizontalDrag = { change, dragAmount ->
+                                change.consume()
+                                offsetPx = (offsetPx + dragAmount).coerceIn(-maxSwipePx, 0f)
+                            },
+                            onDragEnd = {
+                                val finalOffset = offsetPx
+                                offsetPx = 0f
+                                if (finalOffset <= -triggerPx) onUnfavorite()
+                            },
+                            onDragCancel = {
+                                offsetPx = 0f
+                            }
+                        )
+                    }
+            ) {
+                content()
             }
         }
     }
@@ -508,18 +539,16 @@ private fun MoveButtons(
  * that's been "revealed" by the foreground sliding left is tinted — the
  * still-visible portion of the row stays its normal color.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun FavoriteUnfavoriteBackground(state: SwipeToDismissBoxState) {
-    val active = state.dismissDirection == SwipeToDismissBoxValue.EndToStart
-    val rawOffset = runCatching { state.requireOffset() }.getOrDefault(0f)
-    // For EndToStart the offset is negative — its absolute value is the
-    // amount the foreground has moved left, which is exactly how wide the
-    // red reveal panel should be.
-    val revealWidthPx = if (active) (-rawOffset).coerceAtLeast(0f) else 0f
+private fun BoxScope.FavoriteUnfavoriteBackground(offsetPx: Float) {
+    if (offsetPx == 0f) {
+        Box(Modifier.matchParentSize())
+        return
+    }
+    val revealWidthPx = (-offsetPx).coerceAtLeast(0f)
     val revealWidthDp = with(LocalDensity.current) { revealWidthPx.toDp() }
 
-    Box(Modifier.fillMaxSize()) {
+    Box(Modifier.matchParentSize()) {
         Box(
             Modifier
                 .align(Alignment.CenterEnd)
@@ -528,7 +557,7 @@ private fun FavoriteUnfavoriteBackground(state: SwipeToDismissBoxState) {
                 .background(AppColors.Calorie),
             contentAlignment = Alignment.Center
         ) {
-            if (active && revealWidthPx > 24f) {
+            if (revealWidthPx > 24f) {
                 Icon(Icons.Outlined.Favorite, contentDescription = "Unfavorite", tint = Color.White)
             }
         }
