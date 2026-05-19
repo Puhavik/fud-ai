@@ -58,6 +58,8 @@ open class MainActivity : ComponentActivity() {
             intent.removeExtra("restore_real_data")
         }
         val startOnboarding = runBlocking { !container.prefs.hasCompletedOnboarding.first() }
+        val initialAppearance = runBlocking { container.prefs.appearanceMode.first() }
+        val initialThemeColorKey = runBlocking { container.prefs.appThemeColor.first() }
 
         // Hold the splash on screen until the saved profile has loaded from
         // DataStore so Home doesn't briefly render its 2000/150/220/70 fallback
@@ -74,8 +76,8 @@ open class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val appearance by container.prefs.appearanceMode.collectAsState(initial = "system")
-            val themeColorKey by container.prefs.appThemeColor.collectAsState(initial = AppThemeColor.DEFAULT_KEY)
+            val appearance by container.prefs.appearanceMode.collectAsState(initial = initialAppearance)
+            val themeColorKey by container.prefs.appThemeColor.collectAsState(initial = initialThemeColorKey)
             val themeColor = AppThemeColor.fromKey(themeColorKey)
             val systemDark = isSystemInDarkTheme()
             val darkTheme = when (appearance) {
