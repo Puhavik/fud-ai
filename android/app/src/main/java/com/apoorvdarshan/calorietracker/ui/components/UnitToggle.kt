@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.apoorvdarshan.calorietracker.ui.theme.AppColors
@@ -32,7 +33,12 @@ fun UnitToggle(
     onSelect: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val trackColor = if (isDark) {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+    } else {
+        Color(0xFFE5DAD3).copy(alpha = 0.88f)
+    }
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(22.dp))
@@ -63,10 +69,14 @@ private fun UnitSegment(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     // iOS UISegmentedControl uses a slightly lighter neutral fill for the
     // selected thumb (not an accent colour) — matches that look.
     val bg by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.22f)
+        if (selected) {
+            if (isDark) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.22f)
+            else Color.White.copy(alpha = 0.72f)
+        }
         else Color.Transparent,
         label = "segBg"
     )

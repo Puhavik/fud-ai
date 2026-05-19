@@ -64,6 +64,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -161,12 +162,15 @@ fun SavedMealsSheet(
             SavedTab.FAVORITES -> Unit  // driven by `favorites` Flow above
         }
     }
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val sheetSurface = if (isDark) MaterialTheme.colorScheme.surface else Color(0xFFFAF3EE)
+    val searchSurface = if (isDark) Color.Transparent else Color(0xFFF2E9E3).copy(alpha = 0.78f)
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = state,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = sheetSurface
     ) {
         Column(
             Modifier
@@ -207,7 +211,13 @@ fun SavedMealsSheet(
                         }
                     }
                 } else null,
-                shape = RoundedCornerShape(14.dp)
+                shape = RoundedCornerShape(14.dp),
+                colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = searchSurface,
+                    unfocusedContainerColor = searchSurface,
+                    focusedBorderColor = AppColors.Calorie.copy(alpha = 0.34f),
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = if (isDark) 0.16f else 0.12f)
+                )
             )
             Spacer(Modifier.height(16.dp))
 
@@ -289,11 +299,17 @@ fun SavedMealsSheet(
 
 @Composable
 private fun SegmentedTabs(selected: SavedTab, onSelect: (SavedTab) -> Unit) {
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val trackColor = if (isDark) {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f)
+    } else {
+        Color(0xFFE5DAD3).copy(alpha = 0.88f)
+    }
     Row(
         Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f))
+            .background(trackColor)
             .padding(2.dp)
     ) {
         for (t in SavedTab.values()) {
@@ -578,21 +594,35 @@ private fun SavedMealRow(
     onClick: () -> Unit,
     trailing: (@Composable () -> Unit)? = null
 ) {
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val rowFill = if (isDark) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.50f)
+    } else {
+        Color(0xFFF7EEE8).copy(alpha = 0.96f)
+    }
+    val rowSheen = Brush.verticalGradient(
+        listOf(
+            Color.White.copy(alpha = if (isDark) 0.13f else 0.42f),
+            Color.White.copy(alpha = if (isDark) 0.035f else 0.10f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.06f else 0.045f)
+        )
+    )
+    val rowBorder = Brush.linearGradient(
+        listOf(
+            Color.White.copy(alpha = if (isDark) 0.13f else 0.72f),
+            Color.White.copy(alpha = if (isDark) 0.035f else 0.24f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.06f else 0.12f)
+        )
+    )
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(18.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.50f))
-            .background(AppColors.Calorie.copy(alpha = 0.025f))
+            .background(rowFill)
+            .background(rowSheen)
             .border(
                 0.6.dp,
-                Brush.linearGradient(
-                    listOf(
-                        Color.White.copy(alpha = 0.13f),
-                        Color.White.copy(alpha = 0.035f),
-                        AppColors.Calorie.copy(alpha = 0.06f)
-                    )
-                ),
+                rowBorder,
                 RoundedCornerShape(18.dp)
             )
             .clickable(onClick = onClick)

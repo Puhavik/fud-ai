@@ -78,6 +78,7 @@ internal fun SheetReviewToolbar(
 @Composable
 private fun SheetToolbarPill(label: String, bold: Boolean = false, onClick: () -> Unit) {
     val shape = CircleShape
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     val modifier = if (bold) {
         Modifier
             .clip(shape)
@@ -85,18 +86,18 @@ private fun SheetToolbarPill(label: String, bold: Boolean = false, onClick: () -
     } else {
         Modifier
             .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f))
+            .background(if (isDark) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f) else Color(0xFFEDE3DD).copy(alpha = 0.82f))
             .background(
                 Brush.verticalGradient(
                     listOf(
-                        Color.White.copy(alpha = 0.08f),
-                        Color.White.copy(alpha = 0.02f)
+                        Color.White.copy(alpha = if (isDark) 0.08f else 0.24f),
+                        Color.White.copy(alpha = if (isDark) 0.02f else 0.06f)
                     )
                 )
             )
             .border(
                 0.7.dp,
-                Color.White.copy(alpha = 0.10f),
+                Color.White.copy(alpha = if (isDark) 0.10f else 0.48f),
                 shape
             )
     }
@@ -131,29 +132,31 @@ internal fun SheetPillRow(
     content: @Composable RowScope.() -> Unit
 ) {
     val shape = RoundedCornerShape(24.dp)
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val rowFill = if (isDark) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
+    } else {
+        Color(0xFFEDE3DD).copy(alpha = 0.74f)
+    }
+    val rowSheen = Brush.verticalGradient(
+        listOf(
+            Color.White.copy(alpha = if (isDark) 0.075f else 0.24f),
+            Color.White.copy(alpha = if (isDark) 0.018f else 0.06f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.022f else 0.040f)
+        )
+    )
+    val rowBorder = Brush.linearGradient(
+        listOf(
+            Color.White.copy(alpha = if (isDark) 0.14f else 0.60f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.07f else 0.14f)
+        )
+    )
     val base = Modifier
         .fillMaxWidth()
         .clip(shape)
-        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f))
-        .background(
-            Brush.verticalGradient(
-                listOf(
-                    Color.White.copy(alpha = 0.075f),
-                    Color.White.copy(alpha = 0.018f),
-                    AppColors.Calorie.copy(alpha = 0.022f)
-                )
-            )
-        )
-        .border(
-            0.7.dp,
-            Brush.linearGradient(
-                listOf(
-                    Color.White.copy(alpha = 0.14f),
-                    AppColors.Calorie.copy(alpha = 0.07f)
-                )
-            ),
-            shape
-        )
+        .background(rowFill)
+        .background(rowSheen)
+        .border(0.7.dp, rowBorder, shape)
     val withClick = if (onClick != null) base.clickable(onClick = onClick) else base
     Row(
         withClick.padding(horizontal = 18.dp, vertical = 15.dp),
@@ -165,30 +168,32 @@ internal fun SheetPillRow(
 @Composable
 internal fun SheetPillCard(content: @Composable ColumnScope.() -> Unit) {
     val shape = RoundedCornerShape(24.dp)
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val cardFill = if (isDark) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
+    } else {
+        Color(0xFFEDE3DD).copy(alpha = 0.74f)
+    }
+    val cardSheen = Brush.verticalGradient(
+        listOf(
+            Color.White.copy(alpha = if (isDark) 0.075f else 0.24f),
+            Color.White.copy(alpha = if (isDark) 0.018f else 0.06f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.022f else 0.040f)
+        )
+    )
+    val cardBorder = Brush.linearGradient(
+        listOf(
+            Color.White.copy(alpha = if (isDark) 0.14f else 0.60f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.07f else 0.14f)
+        )
+    )
     Column(
         Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f))
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color.White.copy(alpha = 0.075f),
-                        Color.White.copy(alpha = 0.018f),
-                        AppColors.Calorie.copy(alpha = 0.022f)
-                    )
-                )
-            )
-            .border(
-                0.7.dp,
-                Brush.linearGradient(
-                    listOf(
-                        Color.White.copy(alpha = 0.14f),
-                        AppColors.Calorie.copy(alpha = 0.07f)
-                    )
-                ),
-                shape
-            )
+            .background(cardFill)
+            .background(cardSheen)
+            .border(0.7.dp, cardBorder, shape)
             .padding(vertical = 4.dp),
         content = content
     )

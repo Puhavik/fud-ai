@@ -54,21 +54,21 @@ fun FudGlassSurface(
     val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     val shape = RoundedCornerShape(cornerRadius)
     val baseColor = if (isDark) Color(0xFF17171B).copy(alpha = 0.84f)
-                    else Color.White.copy(alpha = 0.94f)
+                    else Color(0xFFFAF2EC).copy(alpha = 0.98f)
     val shadowColor = if (isDark) Color.Black.copy(alpha = 0.28f)
-                      else Color.Black.copy(alpha = 0.08f)
+                      else Color.Black.copy(alpha = 0.11f)
     val sheen = Brush.verticalGradient(
         listOf(
-            Color.White.copy(alpha = if (isDark) 0.070f else 0.48f),
-            Color.White.copy(alpha = if (isDark) 0.018f else 0.16f),
-            AppColors.Calorie.copy(alpha = if (isDark) 0.026f else 0.035f)
+            Color.White.copy(alpha = if (isDark) 0.070f else 0.34f),
+            Color.White.copy(alpha = if (isDark) 0.018f else 0.08f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.026f else 0.045f)
         )
     )
     val border = Brush.linearGradient(
         listOf(
-            Color.White.copy(alpha = if (isDark) 0.18f else 0.70f),
-            Color.White.copy(alpha = if (isDark) 0.045f else 0.22f),
-            AppColors.Calorie.copy(alpha = if (isDark) 0.075f else 0.10f)
+            Color.White.copy(alpha = if (isDark) 0.18f else 0.78f),
+            Color.White.copy(alpha = if (isDark) 0.045f else 0.28f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.075f else 0.14f)
         )
     )
 
@@ -146,6 +146,25 @@ fun FudGlassTextField(
     )
 ) {
     val shape = RoundedCornerShape(18.dp)
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val fieldFill = if (isDark) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f)
+    } else {
+        Color(0xFFEDE3DD).copy(alpha = 0.72f)
+    }
+    val fieldSheen = Brush.verticalGradient(
+        listOf(
+            Color.White.copy(alpha = if (isDark) 0.09f else 0.24f),
+            Color.White.copy(alpha = if (isDark) 0.02f else 0.06f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.025f else 0.040f)
+        )
+    )
+    val fieldBorder = Brush.linearGradient(
+        listOf(
+            Color.White.copy(alpha = if (isDark) 0.16f else 0.62f),
+            AppColors.Calorie.copy(alpha = if (isDark) 0.09f else 0.14f)
+        )
+    )
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
@@ -160,26 +179,9 @@ fun FudGlassTextField(
             .fillMaxWidth()
             .heightIn(min = if (singleLine) 52.dp else 118.dp)
             .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.38f))
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color.White.copy(alpha = 0.09f),
-                        Color.White.copy(alpha = 0.02f),
-                        AppColors.Calorie.copy(alpha = 0.025f)
-                    )
-                )
-            )
-            .border(
-                0.7.dp,
-                Brush.linearGradient(
-                    listOf(
-                        Color.White.copy(alpha = 0.16f),
-                        AppColors.Calorie.copy(alpha = 0.09f)
-                    )
-                ),
-                shape
-            )
+            .background(fieldFill)
+            .background(fieldSheen)
+            .border(0.7.dp, fieldBorder, shape)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         decorationBox = { inner ->
             Box(

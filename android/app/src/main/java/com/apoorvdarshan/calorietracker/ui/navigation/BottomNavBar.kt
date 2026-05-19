@@ -111,21 +111,34 @@ fun FudAIBottomNavBar(
     val barShape = RoundedCornerShape(BarCorner)
 
     val backdropColor = if (isDark) Color(0xFF15151A).copy(alpha = 0.86f)
-                        else Color(0xFFFFFFFF).copy(alpha = 0.90f)
+                        else Color(0xFFFCF6F1).copy(alpha = 0.74f)
 
     val barSheen = Brush.verticalGradient(
         colors = if (isDark)
             listOf(Color.White.copy(alpha = 0.14f), Color.White.copy(alpha = 0.0f))
         else
-            listOf(Color.White.copy(alpha = 0.55f), Color.White.copy(alpha = 0.10f))
+            listOf(
+                Color.White.copy(alpha = 0.76f),
+                Color.White.copy(alpha = 0.22f),
+                AppColors.Calorie.copy(alpha = 0.035f)
+            )
     )
 
     val barBorder = Brush.linearGradient(
-        listOf(
-            Color.White.copy(alpha = if (isDark) 0.28f else 0.65f),
-            Color.White.copy(alpha = if (isDark) 0.06f else 0.18f)
-        )
+        if (isDark) {
+            listOf(
+                Color.White.copy(alpha = 0.28f),
+                Color.White.copy(alpha = 0.06f)
+            )
+        } else {
+            listOf(
+                Color.White.copy(alpha = 0.95f),
+                Color.White.copy(alpha = 0.32f),
+                AppColors.Calorie.copy(alpha = 0.16f)
+            )
+        }
     )
+    val shadowAlpha = if (isDark) 0.35f else 0.16f
 
     Box(
         modifier = modifier
@@ -138,13 +151,14 @@ fun FudAIBottomNavBar(
                 .fillMaxWidth()
                 .height(BarHeight)
                 .shadow(
-                    elevation = 22.dp,
+                    elevation = if (isDark) 22.dp else 18.dp,
                     shape = barShape,
-                    ambientColor = Color.Black.copy(alpha = 0.35f),
-                    spotColor = Color.Black.copy(alpha = 0.35f)
+                    ambientColor = Color.Black.copy(alpha = shadowAlpha),
+                    spotColor = Color.Black.copy(alpha = shadowAlpha)
                 )
                 .clip(barShape)
                 .background(backdropColor)
+                .background(if (isDark) Brush.linearGradient(listOf(Color.Transparent, Color.Transparent)) else Brush.linearGradient(listOf(Color.White.copy(alpha = 0.18f), AppColors.Calorie.copy(alpha = 0.020f))))
                 .background(barSheen)
                 .border(0.8.dp, barBorder, barShape)
         ) {
