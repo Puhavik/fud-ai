@@ -308,6 +308,28 @@ struct GeminiService {
         return await addingFallbackServingUnits(to: analysis, image: image, description: description)
     }
 
+    static func analyzeFood(images: [UIImage]) async throws -> FoodAnalysis {
+        guard !images.isEmpty else { throw AnalysisError.imageConversionFailed }
+
+        let prompt = """
+        Analyze these food-related images together. They may show the food/package from one angle and the nutrition facts label or another useful angle from another photo.
+
+        Use all images as one logging request. If a nutrition label is visible, prefer the label values for packaged foods and combine that with the visible serving/package context from the other image. If no label is visible, estimate the visible food amount from the photos.
+
+        Respond ONLY with a JSON object in this exact format, no other text:
+        {"name":"Food Name","calories":0,"protein":0,"carbs":0,"fat":0,"serving_size_grams":0.0,"sugar":0.0,"added_sugar":0.0,"fiber":0.0,"saturated_fat":0.0,"monounsaturated_fat":0.0,"polyunsaturated_fat":0.0,"cholesterol":0.0,"sodium":0.0,"potassium":0.0,"unit_options":[]}
+
+        Calories/protein/carbs/fat are integers. serving_size_grams is the estimated weight in grams of the serving to log. Micronutrients are numbers (sugar/fiber/sat fat/mono fat/poly fat in grams, cholesterol/sodium/potassium in milligrams).
+        The [] in unit_options above is only a JSON shape placeholder; replace it with options when a non-gram unit is obvious.
+        unit_options is required for obvious non-gram units visible in the food or label. Use slice/piece for pizza, cake, bread, cookies, fruit pieces, etc.; use ml/cup/fl oz for drinks, milk, soup, smoothies, sauces, etc.; use tbsp/tsp for spooned foods; use can/packet/bar when packaged. Its quantity must describe the whole analyzed amount, not always 1. Use [] only when no non-gram unit is apparent. Do not include g/grams in unit_options.
+        Give your best estimate for the actual amount shown or implied across the images. Use null for any nutrient you cannot estimate.
+        """
+
+        let text = try await callAI(prompt: prompt, images: images)
+        let analysis = try parseFoodAnalysis(from: text)
+        return await addingFallbackServingUnits(to: analysis, image: images[0], description: nil)
+    }
+
     static func analyzeNutritionLabel(image: UIImage) async throws -> NutritionLabelAnalysis {
         let prompt = """
         Read this nutrition label image. Extract the nutritional values per 100g (or per 100ml).
@@ -447,6 +469,10 @@ struct GeminiService {
     // MARK: - Unified AI Call Router
 
     private static func callAI(prompt: String, image: UIImage?) async throws -> String {
+        try await callAI(prompt: prompt, images: image.map { [$0] } ?? [])
+    }
+
+    private static func callAI(prompt: String, images: [UIImage]) async throws -> String {
         let usingFudAIPlus = AIAccessSettings.isUsingFudAIPlus
         if usingFudAIPlus, !AIAccessSettings.hasActivePlusEntitlement {
             throw AnalysisError.subscriptionRequired
@@ -457,12 +483,12 @@ struct GeminiService {
             throw AnalysisError.noAPIKey
         }
 
-        var imageData: Data?
-        if let image {
+        var imageDataList: [Data] = []
+        for image in images {
             guard let data = image.jpegData(compressionQuality: 0.8) else {
                 throw AnalysisError.imageConversionFailed
             }
-            imageData = data
+            imageDataList.append(data)
         }
 
         if usingFudAIPlus {
@@ -472,7 +498,7 @@ struct GeminiService {
                 baseURL: AIProvider.gemini.baseURL,
                 apiKey: nil,
                 prompt: prompt,
-                imageData: imageData
+                imageDataList: imageDataList
             )
         }
 
@@ -483,7 +509,7 @@ struct GeminiService {
                 baseURL: AIProviderSettings.currentBaseURL,
                 apiKey: AIProviderSettings.currentAPIKey,
                 prompt: prompt,
-                imageData: imageData
+                imageDataList: imageDataList
             )
         } catch {
             // imageConversionFailed is local — fallback won't help, rethrow.
@@ -498,34 +524,34 @@ struct GeminiService {
                 baseURL: fallback.baseURL,
                 apiKey: fallback.apiKey,
                 prompt: prompt,
-                imageData: imageData
+                imageDataList: imageDataList
             )
         }
     }
 
-    private static func dispatch(provider: AIProvider, model: String, baseURL: String, apiKey: String?, prompt: String, imageData: Data?) async throws -> String {
+    private static func dispatch(provider: AIProvider, model: String, baseURL: String, apiKey: String?, prompt: String, imageDataList: [Data]) async throws -> String {
         switch provider.apiFormat {
         case .gemini:
             if AIAccessSettings.isUsingFudAIPlus {
-                return try await callGemini(baseURL: baseURL, model: model, apiKey: nil, prompt: prompt, imageData: imageData)
+                return try await callGemini(baseURL: baseURL, model: model, apiKey: nil, prompt: prompt, imageDataList: imageDataList)
             }
             guard let key = apiKey else { throw AnalysisError.noAPIKey }
-            return try await callGemini(baseURL: baseURL, model: model, apiKey: key, prompt: prompt, imageData: imageData)
+            return try await callGemini(baseURL: baseURL, model: model, apiKey: key, prompt: prompt, imageDataList: imageDataList)
         case .openaiCompatible:
-            return try await callOpenAICompatible(baseURL: baseURL, model: model, apiKey: apiKey, provider: provider, prompt: prompt, imageData: imageData)
+            return try await callOpenAICompatible(baseURL: baseURL, model: model, apiKey: apiKey, provider: provider, prompt: prompt, imageDataList: imageDataList)
         case .anthropic:
             guard let key = apiKey else { throw AnalysisError.noAPIKey }
-            return try await callAnthropic(baseURL: baseURL, model: model, apiKey: key, prompt: prompt, imageData: imageData)
+            return try await callAnthropic(baseURL: baseURL, model: model, apiKey: key, prompt: prompt, imageDataList: imageDataList)
         }
     }
 
     // MARK: - Gemini Format
 
-    private static func callGemini(baseURL: String, model: String, apiKey: String?, prompt: String, imageData: Data?) async throws -> String {
+    private static func callGemini(baseURL: String, model: String, apiKey: String?, prompt: String, imageDataList: [Data]) async throws -> String {
         // Send the API key in the X-goog-api-key header, not the URL query string,
         // so it doesn't end up in server logs / proxies (CodeQL: cleartext transmission).
         var parts: [[String: Any]] = []
-        if let imageData {
+        for imageData in imageDataList {
             parts.append([
                 "inlineData": [
                     "mimeType": "image/jpeg",
@@ -568,13 +594,13 @@ struct GeminiService {
 
     // MARK: - OpenAI-Compatible Format (OpenAI, xAI, OpenRouter, Together, Groq, Ollama)
 
-    private static func callOpenAICompatible(baseURL: String, model: String, apiKey: String?, provider: AIProvider, prompt: String, imageData: Data?) async throws -> String {
+    private static func callOpenAICompatible(baseURL: String, model: String, apiKey: String?, provider: AIProvider, prompt: String, imageDataList: [Data]) async throws -> String {
         guard let url = URL(string: "\(baseURL)/chat/completions") else {
             throw AnalysisError.apiError("Invalid API URL. Check your provider settings.")
         }
 
         var content: [[String: Any]] = []
-        if let imageData {
+        for imageData in imageDataList {
             content.append([
                 "type": "image_url",
                 "image_url": ["url": "data:image/jpeg;base64,\(imageData.base64EncodedString())"]
@@ -615,13 +641,13 @@ struct GeminiService {
 
     // MARK: - Anthropic Format
 
-    private static func callAnthropic(baseURL: String, model: String, apiKey: String, prompt: String, imageData: Data?) async throws -> String {
+    private static func callAnthropic(baseURL: String, model: String, apiKey: String, prompt: String, imageDataList: [Data]) async throws -> String {
         guard let url = URL(string: "\(baseURL)/messages") else {
             throw AnalysisError.apiError("Invalid API URL. Check your provider settings.")
         }
 
         var content: [[String: Any]] = []
-        if let imageData {
+        for imageData in imageDataList {
             content.append([
                 "type": "image",
                 "source": [

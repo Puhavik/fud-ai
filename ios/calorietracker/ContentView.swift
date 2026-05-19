@@ -10,6 +10,7 @@ import AVFoundation
 enum CameraMode {
     case snapFood
     case snapFoodWithContext
+    case snapFoodWithSecondPhoto
     case nutritionLabel
 }
 
@@ -677,6 +678,7 @@ struct HomeView: View {
     @State private var showRecentSheet = false
     @State private var showCopyFromDaySheet = false
     @State private var pendingContextImage: UIImage?
+    @State private var pendingSecondCameraImage: UIImage?
     @State private var contextDescription: String = ""
     @State private var showContextSheet = false
 
@@ -904,6 +906,7 @@ struct HomeView: View {
 
                                 requireAIConsent {
                                     cameraMode = .snapFood
+                                    pendingSecondCameraImage = nil
                                     showCamera = true
                                 }
                             }) {
@@ -913,6 +916,7 @@ struct HomeView: View {
 
                                 requireAIConsent {
                                     cameraMode = .snapFoodWithContext
+                                    pendingSecondCameraImage = nil
                                     showCamera = true
                                 }
                             }) {
@@ -921,7 +925,18 @@ struct HomeView: View {
                             Button(action: {
 
                                 requireAIConsent {
+                                    cameraMode = .snapFoodWithSecondPhoto
+                                    pendingSecondCameraImage = nil
+                                    showCamera = true
+                                }
+                            }) {
+                                Label("Camera + Camera", systemImage: "camera.badge.clock")
+                            }
+                            Button(action: {
+
+                                requireAIConsent {
                                     cameraMode = .nutritionLabel
+                                    pendingSecondCameraImage = nil
                                     showCamera = true
                                 }
                             }) {
@@ -938,6 +953,7 @@ struct HomeView: View {
                                 requireAIConsent {
                                     cameraMode = .snapFood
                                     photoPickerMode = .snapFood
+                                    pendingSecondCameraImage = nil
                                     showPhotoPicker = true
                                 }
                             }) {
@@ -948,6 +964,7 @@ struct HomeView: View {
                                 requireAIConsent {
                                     cameraMode = .snapFoodWithContext
                                     photoPickerMode = .snapFoodWithContext
+                                    pendingSecondCameraImage = nil
                                     showPhotoPicker = true
                                 }
                             }) {
@@ -1064,7 +1081,15 @@ struct HomeView: View {
                 }
             }
             .fullScreenCover(isPresented: $showCamera) {
-                CameraView(image: $capturedImage)
+                CameraView(
+                    image: $capturedImage,
+                    title: cameraMode == .snapFoodWithSecondPhoto && pendingSecondCameraImage != nil ? "Second photo" : nil,
+                    onCancel: {
+                        if cameraMode == .snapFoodWithSecondPhoto {
+                            pendingSecondCameraImage = nil
+                        }
+                    }
+                )
                     .ignoresSafeArea()
             }
             .fullScreenCover(isPresented: $showBarcodeScanner) {
@@ -1082,13 +1107,27 @@ struct HomeView: View {
             .onChange(of: capturedImage) { oldValue, newValue in
                 guard let image = newValue else { return }
                 capturedImage = nil
-                currentImage = image
                 currentEmoji = nil
-                if cameraMode == .snapFoodWithContext {
+
+                if cameraMode == .snapFoodWithSecondPhoto {
+                    if let firstImage = pendingSecondCameraImage {
+                        pendingSecondCameraImage = nil
+                        currentImage = firstImage
+                        startAnalysis(images: [firstImage, image], mode: .snapFoodWithSecondPhoto)
+                    } else {
+                        pendingSecondCameraImage = image
+                        currentImage = image
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                            showCamera = true
+                        }
+                    }
+                } else if cameraMode == .snapFoodWithContext {
+                    currentImage = image
                     pendingContextImage = image
                     contextDescription = ""
                     showContextSheet = true
                 } else {
+                    currentImage = image
                     startAnalysis(image: image, mode: cameraMode)
                 }
             }
@@ -1257,6 +1296,10 @@ struct HomeView: View {
     }
 
     private func startAnalysis(image: UIImage, mode: CameraMode, description: String? = nil) {
+        startAnalysis(images: [image], mode: mode, description: description)
+    }
+
+    private func startAnalysis(images: [UIImage], mode: CameraMode, description: String? = nil) {
         guard aiConsentGiven else { showAIConsent = true; return }
         activeSheet = .analyzing
 
@@ -1264,18 +1307,27 @@ struct HomeView: View {
             do {
                 switch mode {
                 case .snapFood:
+                    guard let image = images.first else { throw GeminiService.AnalysisError.imageConversionFailed }
                     let result = try await GeminiService.analyzeFood(image: image)
                     currentFoodResult = result
                     currentFoodSource = .snapFood
                     activeSheet = .foodResult
 
                 case .snapFoodWithContext:
+                    guard let image = images.first else { throw GeminiService.AnalysisError.imageConversionFailed }
                     let result = try await GeminiService.analyzeFood(image: image, description: description)
                     currentFoodResult = result
                     currentFoodSource = .snapFood
                     activeSheet = .foodResult
 
+                case .snapFoodWithSecondPhoto:
+                    let result = try await GeminiService.analyzeFood(images: images)
+                    currentFoodResult = result
+                    currentFoodSource = .snapFood
+                    activeSheet = .foodResult
+
                 case .nutritionLabel:
+                    guard let image = images.first else { throw GeminiService.AnalysisError.imageConversionFailed }
                     let label = try await GeminiService.analyzeNutritionLabel(image: image)
                     let servingGrams = label.servingSizeGrams ?? 100
                     currentFoodResult = label.scaled(to: servingGrams)
@@ -1924,7 +1976,15 @@ struct ContextDescriptionSheet: View {
 // MARK: - Camera View (UIKit wrapper)
 struct CameraView: UIViewControllerRepresentable {
     @Binding var image: UIImage?
+    let title: String?
+    let onCancel: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
+
+    init(image: Binding<UIImage?>, title: String? = nil, onCancel: (() -> Void)? = nil) {
+        _image = image
+        self.title = title
+        self.onCancel = onCancel
+    }
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
@@ -1971,6 +2031,17 @@ struct CameraView: UIViewControllerRepresentable {
         cancelButton.addTarget(context.coordinator, action: #selector(Coordinator.cancel), for: .touchUpInside)
         bottomBar.addSubview(cancelButton)
 
+        var titleLabel: UILabel?
+        if let title {
+            let label = UILabel()
+            label.text = title
+            label.textColor = .white
+            label.font = .systemFont(ofSize: 17, weight: .semibold)
+            label.translatesAutoresizingMaskIntoConstraints = false
+            bottomBar.addSubview(label)
+            titleLabel = label
+        }
+
         NSLayoutConstraint.activate([
             bottomBar.leadingAnchor.constraint(equalTo: overlay.leadingAnchor),
             bottomBar.trailingAnchor.constraint(equalTo: overlay.trailingAnchor),
@@ -1995,6 +2066,12 @@ struct CameraView: UIViewControllerRepresentable {
             cancelButton.leadingAnchor.constraint(equalTo: bottomBar.leadingAnchor, constant: 20),
             cancelButton.centerYAnchor.constraint(equalTo: shutterOuter.centerYAnchor),
         ])
+        if let titleLabel {
+            NSLayoutConstraint.activate([
+                titleLabel.centerXAnchor.constraint(equalTo: bottomBar.centerXAnchor),
+                titleLabel.topAnchor.constraint(equalTo: shutterOuter.bottomAnchor, constant: 14),
+            ])
+        }
 
         picker.cameraOverlayView = overlay
         context.coordinator.picker = picker
@@ -2021,6 +2098,7 @@ struct CameraView: UIViewControllerRepresentable {
         }
 
         @objc func cancel() {
+            parent.onCancel?()
             parent.dismiss()
         }
 
@@ -2032,6 +2110,7 @@ struct CameraView: UIViewControllerRepresentable {
         }
 
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.onCancel?()
             parent.dismiss()
         }
     }
