@@ -123,7 +123,9 @@ fun <T> WheelPicker(
                         style = MaterialTheme.typography.titleLarge,
                         fontSize = if (isSelected) 24.sp else 20.sp,
                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = alpha)
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = alpha),
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
             }
@@ -278,12 +280,15 @@ fun NumericWheelPicker(
             modifier = Modifier.weight(1f)
         )
         if (unit != null) {
-            Spacer(Modifier.size(8.dp))
+            val compactUnit = unit.length <= 2
+            Spacer(Modifier.width(if (compactUnit) 4.dp else 8.dp))
             Text(
                 unit,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                modifier = Modifier.width(48.dp).padding(start = 4.dp)
+                modifier = Modifier.width(if (compactUnit) 30.dp else 48.dp).padding(start = 4.dp),
+                maxLines = 1,
+                softWrap = false
             )
         }
     }
