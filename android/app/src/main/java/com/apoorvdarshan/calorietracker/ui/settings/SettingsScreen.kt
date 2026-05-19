@@ -780,7 +780,6 @@ fun OptionalNutrientGoalsScreen(
     val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory(container))
     val ui by vm.ui.collectAsState()
     var editing by remember { mutableStateOf<OptionalNutrient?>(null) }
-    val editingNutrient = editing
 
     Scaffold(containerColor = MaterialTheme.colorScheme.background) { padding ->
         LazyColumn(
@@ -798,9 +797,7 @@ fun OptionalNutrientGoalsScreen(
                     Row(
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
-                            .clickable {
-                                if (editing != null) editing = null else onBack()
-                            }
+                            .clickable { onBack() }
                             .padding(horizontal = 2.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -812,7 +809,7 @@ fun OptionalNutrientGoalsScreen(
                         )
                         Spacer(Modifier.width(6.dp))
                         Text(
-                            if (editing != null) "Other Nutrients" else "Settings",
+                            "Settings",
                             color = AppColors.Calorie,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -820,112 +817,108 @@ fun OptionalNutrientGoalsScreen(
                 }
             }
 
-            if (editingNutrient != null) {
-                item {
-                    FudGlassSurface(
-                        modifier = Modifier.fillMaxWidth(),
-                        cornerRadius = 22.dp,
-                        padding = 18.dp
-                    ) {
-                        Column {
-                            NutritionPickerSheet(
-                                label = editingNutrient.displayName,
-                                unit = editingNutrient.unit,
-                                currentValue = ui.optionalNutrientGoals.valueFor(editingNutrient),
-                                range = editingNutrient.pickerRange(),
-                                step = editingNutrient.pickerStep(),
-                                onSave = { value ->
-                                    vm.setOptionalNutrientGoals(
-                                        ui.optionalNutrientGoals.withValue(editingNutrient, value)
-                                    )
-                                    editing = null
-                                }
-                            )
-                        }
-                    }
-                }
-            } else {
-                item {
-                    Text(
-                        "Other Nutrient Goals",
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Spacer(Modifier.height(6.dp))
-                    Text(
-                        "Separate from calories, protein, carbs, and fat. These targets are only used for the extra nutrient cards and details.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.62f)
-                    )
-                }
+            item {
+                Text(
+                    "Other Nutrient Goals",
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    "Separate from calories, protein, carbs, and fat. These targets are only used for the extra nutrient cards and details.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.62f)
+                )
+            }
 
-                item {
-                    FudGlassPrimaryButton(
-                        text = "Estimate with AI",
-                        enabled = !ui.estimatingOptionalNutrientGoals,
-                        onClick = vm::estimateOptionalNutrientGoals
-                    ) {
-                        if (ui.estimatingOptionalNutrientGoals) {
-                            CircularProgressIndicator(
-                                color = Color.White,
-                                strokeWidth = 2.dp,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(Modifier.width(10.dp))
-                            Text("Estimating...", color = Color.White, fontWeight = FontWeight.SemiBold)
-                        } else {
-                            Text("Estimate with AI", color = Color.White, fontWeight = FontWeight.SemiBold)
-                        }
-                    }
-                    ui.optionalNutrientGoalError?.takeIf { it.isNotBlank() }?.let { message ->
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            message,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFFFF453A)
+            item {
+                FudGlassPrimaryButton(
+                    text = "Estimate with AI",
+                    enabled = !ui.estimatingOptionalNutrientGoals,
+                    onClick = vm::estimateOptionalNutrientGoals
+                ) {
+                    if (ui.estimatingOptionalNutrientGoals) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(18.dp)
                         )
+                        Spacer(Modifier.width(10.dp))
+                        Text("Estimating...", color = Color.White, fontWeight = FontWeight.SemiBold)
+                    } else {
+                        Text("Estimate with AI", color = Color.White, fontWeight = FontWeight.SemiBold)
                     }
                 }
-
-                item {
+                ui.optionalNutrientGoalError?.takeIf { it.isNotBlank() }?.let { message ->
+                    Spacer(Modifier.height(8.dp))
                     Text(
-                        "Nutrients",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f),
-                        modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                        message,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFFFF453A)
                     )
                 }
-                item {
-                    FudGlassSurface(
-                        modifier = Modifier.fillMaxWidth(),
-                        cornerRadius = 22.dp,
-                        padding = 0.dp
-                    ) {
-                        Column {
-                            OptionalNutrient.values().forEachIndexed { index, nutrient ->
-                                OptionalNutrientGoalRow(
-                                    nutrient = nutrient,
-                                    value = ui.optionalNutrientGoals.valueFor(nutrient),
-                                    onClick = { editing = nutrient }
-                                )
-                                if (index != OptionalNutrient.values().lastIndex) {
-                                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-                                }
+            }
+
+            item {
+                Text(
+                    "Nutrients",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f),
+                    modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                )
+            }
+            item {
+                FudGlassSurface(
+                    modifier = Modifier.fillMaxWidth(),
+                    cornerRadius = 22.dp,
+                    padding = 0.dp
+                ) {
+                    Column {
+                        OptionalNutrient.values().forEachIndexed { index, nutrient ->
+                            OptionalNutrientGoalRow(
+                                nutrient = nutrient,
+                                value = ui.optionalNutrientGoals.valueFor(nutrient),
+                                onClick = { editing = nutrient }
+                            )
+                            if (index != OptionalNutrient.values().lastIndex) {
+                                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
                             }
                         }
                     }
                 }
-
-                item {
-                    FudGlassTextButton(
-                        text = "Reset to Defaults",
-                        onClick = { vm.setOptionalNutrientGoals(OptionalNutrientGoals.Default) },
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
-                    )
-                }
             }
+
+            item {
+                FudGlassTextButton(
+                    text = "Reset to Defaults",
+                    onClick = { vm.setOptionalNutrientGoals(OptionalNutrientGoals.Default) },
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
+                )
+            }
+        }
+    }
+
+    editing?.let { nutrient ->
+        FudGlassDialog(onDismissRequest = { editing = null }) {
+            NutritionPickerSheet(
+                label = nutrient.displayName,
+                unit = nutrient.unit,
+                currentValue = ui.optionalNutrientGoals.valueFor(nutrient),
+                range = nutrient.pickerRange(),
+                step = nutrient.pickerStep(),
+                onSave = { value ->
+                    vm.setOptionalNutrientGoals(ui.optionalNutrientGoals.withValue(nutrient, value))
+                    editing = null
+                }
+            )
+            FudGlassTextButton(
+                text = "Cancel",
+                onClick = { editing = null },
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
+            )
         }
     }
 }

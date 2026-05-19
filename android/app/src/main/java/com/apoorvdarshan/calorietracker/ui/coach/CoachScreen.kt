@@ -690,38 +690,13 @@ private fun InputBar(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            IconButton(
-                onClick = onPickImage,
+            CoachMediaActions(
                 enabled = !sending,
-                modifier = Modifier
-                    .size(38.dp)
-                    .clip(CircleShape)
-                    .background(AppColors.Calorie.copy(alpha = 0.10f))
-            ) {
-                Icon(
-                    Icons.Filled.PhotoLibrary,
-                    contentDescription = "Add image",
-                    tint = AppColors.Calorie,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-            IconButton(
-                onClick = onCaptureImage,
-                enabled = !sending,
-                modifier = Modifier
-                    .size(38.dp)
-                    .clip(CircleShape)
-                    .background(AppColors.Calorie.copy(alpha = 0.10f))
-            ) {
-                Icon(
-                    Icons.Filled.CameraAlt,
-                    contentDescription = "Open camera",
-                    tint = AppColors.Calorie,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
+                onPickImage = onPickImage,
+                onCaptureImage = onCaptureImage
+            )
 
             Box(Modifier.weight(1f).padding(horizontal = 2.dp, vertical = 8.dp)) {
                 if (value.isEmpty()) {
@@ -749,6 +724,73 @@ private fun InputBar(
 
             SendButton(canSend = canSend, onClick = onSend)
         }
+    }
+}
+
+@Composable
+private fun CoachMediaActions(
+    enabled: Boolean,
+    onPickImage: () -> Unit,
+    onCaptureImage: () -> Unit
+) {
+    val shape = RoundedCornerShape(19.dp)
+    Row(
+        modifier = Modifier
+            .clip(shape)
+            .background(AppColors.Calorie.copy(alpha = 0.075f))
+            .border(
+                0.6.dp,
+                Brush.linearGradient(
+                    listOf(
+                        Color.White.copy(alpha = 0.16f),
+                        AppColors.Calorie.copy(alpha = 0.12f)
+                    )
+                ),
+                shape
+            )
+            .padding(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CoachMediaActionButton(
+            icon = Icons.Filled.PhotoLibrary,
+            contentDescription = "Add image",
+            enabled = enabled,
+            onClick = onPickImage
+        )
+        CoachMediaActionButton(
+            icon = Icons.Filled.CameraAlt,
+            contentDescription = "Open camera",
+            enabled = enabled,
+            onClick = onCaptureImage
+        )
+    }
+}
+
+@Composable
+private fun CoachMediaActionButton(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    contentDescription: String,
+    enabled: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(30.dp)
+            .clip(CircleShape)
+            .background(
+                if (enabled) AppColors.Calorie.copy(alpha = 0.11f)
+                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
+            )
+            .clickable(enabled = enabled, onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            icon,
+            contentDescription = contentDescription,
+            tint = if (enabled) AppColors.Calorie else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.32f),
+            modifier = Modifier.size(17.dp)
+        )
     }
 }
 
