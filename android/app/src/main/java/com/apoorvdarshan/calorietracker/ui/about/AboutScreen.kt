@@ -39,7 +39,6 @@ import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -63,6 +62,8 @@ import androidx.compose.ui.unit.sp
 import com.apoorvdarshan.calorietracker.AppContainer
 import com.apoorvdarshan.calorietracker.services.update.AndroidUpdateChecker
 import com.apoorvdarshan.calorietracker.services.update.AndroidUpdateState
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassSurface
+import com.apoorvdarshan.calorietracker.ui.components.FudIconBubble
 import com.apoorvdarshan.calorietracker.ui.theme.AppColors
 import kotlinx.coroutines.launch
 
@@ -216,12 +217,13 @@ private fun openPlayStore(context: Context) {
 
 @Composable
 private fun CardSection(content: @Composable () -> Unit) {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surface)
-    ) { content() }
+    FudGlassSurface(
+        modifier = Modifier.fillMaxWidth(),
+        cornerRadius = 24.dp,
+        padding = 0.dp
+    ) {
+        Column { content() }
+    }
 }
 
 @Composable
@@ -302,19 +304,19 @@ private fun AboutRow(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(Modifier.size(22.dp)) {
-            Icon(icon, contentDescription = null, tint = AppColors.Calorie, modifier = Modifier.size(22.dp))
+        Box(Modifier.size(36.dp)) {
+            FudIconBubble(icon = icon, size = 36.dp, iconSize = 19.dp)
             if (showDot) {
                 Box(
                     Modifier
                         .align(Alignment.TopEnd)
-                        .size(7.dp)
+                        .size(8.dp)
                         .clip(CircleShape)
                         .background(AppColors.Calorie)
                 )
             }
         }
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(14.dp))
         Column(Modifier.weight(1f)) {
             Text(label, fontSize = 17.sp, color = MaterialTheme.colorScheme.onSurface)
             if (!subtitle.isNullOrBlank()) {
@@ -336,7 +338,7 @@ private fun AboutRow(
 private fun Hairline() {
     Box(
         Modifier
-            .padding(start = 54.dp)
+            .padding(start = 66.dp)
             .fillMaxWidth()
             .height(0.5.dp)
             .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))

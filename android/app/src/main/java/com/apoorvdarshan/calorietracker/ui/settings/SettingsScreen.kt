@@ -85,8 +85,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -139,6 +137,8 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import com.apoorvdarshan.calorietracker.ui.components.DecimalWheelPicker
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassSurface
+import com.apoorvdarshan.calorietracker.ui.components.FudIconBubble
 import com.apoorvdarshan.calorietracker.ui.components.FeetInchesWheelPicker
 import com.apoorvdarshan.calorietracker.ui.components.NumericWheelPicker
 import com.apoorvdarshan.calorietracker.ui.components.SplitDecimalWheelPicker
@@ -394,14 +394,14 @@ fun SettingsScreen(container: AppContainer, nav: NavHostController) {
                             .padding(horizontal = 16.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            Icons.Outlined.Refresh,
-                            contentDescription = null,
-                            tint = AppColors.Calorie,
-                            modifier = Modifier.size(22.dp)
+                        FudIconBubble(icon = Icons.Outlined.Refresh, size = 34.dp, iconSize = 18.dp)
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            stringResource(R.string.settings_recalculate_goals),
+                            color = AppColors.Calorie,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium
                         )
-                        Spacer(Modifier.width(14.dp))
-                        Text(stringResource(R.string.settings_recalculate_goals), color = AppColors.Calorie, style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }
@@ -560,9 +560,15 @@ fun SettingsScreen(container: AppContainer, nav: NavHostController) {
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Outlined.DeleteSweep, contentDescription = null, tint = Color(0xFFFF9500), modifier = Modifier.size(22.dp))
-                    Spacer(Modifier.width(14.dp))
-                    Text(stringResource(R.string.settings_clear_food_log), color = Color(0xFFFF9500), style = MaterialTheme.typography.bodyLarge)
+                    val warning = Color(0xFFFF9500)
+                    FudIconBubble(icon = Icons.Outlined.DeleteSweep, size = 34.dp, iconSize = 18.dp, tint = warning)
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        stringResource(R.string.settings_clear_food_log),
+                        color = warning,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
                 HorizontalDivider()
                 Row(
@@ -572,9 +578,15 @@ fun SettingsScreen(container: AppContainer, nav: NavHostController) {
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Outlined.DeleteForever, contentDescription = null, tint = Color(0xFFFF3B30), modifier = Modifier.size(22.dp))
-                    Spacer(Modifier.width(14.dp))
-                    Text(stringResource(R.string.settings_delete_all_data), color = Color(0xFFFF3B30), style = MaterialTheme.typography.bodyLarge)
+                    val destructive = Color(0xFFFF3B30)
+                    FudIconBubble(icon = Icons.Outlined.DeleteForever, size = 34.dp, iconSize = 18.dp, tint = destructive)
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        stringResource(R.string.settings_delete_all_data),
+                        color = destructive,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
             }
 
@@ -1216,15 +1228,18 @@ private fun <T> ListSheet(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(
+                        if (isSel) AppColors.Calorie.copy(alpha = 0.13f)
+                        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
+                    )
                     .clickable { onSelect(item) }
                     .padding(horizontal = 14.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (rowIcon != null) {
-                    Icon(rowIcon, contentDescription = null, tint = AppColors.Calorie, modifier = Modifier.size(22.dp))
-                    Spacer(Modifier.width(14.dp))
+                    FudIconBubble(rowIcon, size = 34.dp, iconSize = 18.dp)
+                    Spacer(Modifier.width(12.dp))
                 }
                 Column(Modifier.weight(1f)) {
                     Text(
@@ -1597,9 +1612,10 @@ private fun SectionCard(title: String, content: @Composable () -> Unit) {
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f),
             modifier = Modifier.padding(start = 4.dp, bottom = 6.dp)
         )
-        Card(
-            shape = RoundedCornerShape(18.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        FudGlassSurface(
+            modifier = Modifier.fillMaxWidth(),
+            cornerRadius = 22.dp,
+            padding = 0.dp
         ) {
             Column(Modifier.padding(vertical = 4.dp)) { content() }
         }
@@ -1625,16 +1641,20 @@ private fun SettingRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = AppColors.Calorie,
-                modifier = Modifier.size(22.dp)
-            )
-            Spacer(Modifier.width(14.dp))
+            FudIconBubble(icon = icon, size = 34.dp, iconSize = 18.dp)
+            Spacer(Modifier.width(12.dp))
         }
-        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-        Text(value, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+        Text(
+            label,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium
+        )
+        Text(
+            value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.58f)
+        )
         Icon(
             if (inlineMenu) Icons.Filled.UnfoldMore else Icons.Filled.ChevronRight,
             contentDescription = null,
@@ -1667,14 +1687,14 @@ private fun MacroSettingRow(
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            Icons.Outlined.DataUsage,
-            contentDescription = null,
-            tint = AppColors.Calorie,
-            modifier = Modifier.size(22.dp)
+        FudIconBubble(icon = Icons.Outlined.DataUsage, size = 34.dp, iconSize = 18.dp)
+        Spacer(Modifier.width(12.dp))
+        Text(
+            label,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium
         )
-        Spacer(Modifier.width(14.dp))
-        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
         Text(
             if (pinned) "${value}g" else "${value}g · auto",
             style = MaterialTheme.typography.bodyMedium,
@@ -1752,15 +1772,15 @@ private fun ToggleRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = AppColors.Calorie,
-                modifier = Modifier.size(22.dp)
-            )
-            Spacer(Modifier.width(14.dp))
+            FudIconBubble(icon = icon, size = 34.dp, iconSize = 18.dp)
+            Spacer(Modifier.width(12.dp))
         }
-        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+        Text(
+            label,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium
+        )
         Switch(checked = checked, onCheckedChange = onChange)
     }
 }

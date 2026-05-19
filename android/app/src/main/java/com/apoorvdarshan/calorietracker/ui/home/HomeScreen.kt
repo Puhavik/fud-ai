@@ -1219,7 +1219,20 @@ private fun FoodRow(entry: FoodEntry, isFavorite: Boolean = false) {
     Row(
         Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
+            .clip(RoundedCornerShape(22.dp))
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.86f))
+            .background(AppColors.Calorie.copy(alpha = 0.025f))
+            .border(
+                0.7.dp,
+                Brush.linearGradient(
+                    listOf(
+                        Color.White.copy(alpha = 0.14f),
+                        Color.White.copy(alpha = 0.035f),
+                        AppColors.Calorie.copy(alpha = 0.07f)
+                    )
+                ),
+                RoundedCornerShape(22.dp)
+            )
             .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(12.dp)

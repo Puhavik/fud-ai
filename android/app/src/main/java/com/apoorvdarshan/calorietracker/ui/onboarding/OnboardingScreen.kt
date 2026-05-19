@@ -98,6 +98,8 @@ import com.apoorvdarshan.calorietracker.models.WeightGoal
 import com.apoorvdarshan.calorietracker.services.update.AndroidUpdateChecker
 import com.apoorvdarshan.calorietracker.ui.components.DateWheelPicker
 import com.apoorvdarshan.calorietracker.ui.components.DecimalWheelPicker
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassSurface
+import com.apoorvdarshan.calorietracker.ui.components.FudIconBubble
 import com.apoorvdarshan.calorietracker.ui.components.SplitDecimalWheelPicker
 import com.apoorvdarshan.calorietracker.ui.components.FeetInchesWheelPicker
 import com.apoorvdarshan.calorietracker.ui.components.NumericWheelPicker
@@ -1137,12 +1139,12 @@ private fun HealthFeatureRow(icon: ImageVector, label: String) {
 
 @Composable
 private fun ToggleCard(label: String, subtitle: String, enabled: Boolean, onToggle: (Boolean) -> Unit) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (enabled) AppColors.Calorie.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surface
-        ),
-        modifier = Modifier.fillMaxWidth().clickable { onToggle(!enabled) }
+    FudGlassSurface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onToggle(!enabled) },
+        cornerRadius = 20.dp,
+        padding = 0.dp
     ) {
         Row(
             Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 16.dp),
@@ -1654,25 +1656,23 @@ private fun SelectionCard(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val accent = MaterialTheme.colorScheme.onBackground
-    val baseModifier = Modifier
-        .fillMaxWidth()
-        .clip(RoundedCornerShape(16.dp))
-        .background(MaterialTheme.colorScheme.surface)
-        .clickable(onClick = onClick)
-    val outlined = if (selected)
-        baseModifier.border(BorderStroke(2.dp, accent), RoundedCornerShape(16.dp))
-    else baseModifier
-    Box(outlined.padding(16.dp)) {
+    val accent = if (selected) AppColors.Calorie else MaterialTheme.colorScheme.onBackground
+    val selectedBorder = if (selected) {
+        Modifier.border(BorderStroke(1.4.dp, AppColors.Calorie.copy(alpha = 0.55f)), RoundedCornerShape(20.dp))
+    } else {
+        Modifier
+    }
+    FudGlassSurface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(selectedBorder)
+            .clickable(onClick = onClick),
+        cornerRadius = 20.dp,
+        padding = 16.dp
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = if (selected) accent else accent.copy(alpha = 0.55f),
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(end = 16.dp)
-            )
+            FudIconBubble(icon = icon, size = 40.dp, iconSize = 21.dp, tint = accent)
+            Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(
                     title,
@@ -1684,14 +1684,14 @@ private fun SelectionCard(
                     Text(
                         it,
                         style = MaterialTheme.typography.bodySmall,
-                        color = accent.copy(alpha = 0.55f)
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f)
                     )
                 }
             }
             Icon(
                 imageVector = if (selected) Icons.Filled.CheckCircle else Icons.Outlined.RadioButtonUnchecked,
                 contentDescription = null,
-                tint = if (selected) accent else accent.copy(alpha = 0.3f),
+                tint = if (selected) AppColors.Calorie else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
                 modifier = Modifier.size(22.dp)
             )
         }

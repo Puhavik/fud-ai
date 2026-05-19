@@ -581,8 +581,20 @@ private fun SavedMealRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+            .clip(RoundedCornerShape(18.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.50f))
+            .background(AppColors.Calorie.copy(alpha = 0.025f))
+            .border(
+                0.6.dp,
+                Brush.linearGradient(
+                    listOf(
+                        Color.White.copy(alpha = 0.13f),
+                        Color.White.copy(alpha = 0.035f),
+                        AppColors.Calorie.copy(alpha = 0.06f)
+                    )
+                ),
+                RoundedCornerShape(18.dp)
+            )
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,

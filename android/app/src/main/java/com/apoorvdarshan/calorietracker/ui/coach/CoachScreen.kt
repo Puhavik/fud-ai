@@ -695,7 +695,10 @@ private fun InputBar(
             IconButton(
                 onClick = onPickImage,
                 enabled = !sending,
-                modifier = Modifier.size(38.dp)
+                modifier = Modifier
+                    .size(38.dp)
+                    .clip(CircleShape)
+                    .background(AppColors.Calorie.copy(alpha = 0.10f))
             ) {
                 Icon(
                     Icons.Filled.PhotoLibrary,
@@ -707,7 +710,10 @@ private fun InputBar(
             IconButton(
                 onClick = onCaptureImage,
                 enabled = !sending,
-                modifier = Modifier.size(38.dp)
+                modifier = Modifier
+                    .size(38.dp)
+                    .clip(CircleShape)
+                    .background(AppColors.Calorie.copy(alpha = 0.10f))
             ) {
                 Icon(
                     Icons.Filled.CameraAlt,

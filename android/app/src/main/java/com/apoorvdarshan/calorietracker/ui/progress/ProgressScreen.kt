@@ -55,6 +55,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.apoorvdarshan.calorietracker.ui.components.DecimalWheelPicker
+import com.apoorvdarshan.calorietracker.ui.components.FudGlassSurface
+import com.apoorvdarshan.calorietracker.ui.components.FudIconBubble
 import com.apoorvdarshan.calorietracker.ui.components.SplitDecimalWheelPicker
 import androidx.annotation.StringRes
 import com.apoorvdarshan.calorietracker.R
@@ -289,29 +291,36 @@ private fun TimeRangePicker(selected: TimeRange, onSelect: (TimeRange) -> Unit) 
     Row(
         Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(9.dp))
-            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f))
-            .padding(2.dp)
+            .shadow(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(15.dp),
+                ambientColor = Color.Black.copy(alpha = 0.16f),
+                spotColor = Color.Black.copy(alpha = 0.16f)
+            )
+            .clip(RoundedCornerShape(15.dp))
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.82f))
+            .background(AppColors.Calorie.copy(alpha = 0.035f))
+            .padding(3.dp)
     ) {
         for (r in TimeRange.values()) {
             val isSel = r == selected
             Box(
                 Modifier
                     .weight(1f)
-                    .clip(RoundedCornerShape(7.dp))
-                    .background(
-                        if (isSel) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.18f)
-                        else Color.Transparent
+                    .clip(RoundedCornerShape(12.dp))
+                    .then(
+                        if (isSel) Modifier.background(AppColors.CalorieGradient)
+                        else Modifier.background(Color.Transparent)
                     )
                     .clickable { onSelect(r) }
-                    .padding(vertical = 6.dp),
+                    .padding(vertical = 7.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     stringResource(r.labelRes),
                     fontSize = 13.sp,
                     fontWeight = if (isSel) FontWeight.SemiBold else FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = if (isSel) Color.White else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.72f)
                 )
             }
         }
@@ -320,12 +329,10 @@ private fun TimeRangePicker(selected: TimeRange, onSelect: (TimeRange) -> Unit) 
 
 @Composable
 private fun CardSection(content: @Composable () -> Unit) {
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp)
+    FudGlassSurface(
+        modifier = Modifier.fillMaxWidth(),
+        cornerRadius = 24.dp,
+        padding = 16.dp
     ) { content() }
 }
 
@@ -510,36 +517,35 @@ private fun formatTick(value: Double): String =
 
 @Composable
 private fun WeightHistoryLink(count: Int, onClick: () -> Unit) {
-    Row(
-        Modifier
+    FudGlassSurface(
+        modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .clickable(onClick = onClick),
+        cornerRadius = 22.dp,
+        padding = 14.dp
     ) {
-        Icon(
-            Icons.AutoMirrored.Filled.ListAlt,
-            null,
-            tint = AppColors.Calorie,
-            modifier = Modifier.size(28.dp)
-        )
-        Spacer(Modifier.width(12.dp))
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(stringResource(R.string.progress_weight_history), fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
-            Text(
-                stringResource(R.string.progress_history_count_format, count),
-                fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            FudIconBubble(
+                icon = Icons.AutoMirrored.Filled.ListAlt,
+                size = 36.dp,
+                iconSize = 20.dp
+            )
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(stringResource(R.string.progress_weight_history), fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    stringResource(R.string.progress_history_count_format, count),
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
+            Icon(
+                Icons.Filled.ChevronRight,
+                null,
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                modifier = Modifier.size(18.dp)
             )
         }
-        Icon(
-            Icons.Filled.ChevronRight,
-            null,
-            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-            modifier = Modifier.size(18.dp)
-        )
     }
 }
 
@@ -857,8 +863,16 @@ private fun BodyMetricToggle(selected: BodyMetric, onSelect: (BodyMetric) -> Uni
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surface),
+            .shadow(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(16.dp),
+                ambientColor = Color.Black.copy(alpha = 0.14f),
+                spotColor = Color.Black.copy(alpha = 0.14f)
+            )
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.84f))
+            .background(AppColors.Calorie.copy(alpha = 0.035f))
+            .padding(3.dp),
         horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         listOf(BodyMetric.WEIGHT to labelWeight, BodyMetric.BODY_FAT to labelBodyFat).forEach { (metric, label) ->
@@ -866,19 +880,20 @@ private fun BodyMetricToggle(selected: BodyMetric, onSelect: (BodyMetric) -> Uni
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(
-                        if (isSelected) AppColors.Calorie.copy(alpha = 0.15f) else Color.Transparent
+                    .clip(RoundedCornerShape(13.dp))
+                    .then(
+                        if (isSelected) Modifier.background(AppColors.CalorieGradient)
+                        else Modifier.background(Color.Transparent)
                     )
                     .clickable { onSelect(metric) }
-                    .padding(vertical = 8.dp),
+                    .padding(vertical = 9.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     label,
                     fontSize = 14.sp,
                     fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
-                    color = if (isSelected) AppColors.Calorie else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
             }
         }
