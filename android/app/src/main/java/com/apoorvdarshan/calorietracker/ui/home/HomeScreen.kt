@@ -367,6 +367,7 @@ fun HomeScreen(container: AppContainer) {
                             onDismissRequest = { showAddMenu = false },
                             shape = glassMenuShape,
                             containerColor = glassMenuContainer,
+                            tonalElevation = 0.dp,
                             shadowElevation = 0.dp,
                             modifier = Modifier
                                 .width(248.dp)

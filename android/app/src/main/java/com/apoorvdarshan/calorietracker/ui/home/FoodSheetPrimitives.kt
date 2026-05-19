@@ -397,7 +397,8 @@ internal fun SheetGlassDropdownMenu(
         onDismissRequest = onDismissRequest,
         shape = shape,
         containerColor = menuContainer,
-        shadowElevation = 22.dp,
+        tonalElevation = 0.dp,
+        shadowElevation = 0.dp,
         modifier = sizedModifier
             .background(menuSheen, shape)
             .border(0.8.dp, menuBorder, shape)
