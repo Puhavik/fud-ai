@@ -11,7 +11,6 @@ import com.apoorvdarshan.calorietracker.models.SpeechProvider
 import com.apoorvdarshan.calorietracker.models.UserProfile
 import com.apoorvdarshan.calorietracker.models.WeightEntry
 import com.apoorvdarshan.calorietracker.models.WeightGoal
-import com.apoorvdarshan.calorietracker.services.AndroidAppIconManager
 import com.apoorvdarshan.calorietracker.ui.theme.AppThemeColor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -179,7 +178,6 @@ class SettingsViewModel(val container: AppContainer) : ViewModel() {
     fun setAppThemeColor(themeColor: AppThemeColor) {
         viewModelScope.launch {
             container.prefs.setAppThemeColor(themeColor.key)
-            AndroidAppIconManager.apply(container.appContext, themeColor)
             _ui.value = _ui.value.copy(appThemeColor = themeColor)
         }
     }
