@@ -40,10 +40,11 @@ enum WidgetSnapshotWriter {
             }
         )
 
-        let previous = WidgetSnapshot.read()
-        guard previous != snapshot else { return }
-        WidgetSnapshot.write(snapshot)
-        WidgetCenter.shared.reloadAllTimelines()
+        if WidgetSnapshot.read() != snapshot {
+            WidgetSnapshot.write(snapshot)
+            WidgetCenter.shared.reloadAllTimelines()
+        }
+        WatchSnapshotSync.shared.send(snapshot)
     }
 
     private static func homeNutrientValue(

@@ -15,6 +15,7 @@ local.properties
 
 # Secrets
 ios/calorietracker/Resources/Secrets.plist
+ios/Local.xcconfig
 .DS_Store
 
 # Claude Code runtime
