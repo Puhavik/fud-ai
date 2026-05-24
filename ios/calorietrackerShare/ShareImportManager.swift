@@ -7,10 +7,14 @@ public struct ShareImportManager {
             ?? "group.com.apoorvdarshan.calorietracker"
     }
     
-    public static var sharedImportURL: URL? {
-        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID)?
+    /// File URL for the shared image. Defaults to a file in the App Group container.
+    /// Override in tests to use a temp directory.
+    public static var sharedImportURL: URL? = {
+        let groupID = Bundle.main.object(forInfoDictionaryKey: "AppGroupIdentifier") as? String
+            ?? "group.com.apoorvdarshan.calorietracker"
+        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupID)?
             .appendingPathComponent("shared_import.jpg")
-    }
+    }()
     
     /// Checks if a shared image is available in the App Group container.
     public static func hasSharedImage() -> Bool {

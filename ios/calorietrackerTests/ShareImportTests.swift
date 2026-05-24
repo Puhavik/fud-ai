@@ -6,6 +6,11 @@ import UIKit
 struct ShareImportTests {
     
     @Test func testShareImportFlow() async throws {
+        // Point to a temp file instead of the App Group container (unavailable in test target)
+        let testURL = FileManager.default.temporaryDirectory.appendingPathComponent("shared_import_test.jpg")
+        defer { try? FileManager.default.removeItem(at: testURL) }
+        ShareImportManager.sharedImportURL = testURL
+        
         // 1. Prepare dummy image data
         let dummyImage = UIImage(systemName: "fork.knife")!
         guard let dummyData = dummyImage.jpegData(compressionQuality: 0.8) else {
@@ -13,9 +18,9 @@ struct ShareImportTests {
             return
         }
         
-        // 2. Save it to App Group
+        // 2. Save it
         let success = ShareImportManager.saveSharedImage(dummyData)
-        #expect(success, "Should save the image to the shared app group container")
+        #expect(success, "Should save the image to the shared file URL")
         
         // 3. Verify it is detected
         #expect(ShareImportManager.hasSharedImage(), "Should detect shared image")
