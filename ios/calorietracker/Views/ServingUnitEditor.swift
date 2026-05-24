@@ -98,18 +98,16 @@ struct ServingUnitEditor: View {
         return String(format: "%.1f", value).trimmingTrailingZeros()
     }
 
-    /// Parse a decimal string using the current locale (accepts both "." and ",").
-    /// Uses NumberFormatter with the user's locale first, falls back to
-    /// Double() init (C locale) as a secondary attempt.
-    static func parseDecimal(_ string: String) -> Double? {
+    /// Parse a decimal string — accepts both "." (C locale) and "," (user locale).
+    /// Tries C-locale parsing first, then locale-aware as fallback.
+    static func parseDecimal(_ string: String, locale: Locale = .current) -> Double? {
+        if let value = Double(string) {
+            return value
+        }
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.locale = .current
-        if let number = formatter.number(from: string) {
-            return number.doubleValue
-        }
-        // Fallback: try C-locale parsing (period only)
-        return Double(string)
+        formatter.locale = locale
+        return formatter.number(from: string)?.doubleValue
     }
 }
 
