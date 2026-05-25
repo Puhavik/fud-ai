@@ -23,16 +23,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,6 +52,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.LocalCafe
@@ -215,17 +227,51 @@ internal fun ServingQuantityCard(
     val selectedOption = ServingUnitOption.optionMatching(selectedUnitId, unitOptions)
     val parsedQuantity = ServingUnitOption.parseQuantity(quantityText)
     val selectedUnitLabel = selectedOption.displayUnit(parsedQuantity)
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val dismissKeyboard = {
+        focusManager.clearFocus(force = true)
+        keyboardController?.hide()
+    }
+    val focusRequester = remember { FocusRequester() }
+    var quantityFieldValue by remember {
+        mutableStateOf(TextFieldValue(quantityText, selection = TextRange(quantityText.length)))
+    }
+
+    LaunchedEffect(quantityText) {
+        if (quantityText != quantityFieldValue.text) {
+            quantityFieldValue = TextFieldValue(
+                text = quantityText,
+                selection = TextRange(quantityText.length)
+            )
+        }
+    }
 
     SheetPillCard {
         Row(
             Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Quantity", fontSize = 17.sp, modifier = Modifier.padding(end = 8.dp))
-            Spacer(Modifier.weight(1f))
+            Text(
+                "Quantity",
+                fontSize = 17.sp,
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .clickable { dismissKeyboard() }
+            )
+            Spacer(
+                Modifier
+                    .weight(1f)
+                    .clickable { dismissKeyboard() }
+            )
             BasicTextField(
-                value = quantityText,
-                onValueChange = onQuantityChange,
+                value = quantityFieldValue,
+                onValueChange = { newValue ->
+                    quantityFieldValue = newValue.copy(
+                        selection = TextRange(newValue.text.length)
+                    )
+                    onQuantityChange(newValue.text)
+                },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 textStyle = TextStyle(
@@ -234,15 +280,36 @@ internal fun ServingQuantityCard(
                     textAlign = TextAlign.End
                 ),
                 cursorBrush = SolidColor(AppColors.Calorie),
-                modifier = Modifier.width(80.dp)
+                modifier = Modifier
+                    .width(80.dp)
+                    .focusRequester(focusRequester)
             )
+            if (quantityText.isNotEmpty()) {
+                Spacer(Modifier.width(6.dp))
+                Icon(
+                    Icons.Filled.Cancel,
+                    contentDescription = "Clear quantity",
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            quantityFieldValue = TextFieldValue("", selection = TextRange.Zero)
+                            onQuantityChange("")
+                            focusRequester.requestFocus()
+                        }
+                )
+            }
             Spacer(Modifier.width(6.dp))
             if (pickerOptions.size > 1) {
                 Box {
                     Row(
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))
-                            .clickable { onMenuExpandedChange(true) }
+                            .clickable {
+                                dismissKeyboard()
+                                onMenuExpandedChange(true)
+                            }
                             .padding(horizontal = 4.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -287,7 +354,9 @@ internal fun ServingQuantityCard(
                     gramUnit,
                     fontSize = 17.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    modifier = Modifier.width(24.dp)
+                    modifier = Modifier
+                        .width(24.dp)
+                        .clickable { dismissKeyboard() }
                 )
             }
         }

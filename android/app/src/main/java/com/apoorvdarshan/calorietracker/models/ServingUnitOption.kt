@@ -104,6 +104,10 @@ data class ServingUnitOption(
             if (trimmed.isEmpty()) return null
             trimmed.toDoubleOrNull()?.let { return it }
 
+            if (trimmed.contains(',') && !trimmed.contains('.')) {
+                trimmed.replace(',', '.').toDoubleOrNull()?.let { return it }
+            }
+
             val symbols = DecimalFormatSymbols.getInstance(locale)
             val decimal = symbols.decimalSeparator
             if (decimal == '.' || !trimmed.contains(decimal)) return null
