@@ -648,6 +648,14 @@
     <string name="about_check_updates">Check for Updates</string>
     <string name="about_app_version">App Version</string>
     <string name="about_version_format">Version %1$s</string>
+    <string name="about_whats_new">What\'s New</string>
+    <string name="about_whats_new_version_format">Version %1$s</string>
+    <string name="about_whats_new_android_summary">Android changes in this update:</string>
+    <string name="about_whats_new_item_decimal_macros">Protein, carbs, and fat now preserve decimal grams instead of rounding to whole numbers.</string>
+    <string name="about_whats_new_item_home_cards">Home nutrition cards show decimal macro totals in one compact line.</string>
+    <string name="about_whats_new_item_comma_quantity">Comma decimal input works like dot input, so 1,5 is treated as 1.5.</string>
+    <string name="about_whats_new_item_quantity_editing">Review and edit quantity fields keep the cursor at the end, include a clear button, and dismiss the keyboard when tapping outside the input.</string>
+    <string name="about_whats_new_item_widgets">Android widgets use compact decimal macro text to avoid overflow.</string>
     <string name="about_rate">Rate the App</string>
     <string name="about_share">Share the App</string>
     <string name="about_open_source">Open Source (MIT)</string>

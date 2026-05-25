@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.json.JSONArray
+import org.json.JSONObject
 
 sealed class AndroidUpdateState {
     object Idle : AndroidUpdateState()
@@ -18,6 +18,7 @@ sealed class AndroidUpdateState {
 
 object AndroidUpdateChecker {
     const val RELEASE_PACKAGE_NAME = "com.apoorvdarshan.calorietracker"
+    private const val ANDROID_VERSION_MANIFEST_URL = "https://fud-ai.app/android-version.json"
     const val PLAY_STORE_WEB_URL =
         "https://play.google.com/store/apps/details?id=$RELEASE_PACKAGE_NAME"
     const val PLAY_STORE_MARKET_URL = "market://details?id=$RELEASE_PACKAGE_NAME"
@@ -34,8 +35,8 @@ object AndroidUpdateChecker {
         client: OkHttpClient = FoodAnalysisService.defaultClient
     ): AndroidUpdateState {
         val req = Request.Builder()
-            .url("https://api.github.com/repos/apoorvdarshan/fud-ai/releases?per_page=30")
-            .addHeader("Accept", "application/vnd.github+json")
+            .url(ANDROID_VERSION_MANIFEST_URL)
+            .addHeader("Accept", "application/json")
             .addHeader("User-Agent", "Fud-AI-Android")
             .build()
 
@@ -46,7 +47,7 @@ object AndroidUpdateChecker {
                     response.body?.string().orEmpty()
                 }
             }
-            val latest = latestAndroidVersion(raw)
+            val latest = latestPublishedAndroidVersion(raw)
             when {
                 latest == null -> AndroidUpdateState.UpToDate(current = current, latest = null)
                 isVersion(latest, current) ->
@@ -58,18 +59,13 @@ object AndroidUpdateChecker {
         }
     }
 
-    private fun latestAndroidVersion(raw: String): String? {
-        val releases = JSONArray(raw)
-        var latest: String? = null
-        for (index in 0 until releases.length()) {
-            val tag = releases.optJSONObject(index)?.optString("tag_name").orEmpty()
-            val version = tag.removePrefix("android-v").takeIf { it != tag && it.isNotBlank() }
-                ?: continue
-            if (latest == null || isVersion(version, latest)) {
-                latest = version
-            }
-        }
-        return latest
+    private fun latestPublishedAndroidVersion(raw: String): String? {
+        val root = JSONObject(raw)
+        val android = root.optJSONObject("android")
+        return android?.optString("latest_published_version")
+            ?.takeIf { it.isNotBlank() }
+            ?: root.optString("android_latest_published_version")
+                .takeIf { it.isNotBlank() }
     }
 
     private fun isVersion(latest: String, current: String): Boolean {
