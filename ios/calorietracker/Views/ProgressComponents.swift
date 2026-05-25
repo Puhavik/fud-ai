@@ -62,13 +62,15 @@ struct WeightChartSection: View {
                 emptyState("Log your first weight to see trends")
             } else {
                 // Current / Goal row
-                HStack(spacing: 16) {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                     if let current = currentWeightKg {
                         StatBadge(label: "Current", value: String(format: "%.1f %@", displayWeight(current), unit))
                     }
                     if let goal = goalWeightKg {
                         StatBadge(label: "Goal", value: String(format: "%.1f %@", displayWeight(goal), unit))
                     }
+                    StatBadge(label: "Net Change", value: formattedWeightChange)
+                    StatBadge(label: "Average", value: formattedAverageWeight)
                 }
 
                 Chart {
@@ -126,6 +128,31 @@ struct WeightChartSection: View {
         guard let minW = weights.min(), let maxW = weights.max() else { return 0...200 }
         let padding = max((maxW - minW) * 0.15, 2)
         return (minW - padding)...(maxW + padding)
+    }
+
+    private var sortedWeightEntries: [WeightEntry] {
+        weightEntries.sorted { $0.date < $1.date }
+    }
+
+    private var netWeightChange: Double {
+        guard let first = sortedWeightEntries.first,
+              let last = sortedWeightEntries.last else { return 0 }
+        return displayWeight(last.weightKg) - displayWeight(first.weightKg)
+    }
+
+    private var averageWeight: Double {
+        let values = sortedWeightEntries.map { displayWeight($0.weightKg) }
+        guard !values.isEmpty else { return 0 }
+        return values.reduce(0, +) / Double(values.count)
+    }
+
+    private var formattedWeightChange: String {
+        let sign = netWeightChange > 0 ? "+" : ""
+        return String(format: "%@%.1f %@", sign, netWeightChange, unit)
+    }
+
+    private var formattedAverageWeight: String {
+        String(format: "%.1f %@", averageWeight, unit)
     }
 }
 
