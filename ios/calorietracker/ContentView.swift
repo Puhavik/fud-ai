@@ -2716,6 +2716,7 @@ struct ProfileView: View {
     @State private var showAutoMacroEditAlert = false
     @State private var showMaxPinnedAlert = false
     @State private var showInvalidGoalWeightAlert = false
+    @State private var showDefaultGramsInfo = false
     @State private var invalidGoalWeightMessage = ""
     @State private var selectedProvider: AIProvider = AIProviderSettings.selectedProvider
     @State private var selectedModel: String = AIProviderSettings.selectedModel
@@ -3046,15 +3047,28 @@ struct ProfileView: View {
                     }
                     .tint(AppColors.calorie)
 
-                    Toggle(isOn: $preferGramsByDefault) {
+                    HStack {
                         Label {
-                            Text("Default to Grams")
+                            HStack(spacing: 6) {
+                                Text("Default to Grams")
+                                Button {
+                                    showDefaultGramsInfo = true
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                        .foregroundStyle(.secondary)
+                                }
+                                .buttonStyle(.borderless)
+                                .accessibilityLabel("About Default to Grams")
+                            }
                         } icon: {
                             Image(systemName: "scalemass")
                                 .foregroundStyle(AppColors.calorie)
                         }
+                        Spacer()
+                        Toggle("Default to Grams", isOn: $preferGramsByDefault)
+                            .labelsHidden()
+                            .tint(AppColors.calorie)
                     }
-                    .tint(AppColors.calorie)
 
                     Picker(selection: $weekStartsOnMonday) {
                         Text("Sunday").tag(false)
@@ -3773,6 +3787,11 @@ struct ProfileView: View {
                 Button("Recalculate") { recalculateGoalsNow() }
             } message: {
                 Text("Recompute calories, protein, carbs, and fat from your current weight, activity, and goal? Your custom values will be replaced and Auto-balance will reset to Carbs.")
+            }
+            .alert("Default to Grams", isPresented: $showDefaultGramsInfo) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("When enabled, new food results open with grams selected even if the AI detects cups, portions, or servings. You can still switch units for each food.")
             }
             .sheet(isPresented: $showCalculationMethods) {
                 CalculationMethodsView()
