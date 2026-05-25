@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,9 +22,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.apoorvdarshan.calorietracker.models.MacroValueFormatter
@@ -80,59 +82,53 @@ fun MacroCard(
     val firstColor = gradientColors.firstOrNull() ?: AppColors.Calorie
     val left = maxOf(0.0, goal.toDouble() - current)
     val currentText = MacroValueFormatter.string(current)
+    val goalText = "/$goal$unit"
+    val lineLength = currentText.length + goalText.length
     val currentFontSize = when {
-        currentText.length >= 7 -> 20.sp
-        currentText.length >= 6 -> 22.sp
-        currentText.length >= 5 -> 24.sp
+        lineLength >= 14 -> 18.sp
+        lineLength >= 12 -> 20.sp
+        lineLength >= 10 -> 22.sp
+        lineLength >= 8 -> 24.sp
         else -> 28.sp
+    }
+    val goalFontSize = when {
+        lineLength >= 14 -> 10.sp
+        lineLength >= 12 -> 11.sp
+        else -> 12.sp
     }
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Row(
+        Text(
+            text = buildAnnotatedString {
+                withStyle(
+                    SpanStyle(
+                        color = firstColor,
+                        fontSize = currentFontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                ) {
+                    append(currentText)
+                }
+                withStyle(
+                    SpanStyle(
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        fontSize = goalFontSize,
+                        fontWeight = FontWeight.Medium
+                    )
+                ) {
+                    append(goalText)
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                currentText,
-                modifier = Modifier.weight(1f, fill = false),
-                fontSize = currentFontSize,
-                fontWeight = FontWeight.Bold,
-                color = firstColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                softWrap = false
-            )
-            Text(
-                unit,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                maxLines = 1
-            )
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Text(
-                "/$goal$unit",
-                modifier = Modifier.fillMaxWidth(),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                softWrap = false
-            )
-        }
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Clip,
+            softWrap = false
+        )
 
         // GeometryReader { ZStack(alignment: .leading) { ... } }.frame(height: 6)
         BoxWithConstraints(
