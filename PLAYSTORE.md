@@ -1,6 +1,6 @@
 # Play Store Listing
 
-Google Play Console listing copy for Fud AI Android (current: v2.1.0 / versionCode 20). Each field is in a code block for easy copy-paste. Char counts are tracked because Play Console enforces hard caps and silently truncates anything over.
+Google Play Console listing copy for Fud AI Android (current: v2.1.0 / versionCode 21). Each field is in a code block for easy copy-paste. Char counts are tracked because Play Console enforces hard caps and silently truncates anything over.
 
 **Where to paste each field in Play Console:**
 - App name / Short description / Full description → Grow → Store presence → **Main store listing** (default English) and Grow → Store presence → **Custom store listings** → Manage translations (per-language overrides)
@@ -38,7 +38,7 @@ Snap, speak, or type a meal. AI logs the calories. Open source.
 ```
 Fud AI makes calorie tracking effortless with AI-powered food recognition. Snap a photo, scan a barcode, speak it, or type it — get instant nutrition: calories, protein, carbs, fats, vitamins, minerals, and more.
 
-NEW in v2.1.0: Health Connect can estimate calorie goals from energy burn while keeping macros editable, macro nutrition preserves decimal grams across logs/Home/widgets, Progress shows net change and average for weight/body fat, quantity input supports comma decimals with cleaner editing, About > What's New shows the in-app changelog, and update checks ask Google Play directly.
+NEW in v2.1.0: Health Connect can estimate calorie goals from energy burn while keeping macros editable, macro nutrition preserves decimal grams across logs/Home/widgets, Progress shows net change and average for weight/body fat, future-day logging no longer crashes with Health Connect, About > What's New shows the in-app changelog, and update checks ask Google Play directly.
 
 Free, open source, privacy-first. Bring your own API key. All data stays on your device.
 
@@ -108,7 +108,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 
 ---
 
-## 4. What's New (v2.1.0)
+## 4. What's New (v2.1.0 / versionCode 21)
 
 **500 char hard cap per language.** Paste the entire block below into Play Console's "Release notes" field — it auto-routes each `<lang-tag>` block to the matching locale.
 
@@ -118,7 +118,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • Decimal macro grams are preserved in logs, Home, nutrition details, and widgets.
 • Progress shows current, goal, net change, and average for weight/body fat.
 • Quantity fields support comma decimals, clearer cursor/clear behavior, and tap-out keyboard dismiss.
-• About > What's New shows this changelog in-app; update checks ask Google Play directly.
+• Future-day logging no longer crashes when Health Connect is enabled; update checks ask Google Play directly.
 </en-US>
 
 <ar>
@@ -126,7 +126,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • حفظ غرامات الماكروز العشرية في السجل وHome والتفاصيل والويدجت.
 • Progress يعرض الحالي والهدف وصافي التغيير والمتوسط للوزن ودهون الجسم.
 • الكمية تدعم الفاصلة العشرية مع تحرير أوضح وإغلاق لوحة المفاتيح عند النقر خارجها.
-• أضفنا What's New، والتحديثات عبر Google Play.
+• تسجيل الأيام المستقبلية لم يعد يتعطل مع Health Connect؛ التحديثات عبر Google Play.
 </ar>
 
 <az-AZ>
@@ -134,7 +134,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • Ondalıq makro qramları loglarda, Home-da, detallarda və vidjetlərdə saxlanır.
 • Progress çəki və bədən yağı üçün cari, hədəf, net dəyişiklik və ortalamanı göstərir.
 • Miqdar sahələri vergül ondalığını, daha aydın kursor/təmizləmə davranışını və kənara toxunanda klaviaturanın bağlanmasını dəstəkləyir.
-• What's New əlavə edildi; yeniləmə yoxlaması indi birbaşa Google Play-dən edilir.
+• Gələcək günə qeyd Health Connect ilə artıq çökmür; yeniləmə Google Play-dən yoxlanır.
 </az-AZ>
 
 <de-DE>
@@ -142,7 +142,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • Dezimale Makro-Grammwerte bleiben in Logs, Home, Details und Widgets erhalten.
 • Progress zeigt Aktuell, Ziel, Nettoänderung und Durchschnitt für Gewicht/Körperfett.
 • Mengenfelder unterstützen Komma-Dezimalwerte, besseres Cursor-/Löschverhalten und Tastatur-Ausblenden per Tippen außerhalb.
-• About zeigt What's New; Update-Checks fragen jetzt direkt Google Play.
+• Zukunfts-Logging stürzt mit Health Connect nicht mehr ab; Updates fragen Google Play.
 </de-DE>
 
 <es-ES>
@@ -150,7 +150,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • Los gramos decimales de macros se conservan en registros, Home, detalles y widgets.
 • Progress muestra actual, objetivo, cambio neto y promedio para peso/grasa corporal.
 • Los campos de cantidad admiten coma decimal, mejor cursor/borrado y cerrar teclado al tocar fuera.
-• About añade What's New y las actualizaciones se consultan directamente en Google Play.
+• Registrar días futuros ya no falla con Health Connect; las actualizaciones consultan Google Play.
 </es-ES>
 
 <fr-FR>
@@ -158,7 +158,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • Les grammes décimaux des macros sont conservés dans le journal, Home, les détails et les widgets.
 • Progress affiche actuel, objectif, net et moyenne poids/masse grasse.
 • Les champs quantité acceptent la virgule décimale, avec meilleur curseur/effacement et fermeture du clavier en tapant ailleurs.
-• About ajoute What's New; les mises à jour passent directement par Google Play.
+• Jour futur ne plante plus avec Health Connect; mises à jour via Google Play.
 </fr-FR>
 
 <hi-IN>
@@ -166,7 +166,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • Decimal macro grams logs, Home, nutrition details और widgets में preserve होते हैं.
 • Progress में weight/body fat के लिए current, goal, net change और average दिखता है.
 • Quantity fields comma decimals, clear button और बाहर tap पर keyboard dismiss support करते हैं.
-• About में What's New जोड़ा गया; update check अब सीधे Google Play से होता है.
+• Future-day logging अब Health Connect के साथ crash नहीं करता; update check Google Play से होता है.
 </hi-IN>
 
 <it-IT>
@@ -174,7 +174,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • I grammi decimali dei macro restano in log, Home, dettagli nutrizionali e widget.
 • Progress mostra attuale, obiettivo, cambio netto e media per peso/grasso corporeo.
 • I campi quantità supportano decimali con virgola, cursore/cancellazione migliori e chiusura tastiera toccando fuori.
-• About aggiunge What's New; i controlli update chiedono direttamente a Google Play.
+• Il log su giorni futuri non va più in crash con Health Connect; update via Google Play.
 </it-IT>
 
 <ja-JP>
@@ -182,7 +182,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • マクロの小数グラムを記録、Home、栄養詳細、ウィジェットで保持します。
 • Progressで体重/体脂肪の現在、目標、差分、平均を表示します。
 • 数量入力でカンマ小数、カーソル/クリア改善、外側タップでキーボードを閉じる動作に対応。
-• AboutにWhat's Newを追加し、更新確認はGoogle Playへ直接問い合わせます。
+• Health Connect有効時も未来日の記録でクラッシュしません。更新確認はGoogle Playへ。
 </ja-JP>
 
 <ko-KR>
@@ -190,7 +190,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • 소수점 매크로 g 값이 기록, Home, 영양 상세, 위젯에 유지됩니다.
 • Progress에 체중/체지방의 현재, 목표, 순변화, 평균이 표시됩니다.
 • 수량 입력에서 쉼표 소수점, 더 나은 커서/지우기, 바깥 탭 키보드 닫기를 지원합니다.
-• About에 What's New가 추가되고 업데이트 확인은 Google Play에 직접 요청합니다.
+• Health Connect 사용 중 미래 날짜 기록이 더 이상 충돌하지 않으며 업데이트는 Google Play에서 확인합니다.
 </ko-KR>
 
 <nl-NL>
@@ -198,7 +198,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • Decimale macrogrammen blijven behouden in logs, Home, details en widgets.
 • Progress toont huidig, doel, netto verandering en gemiddelde voor gewicht/vetpercentage.
 • Hoeveelheidsvelden ondersteunen kommadecimalen, betere cursor/wissen en toetsenbord sluiten door buiten te tikken.
-• About krijgt What's New; updatechecks vragen nu direct Google Play.
+• Loggen op toekomstige dagen crasht niet meer met Health Connect; updates via Google Play.
 </nl-NL>
 
 <pt-BR>
@@ -206,7 +206,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • Gramas decimais de macros são preservados em registros, Home, detalhes e widgets.
 • Progress mostra atual, meta, mudança líquida e média de peso/gordura corporal.
 • Campos de quantidade aceitam vírgula decimal, melhor cursor/limpar e fecham teclado ao tocar fora.
-• About adiciona What's New; checagem de atualização consulta direto o Google Play.
+• Registrar dias futuros não trava mais com Health Connect; updates consultam Google Play.
 </pt-BR>
 
 <ro>
@@ -214,7 +214,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • Gramele zecimale pentru macro-uri se păstrează în jurnal, Home, detalii și widgeturi.
 • Progress arată curent, țintă, schimbare netă și medie pentru greutate/grăsime corporală.
 • Câmpurile de cantitate acceptă virgulă zecimală, cursor/ștergere mai clare și închid tastatura la tap în afară.
-• About adaugă What's New; verificarea update-urilor întreabă direct Google Play.
+• Jurnalizarea unei zile viitoare nu mai pică cu Health Connect; update-uri via Google Play.
 </ro>
 
 <ru-RU>
@@ -222,7 +222,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • Десятичные граммы макро сохраняются в журнале, Home, деталях и виджетах.
 • Progress показывает текущее, цель, изменение и среднее для веса/жира.
 • Количество поддерживает запятую, очистку и закрытие клавиатуры тапом вне поля.
-• В About добавлено What's New; обновления проверяются через Google Play.
+• Запись будущих дней больше не падает с Health Connect; обновления через Google Play.
 </ru-RU>
 
 <zh-CN>
@@ -230,7 +230,7 @@ English-only on Play Console — non-English Play Store browsers (ar, az-AZ, de-
 • 宏量营养的小数克数会保留在日志、Home、营养详情和小组件中。
 • Progress 显示体重/体脂的当前、目标、净变化和平均值。
 • 数量输入支持逗号小数，光标/清除更顺手，点按输入框外可收起键盘。
-• About 新增 What's New，更新检查现在直接询问 Google Play。
+• Health Connect 开启时记录未来日期不再崩溃，更新检查直接询问 Google Play。
 </zh-CN>
 ```
 

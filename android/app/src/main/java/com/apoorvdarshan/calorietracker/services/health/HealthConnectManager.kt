@@ -162,42 +162,45 @@ class HealthConnectManager(private val context: Context) {
     suspend fun writeNutrition(entry: FoodEntry): Boolean {
         val c = client ?: return false
         val start = entry.timestamp
+        if (start.isAfter(Instant.now())) return false
         // Nutrition records need a non-zero duration or Health Connect rejects them; use 1 minute.
         val end = start.plusSeconds(60)
-        val record = NutritionRecord(
-            startTime = start,
-            endTime = end,
-            startZoneOffset = null,
-            endZoneOffset = null,
-            name = entry.name,
-            mealType = mealTypeFor(entry.mealType),
-            energy = Energy.kilocalories(entry.calories.toDouble()),
-            protein = Mass.grams(entry.protein.toDouble()),
-            totalCarbohydrate = Mass.grams(entry.carbs.toDouble()),
-            totalFat = Mass.grams(entry.fat.toDouble()),
-            dietaryFiber = entry.fiber?.let { Mass.grams(it) },
-            sugar = entry.sugar?.let { Mass.grams(it) },
-            saturatedFat = entry.saturatedFat?.let { Mass.grams(it) },
-            monounsaturatedFat = entry.monounsaturatedFat?.let { Mass.grams(it) },
-            polyunsaturatedFat = entry.polyunsaturatedFat?.let { Mass.grams(it) },
-            transFat = entry.transFat?.let { Mass.grams(it) },
-            cholesterol = entry.cholesterol?.let { Mass.milligrams(it) },
-            sodium = entry.sodium?.let { Mass.milligrams(it) },
-            potassium = entry.potassium?.let { Mass.milligrams(it) },
-            calcium = entry.calcium?.let { Mass.milligrams(it) },
-            iron = entry.iron?.let { Mass.milligrams(it) },
-            magnesium = entry.magnesium?.let { Mass.milligrams(it) },
-            zinc = entry.zinc?.let { Mass.milligrams(it) },
-            vitaminA = entry.vitaminA?.let { Mass.micrograms(it) },
-            vitaminC = entry.vitaminC?.let { Mass.milligrams(it) },
-            vitaminD = entry.vitaminD?.let { Mass.micrograms(it) },
-            vitaminB12 = entry.vitaminB12?.let { Mass.micrograms(it) },
-            vitaminE = entry.vitaminE?.let { Mass.milligrams(it) },
-            vitaminK = entry.vitaminK?.let { Mass.micrograms(it) },
-            folate = entry.folate?.let { Mass.micrograms(it) },
-            metadata = Metadata.manualEntry(clientRecordId = tag(entry.id))
-        )
-        return runCatching { c.insertRecords(listOf(record)) }.isSuccess
+        return runCatching {
+            val record = NutritionRecord(
+                startTime = start,
+                endTime = end,
+                startZoneOffset = null,
+                endZoneOffset = null,
+                name = entry.name,
+                mealType = mealTypeFor(entry.mealType),
+                energy = Energy.kilocalories(entry.calories.toDouble()),
+                protein = Mass.grams(entry.protein),
+                totalCarbohydrate = Mass.grams(entry.carbs),
+                totalFat = Mass.grams(entry.fat),
+                dietaryFiber = entry.fiber?.let { Mass.grams(it) },
+                sugar = entry.sugar?.let { Mass.grams(it) },
+                saturatedFat = entry.saturatedFat?.let { Mass.grams(it) },
+                monounsaturatedFat = entry.monounsaturatedFat?.let { Mass.grams(it) },
+                polyunsaturatedFat = entry.polyunsaturatedFat?.let { Mass.grams(it) },
+                transFat = entry.transFat?.let { Mass.grams(it) },
+                cholesterol = entry.cholesterol?.let { Mass.milligrams(it) },
+                sodium = entry.sodium?.let { Mass.milligrams(it) },
+                potassium = entry.potassium?.let { Mass.milligrams(it) },
+                calcium = entry.calcium?.let { Mass.milligrams(it) },
+                iron = entry.iron?.let { Mass.milligrams(it) },
+                magnesium = entry.magnesium?.let { Mass.milligrams(it) },
+                zinc = entry.zinc?.let { Mass.milligrams(it) },
+                vitaminA = entry.vitaminA?.let { Mass.micrograms(it) },
+                vitaminC = entry.vitaminC?.let { Mass.milligrams(it) },
+                vitaminD = entry.vitaminD?.let { Mass.micrograms(it) },
+                vitaminB12 = entry.vitaminB12?.let { Mass.micrograms(it) },
+                vitaminE = entry.vitaminE?.let { Mass.milligrams(it) },
+                vitaminK = entry.vitaminK?.let { Mass.micrograms(it) },
+                folate = entry.folate?.let { Mass.micrograms(it) },
+                metadata = Metadata.manualEntry(clientRecordId = tag(entry.id))
+            )
+            c.insertRecords(listOf(record))
+        }.isSuccess
     }
 
     suspend fun updateNutrition(entry: FoodEntry): Boolean {

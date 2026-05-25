@@ -658,6 +658,7 @@
     <string name="about_whats_new_item_progress_summaries">Progress shows current, goal, net change, and average for weight and body fat.</string>
     <string name="about_whats_new_item_comma_quantity">Comma decimal input works like dot input, so 1,5 is treated as 1.5.</string>
     <string name="about_whats_new_item_quantity_editing">Review and edit quantity fields keep the cursor at the end, include a clear button, and dismiss the keyboard when tapping outside the input.</string>
+    <string name="about_whats_new_item_future_day_health">Future-day food logging no longer crashes when Health Connect is enabled.</string>
     <string name="about_whats_new_item_widgets">Android widgets use compact decimal macro text to avoid overflow.</string>
     <string name="about_rate">Rate the App</string>
     <string name="about_share">Share the App</string>
