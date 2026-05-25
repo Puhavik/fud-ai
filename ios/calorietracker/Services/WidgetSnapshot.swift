@@ -52,11 +52,11 @@ struct WidgetSnapshot: Codable, Equatable {
     let dayStart: Date
     let calories: Int
     let calorieGoal: Int
-    let protein: Int
+    let protein: Double
     let proteinGoal: Int
-    let carbs: Int
+    let carbs: Double
     let carbsGoal: Int
-    let fat: Int
+    let fat: Double
     let fatGoal: Int
     let homeNutrients: [WidgetNutrientValue]?
 
@@ -160,31 +160,31 @@ struct WidgetSnapshot: Codable, Equatable {
     }
 
     var caloriesRemaining: Int { max(0, calorieGoal - calories) }
-    var proteinRemaining: Int { max(0, proteinGoal - protein) }
-    var carbsRemaining: Int { max(0, carbsGoal - carbs) }
-    var fatRemaining: Int { max(0, fatGoal - fat) }
+    var proteinRemaining: Double { max(0, Double(proteinGoal) - protein) }
+    var carbsRemaining: Double { max(0, Double(carbsGoal) - carbs) }
+    var fatRemaining: Double { max(0, Double(fatGoal) - fat) }
     var calorieProgress: Double {
         guard calorieGoal > 0 else { return 0 }
         return min(1.0, Double(calories) / Double(calorieGoal))
     }
     var proteinProgress: Double {
         guard proteinGoal > 0 else { return 0 }
-        return min(1.0, Double(protein) / Double(proteinGoal))
+        return min(1.0, protein / Double(proteinGoal))
     }
     var carbsProgress: Double {
         guard carbsGoal > 0 else { return 0 }
-        return min(1.0, Double(carbs) / Double(carbsGoal))
+        return min(1.0, carbs / Double(carbsGoal))
     }
     var fatProgress: Double {
         guard fatGoal > 0 else { return 0 }
-        return min(1.0, Double(fat) / Double(fatGoal))
+        return min(1.0, fat / Double(fatGoal))
     }
 
     private var defaultHomeNutrients: [WidgetNutrientValue] {
         [
-            WidgetNutrientValue(id: "protein", label: "Protein", shortLabel: "P", unit: "g", iconName: "fork.knife", value: Double(protein), goal: Double(proteinGoal)),
-            WidgetNutrientValue(id: "carbs", label: "Carbs", shortLabel: "C", unit: "g", iconName: "leaf", value: Double(carbs), goal: Double(carbsGoal)),
-            WidgetNutrientValue(id: "fat", label: "Fat", shortLabel: "F", unit: "g", iconName: "drop.fill", value: Double(fat), goal: Double(fatGoal)),
+            WidgetNutrientValue(id: "protein", label: "Protein", shortLabel: "P", unit: "g", iconName: "fork.knife", value: protein, goal: Double(proteinGoal)),
+            WidgetNutrientValue(id: "carbs", label: "Carbs", shortLabel: "C", unit: "g", iconName: "leaf", value: carbs, goal: Double(carbsGoal)),
+            WidgetNutrientValue(id: "fat", label: "Fat", shortLabel: "F", unit: "g", iconName: "drop.fill", value: fat, goal: Double(fatGoal)),
         ]
     }
 }

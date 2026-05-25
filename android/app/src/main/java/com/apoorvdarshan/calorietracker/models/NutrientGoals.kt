@@ -32,30 +32,30 @@ enum class HomeTopNutrient(
     FOLATE("folate", "Folate", "mcg"),
     OMEGA3("omega3", "Omega", "g");
 
-    fun current(entries: List<FoodEntry>): Int = when (this) {
+    fun current(entries: List<FoodEntry>): Double = when (this) {
         PROTEIN -> entries.sumOf { it.protein }
         CARBS -> entries.sumOf { it.carbs }
         FAT -> entries.sumOf { it.fat }
-        FIBER -> entries.sumOf { it.fiber ?: 0.0 }.roundToInt()
-        SUGAR -> entries.sumOf { it.sugar ?: 0.0 }.roundToInt()
-        ADDED_SUGAR -> entries.sumOf { it.addedSugar ?: 0.0 }.roundToInt()
-        SATURATED_FAT -> entries.sumOf { it.saturatedFat ?: 0.0 }.roundToInt()
-        CHOLESTEROL -> entries.sumOf { it.cholesterol ?: 0.0 }.roundToInt()
-        SODIUM -> entries.sumOf { it.sodium ?: 0.0 }.roundToInt()
-        POTASSIUM -> entries.sumOf { it.potassium ?: 0.0 }.roundToInt()
-        TRANS_FAT -> entries.sumOf { it.transFat ?: 0.0 }.roundToInt()
-        CALCIUM -> entries.sumOf { it.calcium ?: 0.0 }.roundToInt()
-        IRON -> entries.sumOf { it.iron ?: 0.0 }.roundToInt()
-        MAGNESIUM -> entries.sumOf { it.magnesium ?: 0.0 }.roundToInt()
-        ZINC -> entries.sumOf { it.zinc ?: 0.0 }.roundToInt()
-        VITAMIN_A -> entries.sumOf { it.vitaminA ?: 0.0 }.roundToInt()
-        VITAMIN_C -> entries.sumOf { it.vitaminC ?: 0.0 }.roundToInt()
-        VITAMIN_D -> entries.sumOf { it.vitaminD ?: 0.0 }.roundToInt()
-        VITAMIN_B12 -> entries.sumOf { it.vitaminB12 ?: 0.0 }.roundToInt()
-        VITAMIN_E -> entries.sumOf { it.vitaminE ?: 0.0 }.roundToInt()
-        VITAMIN_K -> entries.sumOf { it.vitaminK ?: 0.0 }.roundToInt()
-        FOLATE -> entries.sumOf { it.folate ?: 0.0 }.roundToInt()
-        OMEGA3 -> entries.sumOf { it.omega3 ?: 0.0 }.roundToInt()
+        FIBER -> entries.sumOf { it.fiber ?: 0.0 }.roundToInt().toDouble()
+        SUGAR -> entries.sumOf { it.sugar ?: 0.0 }.roundToInt().toDouble()
+        ADDED_SUGAR -> entries.sumOf { it.addedSugar ?: 0.0 }.roundToInt().toDouble()
+        SATURATED_FAT -> entries.sumOf { it.saturatedFat ?: 0.0 }.roundToInt().toDouble()
+        CHOLESTEROL -> entries.sumOf { it.cholesterol ?: 0.0 }.roundToInt().toDouble()
+        SODIUM -> entries.sumOf { it.sodium ?: 0.0 }.roundToInt().toDouble()
+        POTASSIUM -> entries.sumOf { it.potassium ?: 0.0 }.roundToInt().toDouble()
+        TRANS_FAT -> entries.sumOf { it.transFat ?: 0.0 }.roundToInt().toDouble()
+        CALCIUM -> entries.sumOf { it.calcium ?: 0.0 }.roundToInt().toDouble()
+        IRON -> entries.sumOf { it.iron ?: 0.0 }.roundToInt().toDouble()
+        MAGNESIUM -> entries.sumOf { it.magnesium ?: 0.0 }.roundToInt().toDouble()
+        ZINC -> entries.sumOf { it.zinc ?: 0.0 }.roundToInt().toDouble()
+        VITAMIN_A -> entries.sumOf { it.vitaminA ?: 0.0 }.roundToInt().toDouble()
+        VITAMIN_C -> entries.sumOf { it.vitaminC ?: 0.0 }.roundToInt().toDouble()
+        VITAMIN_D -> entries.sumOf { it.vitaminD ?: 0.0 }.roundToInt().toDouble()
+        VITAMIN_B12 -> entries.sumOf { it.vitaminB12 ?: 0.0 }.roundToInt().toDouble()
+        VITAMIN_E -> entries.sumOf { it.vitaminE ?: 0.0 }.roundToInt().toDouble()
+        VITAMIN_K -> entries.sumOf { it.vitaminK ?: 0.0 }.roundToInt().toDouble()
+        FOLATE -> entries.sumOf { it.folate ?: 0.0 }.roundToInt().toDouble()
+        OMEGA3 -> entries.sumOf { it.omega3 ?: 0.0 }.roundToInt().toDouble()
     }
 
     fun goal(profile: UserProfile?, optionalGoals: OptionalNutrientGoals): Int = when (this) {

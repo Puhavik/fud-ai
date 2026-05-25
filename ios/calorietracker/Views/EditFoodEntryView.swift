@@ -11,9 +11,9 @@ struct EditFoodEntryView: View {
 
     // Base values (the entry's nutrition at its logged serving size)
     private let baseCalories: Int
-    private let baseProtein: Int
-    private let baseCarbs: Int
-    private let baseFat: Int
+    private let baseProtein: Double
+    private let baseCarbs: Double
+    private let baseFat: Double
     private let baseServingSizeGrams: Double
     private let baseSugar: Double?
     private let baseAddedSugar: Double?
@@ -54,9 +54,9 @@ struct EditFoodEntryView: View {
     }
 
     private var scaledCalories: Int { Int(round(Double(baseCalories) * scale)) }
-    private var scaledProtein: Int { Int(round(Double(baseProtein) * scale)) }
-    private var scaledCarbs: Int { Int(round(Double(baseCarbs) * scale)) }
-    private var scaledFat: Int { Int(round(Double(baseFat) * scale)) }
+    private var scaledProtein: Double { baseProtein * scale }
+    private var scaledCarbs: Double { baseCarbs * scale }
+    private var scaledFat: Double { baseFat * scale }
     private var scaledSugar: Double? { baseSugar.map { round($0 * scale * 10) / 10 } }
     private var scaledAddedSugar: Double? { baseAddedSugar.map { round($0 * scale * 10) / 10 } }
     private var scaledFiber: Double? { baseFiber.map { round($0 * scale * 10) / 10 } }
@@ -213,9 +213,9 @@ struct EditFoodEntryView: View {
 
                     Section("Nutrition") {
                         NutritionDisplayRow(label: "Calories", value: "\(scaledCalories)", unit: "kcal")
-                        NutritionDisplayRow(label: "Protein", value: "\(scaledProtein)", unit: "g")
-                        NutritionDisplayRow(label: "Carbs", value: "\(scaledCarbs)", unit: "g")
-                        NutritionDisplayRow(label: "Fat", value: "\(scaledFat)", unit: "g")
+                        NutritionDisplayRow(label: "Protein", value: MacroValueFormatter.string(scaledProtein), unit: "g")
+                        NutritionDisplayRow(label: "Carbs", value: MacroValueFormatter.string(scaledCarbs), unit: "g")
+                        NutritionDisplayRow(label: "Fat", value: MacroValueFormatter.string(scaledFat), unit: "g")
                     }
 
                     Section {

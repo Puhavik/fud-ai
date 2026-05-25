@@ -195,9 +195,9 @@ struct CalorieChartSection: View {
 // MARK: - Macro Averages Section
 
 struct MacroAveragesSection: View {
-    let avgProtein: Int
-    let avgCarbs: Int
-    let avgFat: Int
+    let avgProtein: Double
+    let avgCarbs: Double
+    let avgFat: Double
     let proteinGoal: Int
     let carbsGoal: Int
     let fatGoal: Int
@@ -219,13 +219,13 @@ struct MacroAveragesSection: View {
 
 struct MacroProgressRow: View {
     let label: String
-    let current: Int
+    let current: Double
     let goal: Int
     let color: Color
     let gradientColors: [Color]
 
     private var progress: Double {
-        goal > 0 ? min(Double(current) / Double(goal), 1.0) : 0
+        goal > 0 ? min(current / Double(goal), 1.0) : 0
     }
 
     var body: some View {
@@ -234,7 +234,7 @@ struct MacroProgressRow: View {
                 Text(label)
                     .font(.system(.subheadline, design: .rounded, weight: .medium))
                 Spacer()
-                Text("\(current)g / \(goal)g")
+                Text("\(MacroValueFormatter.withUnit(current)) / \(goal)g")
                     .font(.system(.subheadline, design: .rounded))
                     .foregroundStyle(.secondary)
             }

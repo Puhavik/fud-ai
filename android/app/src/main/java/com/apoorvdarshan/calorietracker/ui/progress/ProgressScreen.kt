@@ -74,6 +74,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.apoorvdarshan.calorietracker.AppContainer
 import com.apoorvdarshan.calorietracker.models.BodyFatEntry
 import com.apoorvdarshan.calorietracker.models.FoodEntry
+import com.apoorvdarshan.calorietracker.models.MacroValueFormatter
 import com.apoorvdarshan.calorietracker.models.WeightEntry
 import com.apoorvdarshan.calorietracker.ui.navigation.BottomNavScrollPadding
 import com.apoorvdarshan.calorietracker.ui.theme.AppColors
@@ -155,7 +156,7 @@ fun ProgressScreen(container: AppContainer) {
     // Macro averages over the range, only counting days with logged food
     val macroAverages = remember(foods, range) {
         val today = LocalDate.now()
-        var p = 0; var c = 0; var f = 0; var n = 0
+        var p = 0.0; var c = 0.0; var f = 0.0; var n = 0
         for (offset in 0 until range.days) {
             val day = today.minusDays(offset.toLong())
             val dayEntries = foods.filter { it.timestamp.atZone(zone).toLocalDate() == day }
@@ -165,7 +166,7 @@ fun ProgressScreen(container: AppContainer) {
             f += dayEntries.sumOf { it.fat }
             n += 1
         }
-        if (n == 0) Triple(0, 0, 0) else Triple(p / n, c / n, f / n)
+        if (n == 0) Triple(0.0, 0.0, 0.0) else Triple(p / n, c / n, f / n)
     }
 
     Scaffold(containerColor = MaterialTheme.colorScheme.background) { padding ->
@@ -760,7 +761,7 @@ private fun pickXLabelIndices(n: Int, maxLabels: Int = 7): List<Int> {
 
 @Composable
 private fun MacroAveragesSection(
-    avgProtein: Int, avgCarbs: Int, avgFat: Int,
+    avgProtein: Double, avgCarbs: Double, avgFat: Double,
     proteinGoal: Int, carbsGoal: Int, fatGoal: Int
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -772,14 +773,14 @@ private fun MacroAveragesSection(
 }
 
 @Composable
-private fun MacroProgressRow(label: String, current: Int, goal: Int) {
+private fun MacroProgressRow(label: String, current: Double, goal: Int) {
     val progress = if (goal > 0) (current.toFloat() / goal).coerceIn(0f, 1f) else 0f
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(label, fontSize = 15.sp, fontWeight = FontWeight.Medium)
             Spacer(Modifier.weight(1f))
             Text(
-                stringResource(R.string.progress_macro_progress_format, current, goal),
+                "${MacroValueFormatter.string(current)}g / ${goal}g",
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )

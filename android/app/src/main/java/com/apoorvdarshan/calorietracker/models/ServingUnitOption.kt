@@ -1,6 +1,7 @@
 package com.apoorvdarshan.calorietracker.models
 
 import kotlinx.serialization.Serializable
+import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 @Serializable
@@ -96,6 +97,24 @@ data class ServingUnitOption(
                 String.format(Locale.US, "%.1f", value)
             }
             return formatted.trimEnd('0').trimEnd('.')
+        }
+
+        fun parseQuantity(value: String, locale: Locale = Locale.getDefault()): Double? {
+            val trimmed = value.trim()
+            if (trimmed.isEmpty()) return null
+            trimmed.toDoubleOrNull()?.let { return it }
+
+            val symbols = DecimalFormatSymbols.getInstance(locale)
+            val decimal = symbols.decimalSeparator
+            if (decimal == '.' || !trimmed.contains(decimal)) return null
+
+            var normalized = trimmed
+            val grouping = symbols.groupingSeparator
+            if (grouping != decimal) {
+                normalized = normalized.replace(grouping.toString(), "")
+            }
+            normalized = normalized.replace(decimal, '.')
+            return normalized.toDoubleOrNull()
         }
     }
 }

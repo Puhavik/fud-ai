@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.apoorvdarshan.calorietracker.R
 import com.apoorvdarshan.calorietracker.models.FoodEntry
+import com.apoorvdarshan.calorietracker.models.MacroValueFormatter
 import com.apoorvdarshan.calorietracker.models.MealType
 import com.apoorvdarshan.calorietracker.models.ServingUnitOption
 import com.apoorvdarshan.calorietracker.ui.components.DateWheelPicker
@@ -111,7 +112,7 @@ fun EditFoodEntrySheet(
         )
     }
     val selectedServingOption = ServingUnitOption.optionMatching(selectedServingUnitId, servingUnitOptions)
-    val selectedServingQuantity = servingQuantityText.toDoubleOrNull()?.takeIf { it > 0 }
+    val selectedServingQuantity = ServingUnitOption.parseQuantity(servingQuantityText)?.takeIf { it > 0 }
     val scale = if (baseServing > 0) servingGrams / baseServing else 1.0
     var mealType by remember { mutableStateOf(entry.mealType) }
     var moreNutritionExpanded by remember { mutableStateOf(false) }
@@ -135,14 +136,15 @@ fun EditFoodEntrySheet(
     }
 
     fun scaledInt(v: Int) = (v * scale).roundToInt()
+    fun scaledMacro(v: Double) = v * scale
     fun scaledD(v: Double?) = v?.let { ((it * scale) * 10).roundToInt() / 10.0 }
 
     fun buildUpdated(): FoodEntry = entry.copy(
         name = name.trim().ifEmpty { entry.name },
         calories = scaledInt(entry.calories),
-        protein = scaledInt(entry.protein),
-        carbs = scaledInt(entry.carbs),
-        fat = scaledInt(entry.fat),
+        protein = scaledMacro(entry.protein),
+        carbs = scaledMacro(entry.carbs),
+        fat = scaledMacro(entry.fat),
         timestamp = loggedDate.atTime(loggedTime).atZone(zone).toInstant(),
         mealType = mealType,
         sugar = scaledD(entry.sugar),
@@ -279,7 +281,7 @@ fun EditFoodEntrySheet(
                     quantityText = servingQuantityText,
                     onQuantityChange = { newValue ->
                         servingQuantityText = newValue
-                        newValue.toDoubleOrNull()?.takeIf { it > 0 }?.let {
+                        ServingUnitOption.parseQuantity(newValue)?.takeIf { it > 0 }?.let {
                             servingGrams = it * selectedServingOption.gramsPerUnit
                         }
                     },
@@ -303,11 +305,11 @@ fun EditFoodEntrySheet(
                 SheetPillCard {
                     SheetNutritionRow(stringResource(R.string.nutrition_label_calories), "${scaledInt(entry.calories)}", stringResource(R.string.unit_kcal))
                     SheetHairline()
-                    SheetNutritionRow(stringResource(R.string.nutrition_label_protein), "${scaledInt(entry.protein)}", stringResource(R.string.unit_g))
+                    SheetNutritionRow(stringResource(R.string.nutrition_label_protein), MacroValueFormatter.string(scaledMacro(entry.protein)), stringResource(R.string.unit_g))
                     SheetHairline()
-                    SheetNutritionRow(stringResource(R.string.nutrition_label_carbs), "${scaledInt(entry.carbs)}", stringResource(R.string.unit_g))
+                    SheetNutritionRow(stringResource(R.string.nutrition_label_carbs), MacroValueFormatter.string(scaledMacro(entry.carbs)), stringResource(R.string.unit_g))
                     SheetHairline()
-                    SheetNutritionRow(stringResource(R.string.nutrition_label_fat), "${scaledInt(entry.fat)}", stringResource(R.string.unit_g))
+                    SheetNutritionRow(stringResource(R.string.nutrition_label_fat), MacroValueFormatter.string(scaledMacro(entry.fat)), stringResource(R.string.unit_g))
                 }
             }
 

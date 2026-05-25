@@ -34,6 +34,7 @@ import androidx.glance.text.TextStyle
 import com.apoorvdarshan.calorietracker.MainActivity
 import com.apoorvdarshan.calorietracker.R
 import com.apoorvdarshan.calorietracker.data.PreferencesStore
+import com.apoorvdarshan.calorietracker.models.MacroValueFormatter
 import com.apoorvdarshan.calorietracker.models.WidgetSnapshot
 import kotlinx.coroutines.flow.first
 
@@ -98,13 +99,13 @@ private fun ProteinSmall(snapshot: WidgetSnapshot) {
                 progress = snapshot.proteinProgress.toFloat(),
                 ringSizeDp = 92,
                 strokeDp = 9,
-                centerLarge = "${snapshot.protein}g",
+                centerLarge = "${MacroValueFormatter.string(snapshot.protein)}g",
                 centerSmall = "/ ${snapshot.proteinGoal}g"
             )
         }
         Spacer(modifier = GlanceModifier.height(4.dp))
         Text(
-            text = "${snapshot.proteinRemaining}g left",
+            text = "${MacroValueFormatter.string(snapshot.proteinRemaining)}g left",
             style = TextStyle(
                 color = WidgetTheme.secondaryTextProvider,
                 fontWeight = FontWeight.Medium,
@@ -124,7 +125,7 @@ private fun ProteinMedium(snapshot: WidgetSnapshot) {
             progress = snapshot.proteinProgress.toFloat(),
             ringSizeDp = 100,
             strokeDp = 9,
-            centerLarge = snapshot.protein.toString(),
+            centerLarge = MacroValueFormatter.string(snapshot.protein),
             centerSmall = "/ ${snapshot.proteinGoal}",
             centerCaption = "protein g"
         )
@@ -133,7 +134,7 @@ private fun ProteinMedium(snapshot: WidgetSnapshot) {
             modifier = GlanceModifier.fillMaxHeight().defaultWeight(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CapsuleMacroRow("Calories", snapshot.calories, snapshot.calorieGoal, snapshot.calorieProgress.toFloat(), unit = "")
+            CapsuleMacroRow("Calories", snapshot.calories.toDouble(), snapshot.calorieGoal, snapshot.calorieProgress.toFloat(), unit = "")
             Spacer(modifier = GlanceModifier.height(8.dp))
             CapsuleMacroRow("Carbs", snapshot.carbs, snapshot.carbsGoal, snapshot.carbsProgress.toFloat(), unit = "g")
             Spacer(modifier = GlanceModifier.height(8.dp))

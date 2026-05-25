@@ -234,9 +234,9 @@ enum HomeTopNutrient: String, CaseIterable, Identifiable {
 
     func value(from foodStore: FoodStore, on date: Date) -> Double {
         switch self {
-        case .protein: Double(foodStore.protein(for: date))
-        case .carbs: Double(foodStore.carbs(for: date))
-        case .fat: Double(foodStore.fat(for: date))
+        case .protein: foodStore.protein(for: date)
+        case .carbs: foodStore.carbs(for: date)
+        case .fat: foodStore.fat(for: date)
         case .fiber: foodStore.fiber(for: date)
         case .sugar: foodStore.sugar(for: date)
         case .addedSugar: foodStore.addedSugar(for: date)

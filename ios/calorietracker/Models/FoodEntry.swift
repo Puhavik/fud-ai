@@ -97,13 +97,26 @@ struct FoodMeasurementSettings {
     }
 }
 
+enum MacroValueFormatter {
+    static func string(_ value: Double) -> String {
+        if abs(value.rounded() - value) < 0.05 {
+            return String(Int(value.rounded()))
+        }
+        return String(format: "%.1f", value)
+    }
+
+    static func withUnit(_ value: Double) -> String {
+        "\(string(value))g"
+    }
+}
+
 struct FoodEntry: Identifiable, Codable {
     let id: UUID
     var name: String
     var calories: Int
-    var protein: Int
-    var carbs: Int
-    var fat: Int
+    var protein: Double
+    var carbs: Double
+    var fat: Double
     let timestamp: Date
     /// In-memory image bytes. NEVER persisted directly — see `imageFilename`.
     /// Kept as a property so existing views continue to read `entry.imageData`
@@ -149,9 +162,9 @@ struct FoodEntry: Identifiable, Codable {
         id: UUID = UUID(),
         name: String,
         calories: Int,
-        protein: Int,
-        carbs: Int,
-        fat: Int,
+        protein: Double,
+        carbs: Double,
+        fat: Double,
         timestamp: Date = Date(),
         imageData: Data? = nil,
         imageFilename: String? = nil,
@@ -239,14 +252,30 @@ struct FoodEntry: Identifiable, Codable {
         case servingUnitOptions, selectedServingUnit, selectedServingQuantity
     }
 
+    private static func decodeDouble(
+        _ container: KeyedDecodingContainer<CodingKeys>,
+        forKey key: CodingKeys
+    ) throws -> Double {
+        if let value = try? container.decode(Double.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decode(Int.self, forKey: key) {
+            return Double(value)
+        }
+        throw DecodingError.typeMismatch(
+            Double.self,
+            DecodingError.Context(codingPath: container.codingPath, debugDescription: "Expected number for \(key.stringValue)")
+        )
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(UUID.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         calories = try container.decode(Int.self, forKey: .calories)
-        protein = try container.decode(Int.self, forKey: .protein)
-        carbs = try container.decode(Int.self, forKey: .carbs)
-        fat = try container.decode(Int.self, forKey: .fat)
+        protein = try Self.decodeDouble(container, forKey: .protein)
+        carbs = try Self.decodeDouble(container, forKey: .carbs)
+        fat = try Self.decodeDouble(container, forKey: .fat)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
 
         // Prefer filename (new format). Fall back to inline bytes (legacy rows).

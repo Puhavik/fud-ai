@@ -80,6 +80,7 @@ import androidx.compose.ui.unit.sp
 import com.apoorvdarshan.calorietracker.AppContainer
 import com.apoorvdarshan.calorietracker.data.FrequentFoodGroup
 import com.apoorvdarshan.calorietracker.models.FoodEntry
+import com.apoorvdarshan.calorietracker.models.MacroValueFormatter
 import com.apoorvdarshan.calorietracker.services.FoodImageStore
 import com.apoorvdarshan.calorietracker.ui.theme.AppColors
 import kotlinx.coroutines.launch
@@ -669,9 +670,9 @@ private fun SavedMealRow(
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                MacroTag("P", entry.protein.toInt())
-                MacroTag("C", entry.carbs.toInt())
-                MacroTag("F", entry.fat.toInt())
+                MacroTag("P", entry.protein)
+                MacroTag("C", entry.carbs)
+                MacroTag("F", entry.fat)
             }
         }
 
@@ -725,7 +726,7 @@ private fun Thumbnail(emoji: String?, imageFilename: String?, imageStore: FoodIm
 }
 
 @Composable
-private fun MacroTag(label: String, value: Int) {
+private fun MacroTag(label: String, value: Double) {
     Box(
         Modifier
             .clip(CircleShape)
@@ -733,7 +734,7 @@ private fun MacroTag(label: String, value: Int) {
             .padding(horizontal = 6.dp, vertical = 2.dp)
     ) {
         Text(
-            "$label ${value}g",
+            "$label ${MacroValueFormatter.withUnit(value)}",
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)

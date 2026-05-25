@@ -194,9 +194,9 @@ class TestDataSeeder(private val container: AppContainer) {
                     FoodEntry(
                         name = template.name,
                         calories = (template.cal * jitter).toInt(),
-                        protein = (template.p * jitter).toInt(),
-                        carbs = (template.c * jitter).toInt(),
-                        fat = (template.f * jitter).toInt(),
+                        protein = template.p * jitter,
+                        carbs = template.c * jitter,
+                        fat = template.f * jitter,
                         timestamp = ts,
                         emoji = template.emoji,
                         source = FoodSource.TEXT_INPUT,

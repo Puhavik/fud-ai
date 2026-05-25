@@ -65,15 +65,15 @@ class FoodStore {
         todayEntries.reduce(0) { $0 + $1.calories }
     }
 
-    var todayProtein: Int {
+    var todayProtein: Double {
         todayEntries.reduce(0) { $0 + $1.protein }
     }
 
-    var todayCarbs: Int {
+    var todayCarbs: Double {
         todayEntries.reduce(0) { $0 + $1.carbs }
     }
 
-    var todayFat: Int {
+    var todayFat: Double {
         todayEntries.reduce(0) { $0 + $1.fat }
     }
 
@@ -137,15 +137,15 @@ class FoodStore {
         entries(for: date).reduce(0) { $0 + $1.calories }
     }
 
-    func protein(for date: Date) -> Int {
+    func protein(for date: Date) -> Double {
         entries(for: date).reduce(0) { $0 + $1.protein }
     }
 
-    func carbs(for date: Date) -> Int {
+    func carbs(for date: Date) -> Double {
         entries(for: date).reduce(0) { $0 + $1.carbs }
     }
 
-    func fat(for date: Date) -> Int {
+    func fat(for date: Date) -> Double {
         entries(for: date).reduce(0) { $0 + $1.fat }
     }
 

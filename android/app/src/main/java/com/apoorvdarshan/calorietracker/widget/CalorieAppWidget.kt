@@ -38,6 +38,7 @@ import androidx.glance.text.TextStyle
 import com.apoorvdarshan.calorietracker.MainActivity
 import com.apoorvdarshan.calorietracker.R
 import com.apoorvdarshan.calorietracker.data.PreferencesStore
+import com.apoorvdarshan.calorietracker.models.MacroValueFormatter
 import com.apoorvdarshan.calorietracker.models.WidgetSnapshot
 import kotlinx.coroutines.flow.first
 
@@ -221,7 +222,7 @@ internal fun RingWithCenter(
 }
 
 @Composable
-internal fun CapsuleMacroRow(label: String, value: Int, goal: Int, progress: Float, unit: String) {
+internal fun CapsuleMacroRow(label: String, value: Double, goal: Int, progress: Float, unit: String) {
     Column(modifier = GlanceModifier.fillMaxWidth()) {
         Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -234,7 +235,7 @@ internal fun CapsuleMacroRow(label: String, value: Int, goal: Int, progress: Flo
                 modifier = GlanceModifier.defaultWeight()
             )
             Text(
-                text = "${value}${unit} / ${goal}${unit}",
+                text = "${MacroValueFormatter.string(value)}${unit} / ${goal}${unit}",
                 style = TextStyle(
                     color = WidgetTheme.primaryTextProvider,
                     fontWeight = FontWeight.Medium,

@@ -61,9 +61,9 @@ data class HomeUiState(
     val error: String? = null
 ) {
     val caloriesToday: Int get() = todayEntries.sumOf { it.calories }
-    val proteinToday: Int get() = todayEntries.sumOf { it.protein }
-    val carbsToday: Int get() = todayEntries.sumOf { it.carbs }
-    val fatToday: Int get() = todayEntries.sumOf { it.fat }
+    val proteinToday: Double get() = todayEntries.sumOf { it.protein }
+    val carbsToday: Double get() = todayEntries.sumOf { it.carbs }
+    val fatToday: Double get() = todayEntries.sumOf { it.fat }
     fun isFavorite(entry: FoodEntry): Boolean = entry.favoriteKey in favoriteKeys
 }
 
@@ -295,14 +295,15 @@ class HomeViewModel(private val container: AppContainer) : ViewModel() {
                 ?: pendingDraftImageFilename
                 ?: imageBytes?.let { container.imageStore.storeBytes(it, id) }
             fun s(v: Int) = (v * scale).toInt()
+            fun macro(v: Double) = v * scale
             fun s(v: Double?) = v?.let { it * scale }
             val entry = FoodEntry(
                 id = id,
                 name = name?.takeIf { it.isNotBlank() } ?: analysis.name,
                 calories = s(analysis.calories),
-                protein = s(analysis.protein),
-                carbs = s(analysis.carbs),
-                fat = s(analysis.fat),
+                protein = macro(analysis.protein),
+                carbs = macro(analysis.carbs),
+                fat = macro(analysis.fat),
                 timestamp = timestampForSelectedDay(),
                 imageFilename = filename,
                 emoji = analysis.emoji,
@@ -428,9 +429,9 @@ class HomeViewModel(private val container: AppContainer) : ViewModel() {
     fun saveManualEntry(
         name: String,
         calories: Int,
-        protein: Int,
-        carbs: Int,
-        fat: Int,
+        protein: Double,
+        carbs: Double,
+        fat: Double,
         mealType: MealType = MealType.currentMeal
     ) {
         viewModelScope.launch {

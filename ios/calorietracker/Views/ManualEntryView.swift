@@ -65,9 +65,9 @@ struct ManualEntryView: View {
                 let entry = FoodEntry(
                     name: name.trimmingCharacters(in: .whitespaces),
                     calories: Int(calories) ?? 0,
-                    protein: Int(protein) ?? 0,
-                    carbs: Int(carbs) ?? 0,
-                    fat: Int(fat) ?? 0,
+                    protein: ServingUnitEditor.parseDecimal(protein) ?? 0,
+                    carbs: ServingUnitEditor.parseDecimal(carbs) ?? 0,
+                    fat: ServingUnitEditor.parseDecimal(fat) ?? 0,
                     timestamp: logDate,
                     source: .manual,
                     mealType: mealType
@@ -114,7 +114,7 @@ struct ManualEntryView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
             TextField("0", text: text)
-                .keyboardType(.numberPad)
+                .keyboardType(focus == .calories ? .numberPad : .decimalPad)
                 .textFieldStyle(.plain)
                 .focused($focused, equals: focus)
                 .padding(10)

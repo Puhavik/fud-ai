@@ -76,4 +76,9 @@ struct ServingUnitEditorTests {
         #expect(ServingUnitEditor.parseDecimal("0,5", locale: Locale(identifier: "en_US")) == nil)
     }
 
+    @Test func invalid_multipleDecimalSeparators() {
+        #expect(ServingUnitEditor.parseDecimal("1.2.3", locale: Locale(identifier: "en_US")) == nil)
+        #expect(ServingUnitEditor.parseDecimal("1,2,3", locale: Locale(identifier: "de_DE")) == nil)
+    }
+
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.apoorvdarshan.calorietracker.models.MacroValueFormatter
 import com.apoorvdarshan.calorietracker.ui.theme.AppColors
 
 /**
@@ -62,7 +63,7 @@ import com.apoorvdarshan.calorietracker.ui.theme.AppColors
 @Composable
 fun MacroCard(
     label: String,
-    current: Int,
+    current: Double,
     goal: Int,
     unit: String = "g",
     modifier: Modifier = Modifier,
@@ -75,7 +76,7 @@ fun MacroCard(
         label = "macroProgress"
     )
     val firstColor = gradientColors.firstOrNull() ?: AppColors.Calorie
-    val left = maxOf(0, goal - current)
+    val left = maxOf(0.0, goal.toDouble() - current)
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -89,7 +90,7 @@ fun MacroCard(
         ) {
             // Text("\(current)") .font(.system(.title, design: .rounded, weight: .bold))
             Text(
-                "$current",
+                MacroValueFormatter.string(current),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = firstColor
@@ -146,7 +147,7 @@ fun MacroCard(
 
         // Text("\(left)g left") .font(.system(.caption2, design: .rounded)) .foregroundStyle(.tertiary)
         Text(
-            "$left$unit left",
+            "${MacroValueFormatter.string(left)}$unit left",
             fontSize = 11.sp,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
         )

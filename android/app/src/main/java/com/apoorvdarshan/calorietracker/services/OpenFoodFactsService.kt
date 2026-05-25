@@ -82,9 +82,9 @@ object OpenFoodFactsService {
         return FoodAnalysis(
             name = productName(product, barcode),
             calories = (calories ?: 0.0).roundToInt(),
-            protein = (protein ?: 0.0).roundToInt(),
-            carbs = (carbs ?: 0.0).roundToInt(),
-            fat = (fat ?: 0.0).roundToInt(),
+            protein = protein ?: 0.0,
+            carbs = carbs ?: 0.0,
+            fat = fat ?: 0.0,
             servingSizeGrams = servingGrams,
             emoji = "🏷️",
             sugar = rounded(servingValue("sugars")),

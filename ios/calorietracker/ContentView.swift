@@ -1632,9 +1632,9 @@ private enum OpenFoodFactsService {
         return GeminiService.FoodAnalysis(
             name: name,
             calories: Int(round(calories ?? 0)),
-            protein: Int(round(protein ?? 0)),
-            carbs: Int(round(carbs ?? 0)),
-            fat: Int(round(fat ?? 0)),
+            protein: protein ?? 0,
+            carbs: carbs ?? 0,
+            fat: fat ?? 0,
             servingSizeGrams: servingGrams,
             emoji: "🏷️",
             sugar: rounded(servingValue("sugars", in: nutriments, scale: scale)),
@@ -1860,9 +1860,9 @@ struct NutritionDetailView: View {
 
                 Section("Macros") {
                     NutritionDetailRow(icon: "flame.fill", label: "Calories", value: "\(foodStore.calories(for: date))", unit: "kcal", goal: "\(userProfile.effectiveCalories)")
-                    NutritionDetailRow(icon: "p.circle.fill", label: "Protein", value: "\(foodStore.protein(for: date))", unit: "g", goal: "\(userProfile.effectiveProtein)")
-                    NutritionDetailRow(icon: "c.circle.fill", label: "Carbs", value: "\(foodStore.carbs(for: date))", unit: "g", goal: "\(userProfile.effectiveCarbs)")
-                    NutritionDetailRow(icon: "f.circle.fill", label: "Fat", value: "\(foodStore.fat(for: date))", unit: "g", goal: "\(userProfile.effectiveFat)")
+                    NutritionDetailRow(icon: "p.circle.fill", label: "Protein", value: MacroValueFormatter.string(foodStore.protein(for: date)), unit: "g", goal: "\(userProfile.effectiveProtein)")
+                    NutritionDetailRow(icon: "c.circle.fill", label: "Carbs", value: MacroValueFormatter.string(foodStore.carbs(for: date)), unit: "g", goal: "\(userProfile.effectiveCarbs)")
+                    NutritionDetailRow(icon: "f.circle.fill", label: "Fat", value: MacroValueFormatter.string(foodStore.fat(for: date)), unit: "g", goal: "\(userProfile.effectiveFat)")
                 }
                 .listRowBackground(AppColors.appCard)
 
@@ -2501,10 +2501,10 @@ struct FoodRow: View {
 
 struct MacroPill: View {
     let label: String
-    let value: Int
+    let value: Double
 
     var body: some View {
-        Text("\(label) \(value)g")
+        Text("\(label) \(MacroValueFormatter.withUnit(value))")
             .font(.system(.caption2, design: .rounded, weight: .medium))
             .foregroundStyle(.secondary)
             .padding(.horizontal, 6)
@@ -2561,11 +2561,12 @@ struct ProgressTabView: View {
         }.reversed()
     }
 
-    private var macroAverages: (protein: Int, carbs: Int, fat: Int) {
+    private var macroAverages: (protein: Double, carbs: Double, fat: Double) {
         let calendar = Calendar.current
         let days = timeRange.days
         let today = calendar.startOfDay(for: .now)
-        var totalP = 0, totalC = 0, totalF = 0, count = 0
+        var totalP = 0.0, totalC = 0.0, totalF = 0.0
+        var count = 0
         for offset in 0..<days {
             guard let date = calendar.date(byAdding: .day, value: -offset, to: today) else { continue }
             let dayEntries = foodStore.entries(for: date)
@@ -2576,7 +2577,7 @@ struct ProgressTabView: View {
             count += 1
         }
         guard count > 0 else { return (0, 0, 0) }
-        return (totalP / count, totalC / count, totalF / count)
+        return (totalP / Double(count), totalC / Double(count), totalF / Double(count))
     }
 
     var body: some View {

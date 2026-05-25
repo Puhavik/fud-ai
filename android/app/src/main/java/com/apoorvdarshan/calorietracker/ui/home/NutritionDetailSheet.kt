@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.apoorvdarshan.calorietracker.models.FoodEntry
 import com.apoorvdarshan.calorietracker.models.HomeTopNutrient
+import com.apoorvdarshan.calorietracker.models.MacroValueFormatter
 import com.apoorvdarshan.calorietracker.models.OptionalNutrientGoals
 import com.apoorvdarshan.calorietracker.models.UserProfile
 import com.apoorvdarshan.calorietracker.ui.components.FudGlassDialog
@@ -145,11 +146,11 @@ fun NutritionDetailSheet(
                 Card {
                     DetailRow(Icons.Filled.LocalFireDepartment, "Calories", "$calories", "kcal", goal = "${profile?.effectiveCalories ?: 2000}")
                     Hairline()
-                    DetailRow(null, "Protein", "$protein", "g", goal = "${profile?.effectiveProtein ?: 150}", labelGlyph = "P")
+                    DetailRow(null, "Protein", MacroValueFormatter.string(protein), "g", goal = "${profile?.effectiveProtein ?: 150}", labelGlyph = "P")
                     Hairline()
-                    DetailRow(null, "Carbs", "$carbs", "g", goal = "${profile?.effectiveCarbs ?: 220}", labelGlyph = "C")
+                    DetailRow(null, "Carbs", MacroValueFormatter.string(carbs), "g", goal = "${profile?.effectiveCarbs ?: 220}", labelGlyph = "C")
                     Hairline()
-                    DetailRow(null, "Fat", "$fat", "g", goal = "${profile?.effectiveFat ?: 70}", labelGlyph = "F")
+                    DetailRow(null, "Fat", MacroValueFormatter.string(fat), "g", goal = "${profile?.effectiveFat ?: 70}", labelGlyph = "F")
                 }
             }
 

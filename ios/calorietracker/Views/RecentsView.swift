@@ -285,10 +285,10 @@ private struct SavedMealRow: View {
 
 private struct MacroTag: View {
     let label: String
-    let value: Int
+    let value: Double
 
     var body: some View {
-        Text("\(label) \(value)g")
+        Text("\(label) \(MacroValueFormatter.withUnit(value))")
             .font(.system(.caption2, design: .rounded, weight: .medium))
             .foregroundStyle(.secondary)
             .padding(.horizontal, 6)

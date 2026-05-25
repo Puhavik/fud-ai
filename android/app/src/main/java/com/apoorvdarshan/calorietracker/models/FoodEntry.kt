@@ -10,9 +10,9 @@ data class FoodEntry(
     val id: UUID = UUID.randomUUID(),
     val name: String,
     val calories: Int,
-    val protein: Int,
-    val carbs: Int,
-    val fat: Int,
+    val protein: Double,
+    val carbs: Double,
+    val fat: Double,
     @Serializable(with = InstantSerializer::class)
     val timestamp: Instant = Instant.now(),
     /** Filename (not path) under filesDir/fudai-food-images/ where the JPEG lives. */

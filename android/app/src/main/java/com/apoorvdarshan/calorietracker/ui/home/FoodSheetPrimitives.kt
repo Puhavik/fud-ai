@@ -213,7 +213,7 @@ internal fun ServingQuantityCard(
 ) {
     val pickerOptions = ServingUnitOption.pickerOptions(unitOptions)
     val selectedOption = ServingUnitOption.optionMatching(selectedUnitId, unitOptions)
-    val parsedQuantity = quantityText.toDoubleOrNull()
+    val parsedQuantity = ServingUnitOption.parseQuantity(quantityText)
     val selectedUnitLabel = selectedOption.displayUnit(parsedQuantity)
 
     SheetPillCard {

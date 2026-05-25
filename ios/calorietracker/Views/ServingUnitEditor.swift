@@ -101,13 +101,22 @@ struct ServingUnitEditor: View {
     /// Parse a decimal string — accepts both "." (C locale) and "," (user locale).
     /// Tries C-locale parsing first, then locale-aware as fallback.
     static func parseDecimal(_ string: String, locale: Locale = .current) -> Double? {
-        if let value = Double(string) {
+        let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        if let value = Double(trimmed) {
             return value
         }
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = locale
-        return formatter.number(from: string)?.doubleValue
+        guard let decimalSeparator = locale.decimalSeparator,
+              decimalSeparator != ".",
+              trimmed.contains(decimalSeparator)
+        else { return nil }
+
+        var normalized = trimmed
+        if let groupingSeparator = locale.groupingSeparator, groupingSeparator != decimalSeparator {
+            normalized = normalized.replacingOccurrences(of: groupingSeparator, with: "")
+        }
+        normalized = normalized.replacingOccurrences(of: decimalSeparator, with: ".")
+        return Double(normalized)
     }
 }
 

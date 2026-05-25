@@ -73,9 +73,9 @@ struct CloudKitService {
     static func foodEntry(from record: CKRecord) -> FoodEntry? {
         guard let name = record["name"] as? String,
               let calories = record["calories"] as? Int,
-              let protein = record["protein"] as? Int,
-              let carbs = record["carbs"] as? Int,
-              let fat = record["fat"] as? Int,
+              let protein = doubleValue(record["protein"]),
+              let carbs = doubleValue(record["carbs"]),
+              let fat = doubleValue(record["fat"]),
               let timestamp = record["timestamp"] as? Date,
               let sourceRaw = record["source"] as? String,
               let source = FoodSource(rawValue: sourceRaw)
@@ -123,6 +123,13 @@ struct CloudKitService {
             omega3: record["omega3"] as? Double,
             servingSizeGrams: record["servingSizeGrams"] as? Double
         )
+    }
+
+    private static func doubleValue(_ value: Any?) -> Double? {
+        if let value = value as? Double { return value }
+        if let value = value as? Int { return Double(value) }
+        if let value = value as? NSNumber { return value.doubleValue }
+        return nil
     }
 
     // MARK: - WeightEntry ↔ CKRecord

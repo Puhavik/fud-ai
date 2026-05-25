@@ -115,7 +115,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.apoorvdarshan.calorietracker.R
 import com.apoorvdarshan.calorietracker.AppContainer
 import com.apoorvdarshan.calorietracker.models.FoodEntry
+import com.apoorvdarshan.calorietracker.models.MacroValueFormatter
 import com.apoorvdarshan.calorietracker.models.MealType
+import com.apoorvdarshan.calorietracker.models.ServingUnitOption
 import com.apoorvdarshan.calorietracker.ui.components.InAppCameraCaptureDialog
 import com.apoorvdarshan.calorietracker.ui.components.MacroCard
 import com.apoorvdarshan.calorietracker.ui.components.DateWheelPicker
@@ -1416,7 +1418,7 @@ private fun FoodRow(
 }
 
 @Composable
-private fun MacroChip(label: String, value: Int) {
+private fun MacroChip(label: String, value: Double) {
     Box(
         Modifier
             .clip(CircleShape)
@@ -1424,7 +1426,7 @@ private fun MacroChip(label: String, value: Int) {
             .padding(horizontal = 8.dp, vertical = 3.dp)
     ) {
         Text(
-            "$label ${value}g",
+            "$label ${MacroValueFormatter.withUnit(value)}",
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
@@ -1733,9 +1735,9 @@ private fun AnalysisResultDialog(
         FudGlassSurface(modifier = Modifier.fillMaxWidth(), cornerRadius = 20.dp, padding = 16.dp) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("${analysis.calories} kcal", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = AppColors.Calorie)
-                Text("Protein: ${analysis.protein}g")
-                Text("Carbs: ${analysis.carbs}g")
-                Text("Fat: ${analysis.fat}g")
+                Text("Protein: ${MacroValueFormatter.withUnit(analysis.protein)}")
+                Text("Carbs: ${MacroValueFormatter.withUnit(analysis.carbs)}")
+                Text("Fat: ${MacroValueFormatter.withUnit(analysis.fat)}")
                 if (analysis.fiber != null || analysis.sugar != null || analysis.sodium != null) {
                     Spacer(Modifier.height(2.dp))
                     analysis.fiber?.let { Text("Fiber: ${it}g", fontSize = 12.sp) }
@@ -1809,7 +1811,7 @@ private fun TextInputDialog(onDismiss: () -> Unit, onSubmit: (String) -> Unit) {
 @Composable
 private fun ManualEntryDialog(
     onDismiss: () -> Unit,
-    onSave: (name: String, calories: Int, protein: Int, carbs: Int, fat: Int, mealType: MealType) -> Unit
+    onSave: (name: String, calories: Int, protein: Double, carbs: Double, fat: Double, mealType: MealType) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var calories by remember { mutableStateOf("") }
@@ -1834,11 +1836,11 @@ private fun ManualEntryDialog(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     NumberField("Calories", calories, { calories = it.filter(Char::isDigit) }, Modifier.weight(1f))
-                    NumberField("Protein (g)", protein, { protein = it.filter(Char::isDigit) }, Modifier.weight(1f))
+                    NumberField("Protein (g)", protein, { protein = filterDecimalInput(it) }, Modifier.weight(1f), decimal = true)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    NumberField("Carbs (g)", carbs, { carbs = it.filter(Char::isDigit) }, Modifier.weight(1f))
-                    NumberField("Fat (g)", fat, { fat = it.filter(Char::isDigit) }, Modifier.weight(1f))
+                    NumberField("Carbs (g)", carbs, { carbs = filterDecimalInput(it) }, Modifier.weight(1f), decimal = true)
+                    NumberField("Fat (g)", fat, { fat = filterDecimalInput(it) }, Modifier.weight(1f), decimal = true)
                 }
 
                 // Meal Type — DropdownMenu styled to match the FoodResultSheet /
@@ -1896,9 +1898,9 @@ private fun ManualEntryDialog(
                         onSave(
                             name.trim(),
                             calories.toIntOrNull() ?: 0,
-                            protein.toIntOrNull() ?: 0,
-                            carbs.toIntOrNull() ?: 0,
-                            fat.toIntOrNull() ?: 0,
+                            ServingUnitOption.parseQuantity(protein) ?: 0.0,
+                            ServingUnitOption.parseQuantity(carbs) ?: 0.0,
+                            ServingUnitOption.parseQuantity(fat) ?: 0.0,
                             mealType
                         )
                     },
@@ -1912,13 +1914,18 @@ private fun ManualEntryDialog(
 }
 
 @Composable
-private fun NumberField(label: String, value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun NumberField(label: String, value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier, decimal: Boolean = false) {
     FudGlassTextField(
         value = value,
         onValueChange = onValueChange,
         placeholder = label,
         singleLine = true,
-        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+            keyboardType = if (decimal) androidx.compose.ui.text.input.KeyboardType.Decimal else androidx.compose.ui.text.input.KeyboardType.Number
+        ),
         modifier = modifier
     )
 }
+
+private fun filterDecimalInput(value: String): String =
+    value.filter { it.isDigit() || it == '.' || it == ',' }
