@@ -1,6 +1,6 @@
 # App Store Listing
 
-App Store Connect submission details for Fud AI v3.6. Each field is in a code block for easy copy-paste.
+App Store Connect submission details for Fud AI v4.0. Each field is in a code block for easy copy-paste.
 
 ## App Name
 ```
@@ -14,7 +14,7 @@ Food & Macro Tracker
 
 ## Promotional Text (170 chars max)
 ```
-Camera + Camera logging, expanded nutrients, smarter widgets, barcode, Plus, and custom Home nutrient cards.
+Apple Watch, Share Extension, Health energy goals, decimal macros, progress summaries, and Gemini 3.5 Flash.
 ```
 
 ## Keywords (100 chars max)
@@ -28,25 +28,26 @@ Primary: Health & Fitness
 Secondary: Food & Drink
 ```
 
-## What's New (v3.6)
+## What's New (v4.0)
 ```
-Fud AI 3.6 — expanded nutrients and better capture flows.
+Fud AI 4.0 — Apple Watch, faster sharing, and clearer nutrition totals.
 
 NEW
-• Added Camera + Camera logging for combining two photos in one analysis.
-• Widgets now follow the selected Home nutrient cards instead of fixed macros.
-• Expanded optional nutrient tracking and goals with vitamins, minerals, and extra fats.
-• Added more nutrients to View More, Home card selection, and AI-estimated goals.
-• Improved Plus onboarding/update messaging for non-technical users.
+• Added Apple Watch app and complications for calories and macros at a glance.
+• Added iOS Share Extension support so food photos can be sent into Fud AI from Photos and other apps.
+• Added optional Apple Health energy-burn goals in Goal Settings.
+• Macro and nutrient totals now keep decimal precision across logs, Home, widgets, and View More.
+• Weight and body-fat progress now show average and net change summaries.
+• Added Gemini 3.5 Flash and a default grams setting with an in-app explanation.
 
-BYOK mode remains available, and existing calorie/macro goal calculations are unchanged.
+Macros remain editable after energy-burn goal estimates, BYOK mode remains available, and existing logged data is preserved on update.
 ```
 
 ## Description
 ```
 Effortless calorie tracking with AI-powered food recognition. Snap, scan, speak, or type a meal — get instant nutrition: calories, protein, carbs, fats, vitamins, minerals, and more.
 
-NEW in v3.6: Camera + Camera logging, expanded optional nutrients and goals, widgets that follow your selected Home nutrient cards, and clearer Fud AI Plus guidance for users who do not want to manage API keys.
+NEW in v4.0: Apple Watch app + complications, iOS Share Extension food-photo import, Apple Health energy-burn goals, decimal macro totals, progress average/net-change summaries, Gemini 3.5 Flash, and default grams controls.
 
 Free, open source, privacy-first. Bring your own API key, or use optional Fud AI Plus if you do not want to set up APIs.
 
@@ -60,7 +61,7 @@ HOW TO USE
 Photo, Photo + Note, Photo + Photo, Nutrition Label, Barcode, From Photos, From Photos + Note, Voice, Text, Manual Entry, and Saved Meals.
 
 13 AI PROVIDERS
-Google Gemini, OpenAI, Anthropic Claude, xAI Grok, Groq, OpenRouter, Together AI, Hugging Face, Fireworks AI, DeepInfra, Mistral, Ollama, or any OpenAI-compatible endpoint. Switch anytime. Keys are stored in iOS Keychain. Add Custom AI Instructions and an optional Fallback Provider.
+Google Gemini including Gemini 3.5 Flash, OpenAI, Anthropic Claude, xAI Grok, Groq, OpenRouter, Together AI, Hugging Face, Fireworks AI, DeepInfra, Mistral, Ollama, or any OpenAI-compatible endpoint. Switch anytime. Keys are stored in iOS Keychain. Add Custom AI Instructions and an optional Fallback Provider.
 
 AI ACCESS MODES
 Bring Your Own Key remains available for full provider control. Fud AI Plus is optional and uses Fud AI's proxy for no-key food scans, Deepgram voice transcription, and Coach access with daily limits. Plus includes weekly, monthly, and yearly plans.
@@ -81,10 +82,10 @@ PERSONALIZED GOALS
 BMR via Katch-McArdle or Mifflin-St Jeor, TDEE with 6 activity levels, auto-calculated calorie + protein + carbs + fat targets, and optional detailed nutrient goals. Optional goals stay separate from the calorie and macro calculator.
 
 PROGRESS
-Weight / Body Fat chart, goal lines, calorie trend vs goal, and macro averages over 1W, 1M, 3M, 6M, 1Y, All Time.
+Weight / Body Fat chart, average and net change summaries, goal lines, calorie trend vs goal, and macro averages over 1W, 1M, 3M, 6M, 1Y, All Time.
 
 WIDGETS
-Widgets in all 5 families — Small, Medium, Circular, Rectangular, Inline. Nutrient widgets follow the three Home cards you choose.
+Widgets in all 5 families — Small, Medium, Circular, Rectangular, Inline. Nutrient widgets follow the three Home cards you choose. Apple Watch app and complications show calories and macros at a glance.
 
 15 LANGUAGES
 English, Spanish, French, German, Italian, Portuguese (BR), Dutch, Russian, Japanese, Korean, Chinese (Simplified), Hindi, Arabic, Romanian, Azerbaijani.
@@ -93,7 +94,7 @@ PRIVACY
 No account, no sign-in, no cloud sync, no analytics, no ads, no tracking. BYOK keys stay on-device. Barcode sends only the barcode to Open Food Facts. Plus sends only active AI or speech requests through Fud AI's proxy. MIT licensed.
 
 APPLE HEALTH
-Two-way sync for nutrition, weight, height, and body fat. External samples from Apple Watch, scales, and Health app can auto-import.
+Two-way sync for nutrition, weight, height, and body fat. External samples from Apple Watch, scales, and Health app can auto-import. Optional energy-burn goals can use Apple Health active/total energy to estimate calorie targets while keeping macros editable.
 
 Fud AI is not medical advice — consult a healthcare professional before significant diet changes.
 

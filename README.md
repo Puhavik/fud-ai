@@ -25,7 +25,7 @@
 
 ---
 
-Open-source, privacy-first calorie tracker for iOS and Android. Bring your own AI provider — 13 supported including Gemini, OpenAI, Claude, Grok, Groq, Hugging Face, Fireworks AI, DeepInfra, Mistral, and any custom OpenAI-compatible endpoint. iOS also supports Fud AI Plus, an optional paid no-key mode that routes food scans and Coach through Gemini and Plus voice through Deepgram via a serverless proxy with daily limits and speech language control. Snap a meal, scan a barcode, combine two camera shots, add a note to a camera or library photo, ask your AI coach how to hit your goal, or speak your lunch. No accounts, no cloud sync, no tracking.
+Open-source, privacy-first calorie tracker for iOS and Android. Bring your own AI provider — 13 supported including Gemini, OpenAI, Claude, Grok, Groq, Hugging Face, Fireworks AI, DeepInfra, Mistral, and any custom OpenAI-compatible endpoint. iOS also supports Fud AI Plus, an optional paid no-key mode that routes food scans and Coach through Gemini and Plus voice through Deepgram via a serverless proxy with daily limits and speech language control. Snap a meal, share a food photo into Fud AI, scan a barcode, combine two camera shots, add a note to a camera or library photo, ask your AI coach how to hit your goal, or speak your lunch. No accounts, no cloud sync, no tracking.
 
 [App Store](https://apps.apple.com/us/app/fud-ai-calorie-tracker/id6758935726) · [Google Play](https://play.google.com/store/apps/details?id=com.apoorvdarshan.calorietracker) · [Website](https://fud-ai.app) · [Report an Issue](https://github.com/apoorvdarshan/fud-ai/issues/new?labels=bug&title=Bug:%20) · [Request a Feature](https://github.com/apoorvdarshan/fud-ai/issues/new?labels=enhancement&title=Feature:%20)
 
@@ -37,6 +37,7 @@ Open-source, privacy-first calorie tracker for iOS and Android. Bring your own A
 - **Snap food** — camera identifies meals and estimates nutrition
 - **Camera + Note** — add a description with the photo for better accuracy
 - **Camera + Camera** — capture two images for one analysis, useful for front/back packaging or food + label combos
+- **iOS Share Extension** — send a food photo from Photos or another app directly into Fud AI for review and logging
 - **Nutrition label scan** — reads packaging for precise per-serving data
 - **Barcode lookup** — scan packaged foods on iOS and Android and fill nutrition from Open Food Facts when product data is available
 - **Photo library** — analyze existing photos
@@ -62,14 +63,17 @@ Open-source, privacy-first calorie tracker for iOS and Android. Bring your own A
 - **Scrollable week calendar** — swipe to any past week, configurable start day
 - **Food log sorting** — keep the default grouped view, or sort meal sections by latest logging order from the Home screen
 - **Progress charts** — weight trends, calorie history, macro averages (1W to All Time)
+- **Progress summaries** — weight and body-fat ranges show average and net change for the selected week, month, or longer window
+- **Decimal nutrition totals** — macros and detailed nutrients preserve decimal precision in logs, Home, widgets, and View More
 - **Weight History** — tap-to-delete past entries, syncs deletion to Apple Health
 - **Goal tracking** — set target weight, BMR/TDEE auto-calculation; goal-reached alert fires from both manual logs and Apple Health reads
 
 ### Health & platform
-- **Apple Health** — bidirectional sync for body measurements + nutrition types written per meal
+- **Apple Health** — bidirectional sync for body measurements + nutrition types written per meal; optional energy-burn goals can estimate calorie targets from active/total energy while macros stay editable
 - **Health Connect** — Android sync for nutrition, weight, and body fat, with permission reconciliation and backfill support
-- **Widgets** — Home Screen and Lock Screen widgets on iOS now follow your selected Home nutrient cards instead of fixed macros; Android Glance widgets update when you log
-- **Android 2.0 UI refresh** — cleaner glass-style menus, sheets, dialogs, selectors, light mode, bottom spacing, cached thumbnails, in-app camera capture, and safer food-row gestures
+- **Apple Watch** — watchOS app and complications show calories and macros at a glance
+- **Widgets** — Home Screen and Lock Screen widgets on iOS follow your selected Home nutrient cards instead of fixed macros; Android Glance widgets update when you log
+- **Android 2.1 updates** — cleaner glass-style UI, in-app camera capture, Health Connect fixes, progress summaries, safer food-row gestures, and updated release/update flows
 - **Share the App** — native iOS share sheet from About → forwards App Store URL plus a personalized message and `fud-ai.app` link; message body localized into all 15 languages
 - **Update check** — About shows the installed app version, opens the App Store / Play Store when a newer version is available, and shows a tab dot for pending updates
 - **Theme color** — iOS and Android Settings let users change the app accent, with matching home screen / launcher icons
@@ -86,7 +90,7 @@ Fud AI Plus proxy env vars: `GEMINI_API_KEY` is required for food/Coach, and `DE
 
 | Provider | Format | Highlight | Needs API Key |
 |----------|--------|-----------|:---:|
-| Google Gemini | Gemini API | Gemini 2.5 Pro / Flash | Yes |
+| Google Gemini | Gemini API | Gemini 3.5 Flash / 2.5 Pro / Flash | Yes |
 | OpenAI | OpenAI | GPT-5 / 4o | Yes |
 | Anthropic Claude | Messages API | Sonnet 4.6 (default) / Opus 4.7 / Haiku 4.5 | Yes |
 | xAI Grok | OpenAI-compatible | Grok 4 | Yes |
@@ -234,8 +238,8 @@ All values can be manually overridden in Settings, with a **Recalculate Goals** 
 
 ```
 fud-ai/
-├── ios/          # SwiftUI iOS app (shipping on App Store, v3.6)
-├── android/      # Kotlin + Jetpack Compose app (min SDK 26 / Android 8.0, v2.0.0)
+├── ios/          # SwiftUI iOS app (shipping on App Store, v4.0)
+├── android/      # Kotlin + Jetpack Compose app (min SDK 26 / Android 8.0, v2.1.0)
 ├── web/          # Marketing site — https://fud-ai.app (static HTML/CSS, Vercel)
 ├── APPSTORE.md   # App Store Connect listing copy (iOS)
 ├── PLAYSTORE.md  # Google Play Console listing copy (Android)
@@ -316,7 +320,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.apoorvdarshan.calorietracker/.MainActivity
 ```
 
-First launch walks you through a 15-step onboarding (gender, birthday, height/weight with metric/imperial toggle, body fat %, activity, goal, goal speed, notifications, Health Connect, AI access mode, plan preview, review). A free Gemini key is available at [aistudio.google.com/apikey](https://aistudio.google.com/apikey), or iOS users can choose Fud AI Plus. You can switch anytime in **Settings → AI Access**.
+First launch walks you through onboarding (gender, birthday, height/weight with metric/imperial toggle, body fat %, activity, goal, goal speed, notifications, Apple Health / Health Connect, AI access mode, plan preview, review). A free Gemini key is available at [aistudio.google.com/apikey](https://aistudio.google.com/apikey), or iOS users can choose Fud AI Plus. You can switch anytime in **Settings → AI Access**.
 
 ## Contributing
 
@@ -330,7 +334,7 @@ See [SECURITY.md](SECURITY.md). Use [private vulnerability reporting](https://gi
 
 ## Privacy
 
-No accounts, no cloud sync, no analytics. BYOK API keys are encrypted on-device and requests go directly to the provider you choose. Barcode lookup sends the scanned barcode to Open Food Facts and stores the returned nutrition locally. Fud AI Plus sends only the active AI/STT request through the proxy for processing and quota enforcement: Gemini for food/Coach and Deepgram for voice. Optional nutrient goals, Home nutrient-card choices, food photos, cached thumbnails, and widget snapshots are local preferences/data; AI estimation sends only the profile context needed for that one estimate. **Delete All Data** is local-only — it wipes the app's storage (food log, weight log, body-fat log, profile, Coach chat, saved meals, API keys, widget snapshot) but never touches Apple Health or Health Connect. Samples you've synced are yours; if you want them cleaned up, do it from Health / Health Connect settings. See [Privacy Policy](https://fud-ai.app/privacy.html).
+No accounts, no cloud sync, no analytics. BYOK API keys are encrypted on-device and requests go directly to the provider you choose. Barcode lookup sends the scanned barcode to Open Food Facts and stores the returned nutrition locally. Fud AI Plus sends only the active AI/STT request through the proxy for processing and quota enforcement: Gemini for food/Coach and Deepgram for voice. Optional nutrient goals, Home nutrient-card choices, food photos from the app or iOS Share Extension, cached thumbnails, widget snapshots, and Apple Watch nutrition snapshots are local preferences/data; AI estimation sends only the profile context needed for that one estimate. Apple Health energy-burn goals read active/total energy only after the user enables that setting. **Delete All Data** is local-only — it wipes the app's storage (food log, weight log, body-fat log, profile, Coach chat, saved meals, API keys, widget / Watch snapshot) but never touches Apple Health or Health Connect. Samples you've synced are yours; if you want them cleaned up, do it from Health / Health Connect settings. See [Privacy Policy](https://fud-ai.app/privacy.html).
 
 ## License
 

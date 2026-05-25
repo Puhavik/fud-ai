@@ -344,6 +344,7 @@ private struct AboutView: View {
     private let refreshUpdateState: () async -> Void
 
     @State private var showShareSheet = false
+    @State private var showWhatsNew = false
 
     init(updateState: Binding<AppUpdateState>, refreshUpdateState: @escaping () async -> Void) {
         self._updateState = updateState
@@ -359,6 +360,7 @@ private struct AboutView: View {
             List {
                 Section {
                     updateRow
+                    whatsNewRow
 
                     // Rate the App
                     Button {
@@ -547,6 +549,48 @@ private struct AboutView: View {
                 ActivityShareSheet(activityItems: [shareMessage, fudAIAppStoreURL])
             }
         }
+    }
+
+    private static let whatsNewItems = [
+        "Apple Watch app and complications for calories and macros at a glance.",
+        "Share Extension support for sending food photos into Fud AI from Photos and other apps.",
+        "Apple Health energy-burn goals that can estimate calorie targets while keeping macros editable.",
+        "Decimal nutrition totals on logs, Home, widgets, and nutrition detail views.",
+        "Weight and body-fat progress now show average and net change summaries.",
+        "Gemini 3.5 Flash and the default grams setting are available in Settings."
+    ]
+
+    private var whatsNewRow: some View {
+        DisclosureGroup(isExpanded: $showWhatsNew) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Fud AI 4.0")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.primary)
+
+                ForEach(Self.whatsNewItems, id: \.self) { item in
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(AppColors.protein)
+                            .padding(.top, 2)
+
+                        Text(item)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+            .padding(.top, 8)
+        } label: {
+            Label {
+                Text("What's New")
+            } icon: {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(AppColors.calorie)
+            }
+        }
+        .tint(AppColors.calorie)
     }
 
     @ViewBuilder
