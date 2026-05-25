@@ -144,7 +144,8 @@ extension ServingUnitOption {
 
     static func initialUnitID(
         preferredUnit: String?,
-        options: [ServingUnitOption]
+        options: [ServingUnitOption],
+        defaultToGrams: Bool = false
     ) -> String {
         let pickerOptions = pickerOptions(for: options)
         if let preferredUnit {
@@ -152,6 +153,9 @@ extension ServingUnitOption {
             if pickerOptions.contains(where: { $0.id == preferredID }) {
                 return preferredID
             }
+        }
+        if defaultToGrams {
+            return ServingUnitOption.grams.id
         }
         return options.first?.id ?? ServingUnitOption.grams.id
     }

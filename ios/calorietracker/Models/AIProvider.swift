@@ -218,6 +218,7 @@ enum AIProvider: String, CaseIterable, Codable, Identifiable {
         switch self {
         case .gemini: [
             "gemini-3.1-flash-lite",         // vision, newest, cheapest
+            "gemini-3.5-flash",              // vision, requested fast model
             "gemini-3.1-pro-preview",        // vision, newest flagship
             "gemini-3-flash-preview",        // vision, newest fast
             "gemini-2.5-flash",              // vision, prior fast

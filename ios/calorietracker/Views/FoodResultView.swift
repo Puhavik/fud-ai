@@ -130,9 +130,11 @@ struct FoodResultView: View {
         onLog: @escaping (FoodEntry) -> Void
     ) {
         let normalizedServingUnitOptions = ServingUnitOption.normalizedOptions(servingUnitOptions, totalGrams: servingSizeGrams)
+        let preferredServingUnit = FoodMeasurementSettings.preferGramsByDefault ? nil : selectedServingUnit
         let initialServingUnitID = ServingUnitOption.initialUnitID(
-            preferredUnit: selectedServingUnit,
-            options: normalizedServingUnitOptions
+            preferredUnit: preferredServingUnit,
+            options: normalizedServingUnitOptions,
+            defaultToGrams: FoodMeasurementSettings.preferGramsByDefault
         )
         self.image = image
         self.emoji = emoji

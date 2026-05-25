@@ -92,7 +92,8 @@ struct EditFoodEntryView: View {
         let normalizedServingUnitOptions = ServingUnitOption.normalizedOptions(entry.servingUnitOptions, totalGrams: serving)
         let initialServingUnitID = ServingUnitOption.initialUnitID(
             preferredUnit: entry.selectedServingUnit,
-            options: normalizedServingUnitOptions
+            options: normalizedServingUnitOptions,
+            defaultToGrams: FoodMeasurementSettings.preferGramsByDefault
         )
         self.baseCalories = entry.calories
         self.baseProtein = entry.protein

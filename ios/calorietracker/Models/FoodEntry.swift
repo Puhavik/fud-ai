@@ -88,6 +88,15 @@ struct ServingUnitOption: Codable, Hashable, Identifiable {
     }
 }
 
+struct FoodMeasurementSettings {
+    static let preferGramsByDefaultKey = "foodMeasurementPreferGramsByDefault"
+
+    static var preferGramsByDefault: Bool {
+        get { UserDefaults.standard.bool(forKey: preferGramsByDefaultKey) }
+        set { UserDefaults.standard.set(newValue, forKey: preferGramsByDefaultKey) }
+    }
+}
+
 struct FoodEntry: Identifiable, Codable {
     let id: UUID
     var name: String

@@ -2701,6 +2701,7 @@ struct ProfileView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = true
     @AppStorage("healthKitEnabled") private var healthKitEnabled = false
     @AppStorage("weekStartsOnMonday") private var weekStartsOnMonday = false
+    @AppStorage(FoodMeasurementSettings.preferGramsByDefaultKey) private var preferGramsByDefault = false
     @AppStorage(AppThemeColor.storageKey) private var appThemeColorRaw = AppThemeColor.defaultColor.rawValue
 
     enum ActiveSheet: String, Identifiable {
@@ -3040,6 +3041,16 @@ struct ProfileView: View {
                             Text("Metric Units")
                         } icon: {
                             Image(systemName: "ruler")
+                                .foregroundStyle(AppColors.calorie)
+                        }
+                    }
+                    .tint(AppColors.calorie)
+
+                    Toggle(isOn: $preferGramsByDefault) {
+                        Label {
+                            Text("Default to Grams")
+                        } icon: {
+                            Image(systemName: "scalemass")
                                 .foregroundStyle(AppColors.calorie)
                         }
                     }
