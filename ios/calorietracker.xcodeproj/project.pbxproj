@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-			BA8E0E2D2F33F198007DD537 /* FudAIWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BA8E0E272F33F198007DD537 /* FudAIWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-			BA8E0E382F33F198007DD537 /* calorietrackerShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BA8E0E372F33F198007DD537 /* calorietrackerShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-			F00DCA700000000000000001 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = F00DCA700000000000000003 /* RevenueCat */; };
+		BA8E0E2D2F33F198007DD537 /* FudAIWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BA8E0E272F33F198007DD537 /* FudAIWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BA8E0E382F33F198007DD537 /* calorietrackerShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BA8E0E372F33F198007DD537 /* calorietrackerShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F00D10000000000000000001 /* FudAIWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = F00D10000000000000000007 /* FudAIWatchApp.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F00D10000000000000000002 /* FudAIWatchWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F00D10000000000000000008 /* FudAIWatchWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F00DCA700000000000000001 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = F00DCA700000000000000003 /* RevenueCat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +43,20 @@
 			remoteGlobalIDString = BA8E0E392F33F198007DD537;
 			remoteInfo = calorietrackerShare;
 		};
+		F00D10000000000000000003 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BA8E0DEB2F33F197007DD537 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F00D1000000000000000000F;
+			remoteInfo = FudAIWatchApp;
+		};
+		F00D10000000000000000004 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BA8E0DEB2F33F197007DD537 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F00D10000000000000000010;
+			remoteInfo = FudAIWatchWidgetsExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,6 +72,28 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F00D10000000000000000005 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				F00D10000000000000000001 /* FudAIWatchApp.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F00D10000000000000000006 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F00D10000000000000000002 /* FudAIWatchWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +102,8 @@
 		BA8E0E112F33F198007DD537 /* calorietrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = calorietrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA8E0E272F33F198007DD537 /* FudAIWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FudAIWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA8E0E372F33F198007DD537 /* calorietrackerShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = calorietrackerShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F00D10000000000000000007 /* FudAIWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FudAIWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F00D10000000000000000008 /* FudAIWatchWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FudAIWatchWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -87,6 +127,20 @@
 				Info.plist,
 			);
 			target = BA8E0E392F33F198007DD537 /* calorietrackerShare */;
+		};
+		F00D10000000000000000009 /* Exceptions for "FudAIWatchApp" folder in "FudAIWatchApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F00D1000000000000000000F /* FudAIWatchApp */;
+		};
+		F00D1000000000000000000A /* Exceptions for "FudAIWatchWidgets" folder in "FudAIWatchWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F00D10000000000000000010 /* FudAIWatchWidgetsExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -125,17 +179,33 @@
 			path = calorietrackerShare;
 			sourceTree = "<group>";
 		};
+		F00D1000000000000000000B /* FudAIWatchApp */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F00D10000000000000000009 /* Exceptions for "FudAIWatchApp" folder in "FudAIWatchApp" target */,
+			);
+			path = FudAIWatchApp;
+			sourceTree = "<group>";
+		};
+		F00D1000000000000000000C /* FudAIWatchWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F00D1000000000000000000A /* Exceptions for "FudAIWatchWidgets" folder in "FudAIWatchWidgetsExtension" target */,
+			);
+			path = FudAIWatchWidgets;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-			BA8E0DF02F33F197007DD537 /* Frameworks */ = {
-				isa = PBXFrameworksBuildPhase;
-				buildActionMask = 2147483647;
-				files = (
-					F00DCA700000000000000001 /* RevenueCat in Frameworks */,
-				);
-				runOnlyForDeploymentPostprocessing = 0;
-			};
+		BA8E0DF02F33F197007DD537 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F00DCA700000000000000001 /* RevenueCat in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BA8E0E042F33F198007DD537 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -164,6 +234,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F00D1000000000000000000D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F00D1000000000000000000E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -173,6 +257,8 @@
 				BA8E0DF52F33F197007DD537 /* calorietracker */,
 				BA8E0E252F33F198007DD537 /* FudAIWidgets */,
 				BA8E0E3A2F33F198007DD537 /* calorietrackerShare */,
+				F00D1000000000000000000B /* FudAIWatchApp */,
+				F00D1000000000000000000C /* FudAIWatchWidgets */,
 				BA8E0E0A2F33F198007DD537 /* calorietrackerTests */,
 				BA8E0E142F33F198007DD537 /* calorietrackerUITests */,
 				BA8E0DF42F33F197007DD537 /* Products */,
@@ -187,6 +273,8 @@
 				BA8E0E112F33F198007DD537 /* calorietrackerUITests.xctest */,
 				BA8E0E272F33F198007DD537 /* FudAIWidgetsExtension.appex */,
 				BA8E0E372F33F198007DD537 /* calorietrackerShare.appex */,
+				F00D10000000000000000007 /* FudAIWatchApp.app */,
+				F00D10000000000000000008 /* FudAIWatchWidgetsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -202,22 +290,24 @@
 				BA8E0DF02F33F197007DD537 /* Frameworks */,
 				BA8E0DF12F33F197007DD537 /* Resources */,
 				BA8E0E2C2F33F198007DD537 /* Embed Foundation Extensions */,
+				F00D10000000000000000005 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				BA8E0E2E2F33F198007DD537 /* PBXTargetDependency */,
 				BA8E0E3D2F33F198007DD537 /* PBXTargetDependency */,
+				F00D10000000000000000015 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				BA8E0DF52F33F197007DD537 /* calorietracker */,
 			);
-				name = calorietracker;
-				packageProductDependencies = (
-					F00DCA700000000000000003 /* RevenueCat */,
-				);
-				productName = calorietracker;
-				productReference = BA8E0DF32F33F197007DD537 /* calorietracker.app */;
+			name = calorietracker;
+			packageProductDependencies = (
+				F00DCA700000000000000003 /* RevenueCat */,
+			);
+			productName = calorietracker;
+			productReference = BA8E0DF32F33F197007DD537 /* calorietracker.app */;
 			productType = "com.apple.product-type.application";
 		};
 		BA8E0E062F33F198007DD537 /* calorietrackerTests */ = {
@@ -308,6 +398,52 @@
 			productReference = BA8E0E372F33F198007DD537 /* calorietrackerShare.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		F00D1000000000000000000F /* FudAIWatchApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F00D1000000000000000001B /* Build configuration list for PBXNativeTarget "FudAIWatchApp" */;
+			buildPhases = (
+				F00D10000000000000000013 /* Sources */,
+				F00D1000000000000000000D /* Frameworks */,
+				F00D10000000000000000011 /* Resources */,
+				F00D10000000000000000006 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F00D10000000000000000016 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F00D1000000000000000000B /* FudAIWatchApp */,
+			);
+			name = FudAIWatchApp;
+			packageProductDependencies = (
+			);
+			productName = "FudAIWatchApp Watch App";
+			productReference = F00D10000000000000000007 /* FudAIWatchApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F00D10000000000000000010 /* FudAIWatchWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F00D1000000000000000001C /* Build configuration list for PBXNativeTarget "FudAIWatchWidgetsExtension" */;
+			buildPhases = (
+				F00D10000000000000000014 /* Sources */,
+				F00D1000000000000000000E /* Frameworks */,
+				F00D10000000000000000012 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F00D1000000000000000000C /* FudAIWatchWidgets */,
+			);
+			name = FudAIWatchWidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = FudAIWatchWidgetsExtension;
+			productReference = F00D10000000000000000008 /* FudAIWatchWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -335,6 +471,12 @@
 					BA8E0E392F33F198007DD537 = {
 						CreatedOnToolsVersion = 26.2;
 					};
+					F00D1000000000000000000F = {
+						CreatedOnToolsVersion = 26.5;
+					};
+					F00D10000000000000000010 = {
+						CreatedOnToolsVersion = 26.5;
+					};
 				};
 			};
 			buildConfigurationList = BA8E0DEE2F33F197007DD537 /* Build configuration list for PBXProject "calorietracker" */;
@@ -359,18 +501,20 @@
 				Base,
 			);
 			mainGroup = BA8E0DEA2F33F197007DD537;
-				minimizedProjectReferenceProxies = 1;
-				packageReferences = (
-					F00DCA700000000000000002 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
-				);
-				preferredProjectObjectVersion = 77;
-				productRefGroup = BA8E0DF42F33F197007DD537 /* Products */;
-				projectDirPath = "";
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F00DCA700000000000000002 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = BA8E0DF42F33F197007DD537 /* Products */;
+			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				BA8E0DF22F33F197007DD537 /* calorietracker */,
 				BA8E0E282F33F198007DD537 /* FudAIWidgetsExtension */,
 				BA8E0E392F33F198007DD537 /* calorietrackerShare */,
+				F00D1000000000000000000F /* FudAIWatchApp */,
+				F00D10000000000000000010 /* FudAIWatchWidgetsExtension */,
 				BA8E0E062F33F198007DD537 /* calorietrackerTests */,
 				BA8E0E102F33F198007DD537 /* calorietrackerUITests */,
 			);
@@ -407,6 +551,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BA8E0E432F33F198007DD537 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F00D10000000000000000011 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F00D10000000000000000012 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -451,6 +609,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F00D10000000000000000013 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F00D10000000000000000014 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -474,18 +646,29 @@
 			target = BA8E0E392F33F198007DD537 /* calorietrackerShare */;
 			targetProxy = BA8E0E3C2F33F198007DD537 /* PBXContainerItemProxy */;
 		};
+		F00D10000000000000000015 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = F00D1000000000000000000F /* FudAIWatchApp */;
+			targetProxy = F00D10000000000000000003 /* PBXContainerItemProxy */;
+		};
+		F00D10000000000000000016 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F00D10000000000000000010 /* FudAIWatchWidgetsExtension */;
+			targetProxy = F00D10000000000000000004 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		BA8E0E1B2F33F198007DD537 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconRed AppIconOrange AppIconGreen AppIconMint AppIconTeal AppIconBlue AppIconPurple";
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				APP_DISPLAY_NAME = "Fud AI Debug";
 				APP_GROUP_IDENTIFIER = group.com.apoorvdarshan.calorietracker.debug;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconRed AppIconOrange AppIconGreen AppIconMint AppIconTeal AppIconBlue AppIconPurple";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = calorietracker/calorietracker.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 15;
@@ -512,11 +695,11 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.6;
-					PRODUCT_BUNDLE_IDENTIFIER = com.apoorvdarshan.calorietracker.debug;
-					PRODUCT_NAME = "$(TARGET_NAME)";
-					REVENUECAT_API_KEY = appl_gTWwNXfsUvRsJAxvqyNandnyjVa;
-					STRING_CATALOG_GENERATE_SYMBOLS = YES;
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				PRODUCT_BUNDLE_IDENTIFIER = com.apoorvdarshan.calorietracker.debug;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REVENUECAT_API_KEY = appl_gTWwNXfsUvRsJAxvqyNandnyjVa;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -532,12 +715,12 @@
 		BA8E0E1C2F33F198007DD537 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconRed AppIconOrange AppIconGreen AppIconMint AppIconTeal AppIconBlue AppIconPurple";
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				APP_DISPLAY_NAME = "Fud AI";
 				APP_GROUP_IDENTIFIER = group.com.apoorvdarshan.calorietracker;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconRed AppIconOrange AppIconGreen AppIconMint AppIconTeal AppIconBlue AppIconPurple";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = calorietracker/calorietracker.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 15;
@@ -564,11 +747,11 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.6;
-					PRODUCT_BUNDLE_IDENTIFIER = com.apoorvdarshan.calorietracker;
-					PRODUCT_NAME = "$(TARGET_NAME)";
-					REVENUECAT_API_KEY = appl_gTWwNXfsUvRsJAxvqyNandnyjVa;
-					STRING_CATALOG_GENERATE_SYMBOLS = YES;
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				PRODUCT_BUNDLE_IDENTIFIER = com.apoorvdarshan.calorietracker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REVENUECAT_API_KEY = appl_gTWwNXfsUvRsJAxvqyNandnyjVa;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -586,9 +769,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -652,9 +835,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -793,10 +976,10 @@
 		BA8E0E302F33F198007DD537 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				APP_DISPLAY_NAME = "Fud AI Debug";
 				APP_GROUP_IDENTIFIER = group.com.apoorvdarshan.calorietracker.debug;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = FudAIWidgets/FudAIWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 15;
@@ -832,10 +1015,10 @@
 		BA8E0E312F33F198007DD537 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				APP_DISPLAY_NAME = "Fud AI";
 				APP_GROUP_IDENTIFIER = group.com.apoorvdarshan.calorietracker;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = FudAIWidgets/FudAIWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 15;
@@ -944,6 +1127,166 @@
 			};
 			name = Release;
 		};
+		F00D10000000000000000017 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APP_DISPLAY_NAME = "Fud AI";
+				APP_GROUP_IDENTIFIER = group.com.apoorvdarshan.calorietracker.debug;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = FudAIWatchApp/FudAIWatchApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 15;
+				DEVELOPMENT_TEAM = 23RV7FYH36;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FudAIWatchApp/Info.plist;
+				INFOPLIST_KEY_AppGroupIdentifier = "$(APP_GROUP_IDENTIFIER)";
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 3.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.apoorvdarshan.calorietracker.debug.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+				WK_COMPANION_APP_BUNDLE_IDENTIFIER = com.apoorvdarshan.calorietracker.debug;
+			};
+			name = Debug;
+		};
+		F00D10000000000000000018 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APP_DISPLAY_NAME = "Fud AI";
+				APP_GROUP_IDENTIFIER = group.com.apoorvdarshan.calorietracker;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = FudAIWatchApp/FudAIWatchApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 15;
+				DEVELOPMENT_TEAM = 23RV7FYH36;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FudAIWatchApp/Info.plist;
+				INFOPLIST_KEY_AppGroupIdentifier = "$(APP_GROUP_IDENTIFIER)";
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 3.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.apoorvdarshan.calorietracker.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+				WK_COMPANION_APP_BUNDLE_IDENTIFIER = com.apoorvdarshan.calorietracker;
+			};
+			name = Release;
+		};
+		F00D10000000000000000019 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				APP_DISPLAY_NAME = "Fud AI";
+				APP_GROUP_IDENTIFIER = group.com.apoorvdarshan.calorietracker.debug;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FudAIWatchWidgets/FudAIWatchWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 15;
+				DEVELOPMENT_TEAM = 23RV7FYH36;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FudAIWatchWidgets/Info.plist;
+				INFOPLIST_KEY_AppGroupIdentifier = "$(APP_GROUP_IDENTIFIER)";
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 3.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.apoorvdarshan.calorietracker.debug.watchkitapp.FudAIWatchWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		F00D1000000000000000001A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				APP_DISPLAY_NAME = "Fud AI";
+				APP_GROUP_IDENTIFIER = group.com.apoorvdarshan.calorietracker;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FudAIWatchWidgets/FudAIWatchWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 15;
+				DEVELOPMENT_TEAM = 23RV7FYH36;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FudAIWatchWidgets/Info.plist;
+				INFOPLIST_KEY_AppGroupIdentifier = "$(APP_GROUP_IDENTIFIER)";
+				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 3.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.apoorvdarshan.calorietracker.watchkitapp.FudAIWatchWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1001,25 +1344,43 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		F00D1000000000000000001B /* Build configuration list for PBXNativeTarget "FudAIWatchApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F00D10000000000000000017 /* Debug */,
+				F00D10000000000000000018 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F00D1000000000000000001C /* Build configuration list for PBXNativeTarget "FudAIWatchWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F00D10000000000000000019 /* Debug */,
+				F00D1000000000000000001A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-			F00DCA700000000000000002 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
-				isa = XCRemoteSwiftPackageReference;
-				repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm";
-				requirement = {
-					kind = upToNextMajorVersion;
-					minimumVersion = 5.70.0;
-				};
+		F00DCA700000000000000002 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.70.0;
 			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-			F00DCA700000000000000003 /* RevenueCat */ = {
-				isa = XCSwiftPackageProductDependency;
-				package = F00DCA700000000000000002 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
-				productName = RevenueCat;
-			};
+		F00DCA700000000000000003 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F00DCA700000000000000002 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
+		};
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BA8E0DEB2F33F197007DD537 /* Project object */;

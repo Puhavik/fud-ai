@@ -65,6 +65,7 @@ struct WidgetSnapshot: Codable, Equatable {
             ?? "group.com.apoorvdarshan.calorietracker"
     }
     private static let key = "widget_snapshot_v1"
+    static let watchPayloadKey = "widget_snapshot_data_v1"
 
     static var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: appGroupID)
@@ -80,6 +81,14 @@ struct WidgetSnapshot: Codable, Equatable {
     static func write(_ snapshot: WidgetSnapshot) {
         guard let data = try? JSONEncoder().encode(snapshot) else { return }
         sharedDefaults?.set(data, forKey: key)
+    }
+
+    var payloadData: Data? {
+        try? JSONEncoder().encode(self)
+    }
+
+    static func decodePayload(_ data: Data) -> WidgetSnapshot? {
+        try? JSONDecoder().decode(WidgetSnapshot.self, from: data)
     }
 
     /// Wipes the shared snapshot. Called from Delete All Data so widgets don't keep
