@@ -99,7 +99,7 @@ struct FoodMeasurementSettings {
 
 enum MacroValueFormatter {
     static func string(_ value: Double) -> String {
-        if abs(value.rounded() - value) < 0.05 {
+        if abs(value.rounded() - value) < 0.0001 {
             return String(Int(value.rounded()))
         }
         return String(format: "%.1f", value)

@@ -1,7 +1,6 @@
 package com.apoorvdarshan.calorietracker.models
 
 import kotlinx.serialization.Serializable
-import kotlin.math.roundToInt
 
 enum class HomeTopNutrient(
     val storageKey: String,
@@ -36,26 +35,26 @@ enum class HomeTopNutrient(
         PROTEIN -> entries.sumOf { it.protein }
         CARBS -> entries.sumOf { it.carbs }
         FAT -> entries.sumOf { it.fat }
-        FIBER -> entries.sumOf { it.fiber ?: 0.0 }.roundToInt().toDouble()
-        SUGAR -> entries.sumOf { it.sugar ?: 0.0 }.roundToInt().toDouble()
-        ADDED_SUGAR -> entries.sumOf { it.addedSugar ?: 0.0 }.roundToInt().toDouble()
-        SATURATED_FAT -> entries.sumOf { it.saturatedFat ?: 0.0 }.roundToInt().toDouble()
-        CHOLESTEROL -> entries.sumOf { it.cholesterol ?: 0.0 }.roundToInt().toDouble()
-        SODIUM -> entries.sumOf { it.sodium ?: 0.0 }.roundToInt().toDouble()
-        POTASSIUM -> entries.sumOf { it.potassium ?: 0.0 }.roundToInt().toDouble()
-        TRANS_FAT -> entries.sumOf { it.transFat ?: 0.0 }.roundToInt().toDouble()
-        CALCIUM -> entries.sumOf { it.calcium ?: 0.0 }.roundToInt().toDouble()
-        IRON -> entries.sumOf { it.iron ?: 0.0 }.roundToInt().toDouble()
-        MAGNESIUM -> entries.sumOf { it.magnesium ?: 0.0 }.roundToInt().toDouble()
-        ZINC -> entries.sumOf { it.zinc ?: 0.0 }.roundToInt().toDouble()
-        VITAMIN_A -> entries.sumOf { it.vitaminA ?: 0.0 }.roundToInt().toDouble()
-        VITAMIN_C -> entries.sumOf { it.vitaminC ?: 0.0 }.roundToInt().toDouble()
-        VITAMIN_D -> entries.sumOf { it.vitaminD ?: 0.0 }.roundToInt().toDouble()
-        VITAMIN_B12 -> entries.sumOf { it.vitaminB12 ?: 0.0 }.roundToInt().toDouble()
-        VITAMIN_E -> entries.sumOf { it.vitaminE ?: 0.0 }.roundToInt().toDouble()
-        VITAMIN_K -> entries.sumOf { it.vitaminK ?: 0.0 }.roundToInt().toDouble()
-        FOLATE -> entries.sumOf { it.folate ?: 0.0 }.roundToInt().toDouble()
-        OMEGA3 -> entries.sumOf { it.omega3 ?: 0.0 }.roundToInt().toDouble()
+        FIBER -> entries.sumOf { it.fiber ?: 0.0 }
+        SUGAR -> entries.sumOf { it.sugar ?: 0.0 }
+        ADDED_SUGAR -> entries.sumOf { it.addedSugar ?: 0.0 }
+        SATURATED_FAT -> entries.sumOf { it.saturatedFat ?: 0.0 }
+        CHOLESTEROL -> entries.sumOf { it.cholesterol ?: 0.0 }
+        SODIUM -> entries.sumOf { it.sodium ?: 0.0 }
+        POTASSIUM -> entries.sumOf { it.potassium ?: 0.0 }
+        TRANS_FAT -> entries.sumOf { it.transFat ?: 0.0 }
+        CALCIUM -> entries.sumOf { it.calcium ?: 0.0 }
+        IRON -> entries.sumOf { it.iron ?: 0.0 }
+        MAGNESIUM -> entries.sumOf { it.magnesium ?: 0.0 }
+        ZINC -> entries.sumOf { it.zinc ?: 0.0 }
+        VITAMIN_A -> entries.sumOf { it.vitaminA ?: 0.0 }
+        VITAMIN_C -> entries.sumOf { it.vitaminC ?: 0.0 }
+        VITAMIN_D -> entries.sumOf { it.vitaminD ?: 0.0 }
+        VITAMIN_B12 -> entries.sumOf { it.vitaminB12 ?: 0.0 }
+        VITAMIN_E -> entries.sumOf { it.vitaminE ?: 0.0 }
+        VITAMIN_K -> entries.sumOf { it.vitaminK ?: 0.0 }
+        FOLATE -> entries.sumOf { it.folate ?: 0.0 }
+        OMEGA3 -> entries.sumOf { it.omega3 ?: 0.0 }
     }
 
     fun goal(profile: UserProfile?, optionalGoals: OptionalNutrientGoals): Int = when (this) {

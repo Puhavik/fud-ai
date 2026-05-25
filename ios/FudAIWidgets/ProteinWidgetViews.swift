@@ -57,6 +57,8 @@ private struct SmallProteinView: View {
             Text(nutrient.displayRemaining)
                 .font(.system(.caption2, design: .rounded, weight: .medium))
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
         }
     }
 }
@@ -112,6 +114,8 @@ private struct ProteinMacroBar: View {
                 Text(nutrient.displayPair)
                     .font(.system(.caption2, design: .rounded, weight: .medium))
                     .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
@@ -184,6 +188,7 @@ private struct RectangularProteinView: View {
                     .font(.system(.caption2, design: .rounded))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.75)
                 Text(snapshot.homeNutrientsSummary)
                     .font(.system(.caption2, design: .rounded, weight: .medium))
                     .foregroundStyle(.secondary)

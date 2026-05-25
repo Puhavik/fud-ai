@@ -37,7 +37,7 @@ struct WidgetNutrientValue: Codable, Equatable, Identifiable {
     }
 
     private static func format(_ value: Double) -> String {
-        if abs(value.rounded() - value) < 0.05 {
+        if abs(value.rounded() - value) < 0.0001 {
             return "\(Int(value.rounded()))"
         }
         return String(format: "%.1f", value)

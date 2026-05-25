@@ -124,6 +124,8 @@ private struct MacroBar: View {
                 Text(nutrient.displayPair)
                     .font(.system(.caption2, design: .rounded, weight: .medium))
                     .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {

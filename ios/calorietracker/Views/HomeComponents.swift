@@ -456,9 +456,9 @@ struct MacroCard: View {
     }
 
     private func formatted(_ value: Double) -> String {
-        if value >= 100 || value.rounded() == value {
+        if unit == "kcal" {
             return "\(Int(value.rounded()))"
         }
-        return String(format: "%.1f", value)
+        return MacroValueFormatter.string(value)
     }
 }

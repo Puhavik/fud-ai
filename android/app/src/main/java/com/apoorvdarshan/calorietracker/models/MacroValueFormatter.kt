@@ -7,7 +7,7 @@ import kotlin.math.round
 object MacroValueFormatter {
     fun string(value: Double): String {
         val rounded = round(value)
-        return if (abs(rounded - value) < 0.05) {
+        return if (abs(rounded - value) < 0.0001) {
             rounded.toInt().toString()
         } else {
             String.format(Locale.US, "%.1f", value)
