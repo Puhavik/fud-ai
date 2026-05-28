@@ -217,14 +217,20 @@ class StoreManager {
             let result = try await product.purchase()
             switch result {
             case .success(let verification):
-                let transaction = extractTransaction(verification)
-                let purchasedPlusSubscription = isActivePlusTransaction(transaction)
-                if purchasedPlusSubscription {
-                    applySubscriptionState(isSubscribed: true, productID: transaction.productID)
+                switch verification {
+                case .verified(let transaction):
+                    let purchasedPlusSubscription = isActivePlusTransaction(transaction)
+                    if purchasedPlusSubscription {
+                        applySubscriptionState(isSubscribed: true, productID: transaction.productID)
+                    }
+                    await transaction.finish()
+                    await checkEntitlements(fallbackActiveProductID: purchasedPlusSubscription ? transaction.productID : nil)
+                    return purchasedPlusSubscription || isSubscribed
+                case .unverified(let transaction, _):
+                    await transaction.finish()
+                    purchaseError = "Purchase could not be verified. Please try again or contact support."
+                    return false
                 }
-                await transaction.finish()
-                await checkEntitlements(fallbackActiveProductID: purchasedPlusSubscription ? transaction.productID : nil)
-                return purchasedPlusSubscription || isSubscribed
             case .userCancelled:
                 break
             case .pending:
@@ -280,8 +286,7 @@ class StoreManager {
         var activeProductID: String?
 
         for await result in Transaction.currentEntitlements {
-            let transaction = extractTransaction(result)
-            if isActivePlusTransaction(transaction) {
+            if case .verified(let transaction) = result, isActivePlusTransaction(transaction) {
                 subscribed = true
                 activeProductID = transaction.productID
             }
@@ -301,25 +306,21 @@ class StoreManager {
         Task { [weak self] in
             for await result in Transaction.updates {
                 guard let self else { break }
-                let transaction = self.extractTransaction(result)
-                if self.isActivePlusTransaction(transaction) {
-                    self.applySubscriptionState(isSubscribed: true, productID: transaction.productID)
+                switch result {
+                case .verified(let transaction):
+                    if self.isActivePlusTransaction(transaction) {
+                        self.applySubscriptionState(isSubscribed: true, productID: transaction.productID)
+                    }
+                    await transaction.finish()
+                    await self.checkEntitlements()
+                case .unverified(let transaction, _):
+                    await transaction.finish()
                 }
-                await transaction.finish()
-                await self.checkEntitlements()
             }
         }
     }
 
     // MARK: - Verification
-    nonisolated private func extractTransaction<T>(_ result: StoreKit.VerificationResult<T>) -> T {
-        switch result {
-        case .unverified(let payload, _):
-            return payload
-        case .verified(let safe):
-            return safe
-        }
-    }
 
     private func isActivePlusTransaction(_ transaction: StoreKit.Transaction) -> Bool {
         guard Self.allProductIDs.contains(transaction.productID),

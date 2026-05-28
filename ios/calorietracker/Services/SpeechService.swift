@@ -139,7 +139,7 @@ struct SpeechService {
             let (responseData, response) = try await send(request)
             guard let http = response as? HTTPURLResponse else { throw SpeechError.invalidResponse }
             if http.statusCode != 200 {
-                throw SpeechError.apiError(decodeErrorMessage(responseData) ?? "HTTP \(http.statusCode)")
+                throw SpeechError.apiError(AINetworkHelpers.parseErrorMessage(from: responseData) ?? "HTTP \(http.statusCode)")
             }
             data = responseData
         }
@@ -180,7 +180,7 @@ struct SpeechService {
         let (data, response) = try await send(request)
         guard let http = response as? HTTPURLResponse else { throw SpeechError.invalidResponse }
         if http.statusCode != 200 {
-            throw SpeechError.apiError(decodeErrorMessage(data) ?? "HTTP \(http.statusCode)")
+            throw SpeechError.apiError(AINetworkHelpers.parseErrorMessage(from: data) ?? "HTTP \(http.statusCode)")
         }
         // response_format=text returns plain text, not JSON.
         if let text = String(data: data, encoding: .utf8), !text.isEmpty {
@@ -216,7 +216,7 @@ struct SpeechService {
         let (data, response) = try await send(request)
         guard let http = response as? HTTPURLResponse else { throw SpeechError.invalidResponse }
         if http.statusCode != 200 {
-            throw SpeechError.apiError(decodeErrorMessage(data) ?? "HTTP \(http.statusCode)")
+            throw SpeechError.apiError(AINetworkHelpers.parseErrorMessage(from: data) ?? "HTTP \(http.statusCode)")
         }
         // Response: { results: { channels: [ { alternatives: [ { transcript: "..." } ] } ] } }
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -248,7 +248,7 @@ struct SpeechService {
               let uploadJson = try? JSONSerialization.jsonObject(with: uploadData) as? [String: Any],
               let audioRef = uploadJson["upload_url"] as? String
         else {
-            throw SpeechError.apiError(decodeErrorMessage(uploadData) ?? "Upload failed.")
+            throw SpeechError.apiError(AINetworkHelpers.parseErrorMessage(from: uploadData) ?? "Upload failed.")
         }
 
         // 2. Submit a transcript job.
@@ -269,7 +269,7 @@ struct SpeechService {
               let submitJson = try? JSONSerialization.jsonObject(with: submitData) as? [String: Any],
               let jobID = submitJson["id"] as? String
         else {
-            throw SpeechError.apiError(decodeErrorMessage(submitData) ?? "Submit failed.")
+            throw SpeechError.apiError(AINetworkHelpers.parseErrorMessage(from: submitData) ?? "Submit failed.")
         }
 
         // 3. Poll every 1s up to 60s until the job finishes.
@@ -304,14 +304,6 @@ struct SpeechService {
         } catch {
             throw SpeechError.networkError(error)
         }
-    }
-
-    private static func decodeErrorMessage(_ data: Data) -> String? {
-        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
-        if let err = json["error"] as? [String: Any], let msg = err["message"] as? String { return msg }
-        if let msg = json["error"] as? String { return msg }
-        if let msg = json["err_msg"] as? String { return msg }
-        return nil
     }
 
     private static func multipartBody(
