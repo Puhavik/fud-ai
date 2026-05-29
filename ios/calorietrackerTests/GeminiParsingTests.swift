@@ -57,6 +57,25 @@ struct GeminiParsingTests {
         #expect(result.sodium == 2.0)
     }
 
+    // MARK: - nutrition label parser
+
+    @Test func labelParserThrowsNotFoodForNonLabel() {
+        // The dedicated label-scan flow has its own parser — it must honour the
+        // not_food guard too, not just the food-photo parser.
+        #expect(throws: GeminiService.AnalysisError.self) {
+            try GeminiService.parseNutritionLabel(from: #"{"error":"not_food"}"#)
+        }
+    }
+
+    @Test func labelParserReadsValues() throws {
+        let json = #"{"name":"Greek Yogurt","calories_per_100g":59,"protein_per_100g":10,"carbs_per_100g":3.6,"fat_per_100g":0.4,"serving_size_grams":170}"#
+        let label = try GeminiService.parseNutritionLabel(from: json)
+        #expect(label.name == "Greek Yogurt")
+        #expect(label.caloriesPer100g == 59)
+        // Label-derived analysis is high confidence (no estimate badge).
+        #expect(label.scaled(to: 170).confidence == "high")
+    }
+
     // MARK: - missing required fields
 
     @Test func missingRequiredFieldThrows() {

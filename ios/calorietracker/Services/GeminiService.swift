@@ -1094,11 +1094,19 @@ struct GeminiService {
         )
     }
 
-    private static func parseNutritionLabel(from text: String) throws -> NutritionLabelAnalysis {
+    // Internal (not private) so GeminiParsingTests can verify the not_food guard
+    // on the dedicated label-scan path too.
+    static func parseNutritionLabel(from text: String) throws -> NutritionLabelAnalysis {
         let jsonString = extractJSON(from: text)
         guard let data = jsonString.data(using: .utf8),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let name = json["name"] as? String,
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else { throw AnalysisError.invalidResponse }
+
+        // The label prompt returns {"error":"not_food"} for a non-label image; surface
+        // it as the friendly typed error rather than a generic "invalid response".
+        if (json["error"] as? String) == "not_food" { throw AnalysisError.notFood }
+
+        guard let name = json["name"] as? String,
               let caloriesPer100g = (json["calories_per_100g"] as? NSNumber)?.doubleValue,
               let proteinPer100g = (json["protein_per_100g"] as? NSNumber)?.doubleValue,
               let carbsPer100g = (json["carbs_per_100g"] as? NSNumber)?.doubleValue,
