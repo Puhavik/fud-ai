@@ -165,6 +165,8 @@ struct GeminiService {
         var fat: Double
         var servingSizeGrams: Double
         var emoji: String?
+        /// "high" / "medium" / "low" estimation confidence, or nil when unknown.
+        var confidence: String?
         var sugar: Double?
         var addedSugar: Double?
         var fiber: Double?
@@ -233,6 +235,8 @@ struct GeminiService {
                 carbs: carbsPer100g * scale,
                 fat: fatPer100g * scale,
                 servingSizeGrams: grams,
+                // Values come straight off a nutrition label → high confidence, no estimate badge.
+                confidence: "high",
                 sugar: sugarPer100g.map { round($0 * scale * 10) / 10 },
                 addedSugar: addedSugarPer100g.map { round($0 * scale * 10) / 10 },
                 fiber: fiberPer100g.map { round($0 * scale * 10) / 10 },
@@ -274,6 +278,7 @@ struct GeminiService {
         case invalidResponse
         case apiError(String)
         case subscriptionRequired
+        case notFood
 
         var errorDescription: String? {
             switch self {
@@ -289,23 +294,64 @@ struct GeminiService {
                 return "API error: \(message)"
             case .subscriptionRequired:
                 return "Fud AI Plus is not active. Subscribe or switch back to Bring Your Own Key in Settings."
+            case .notFood:
+                return "That doesn't look like a food or drink. Try describing what you ate, or take a clearer photo."
             }
         }
     }
 
+    // Optional nutrients are null (not 0.0): a null means "couldn't estimate", whereas
+    // 0.0 used to be misread by the model as a confident "this food has zero of X".
     private static let foodAnalysisJSONShape = """
-    {"name":"...","calories":0,"protein":0.0,"carbs":0.0,"fat":0.0,"serving_size_grams":0.0,"emoji":"🍽️","sugar":0.0,"added_sugar":0.0,"fiber":0.0,"saturated_fat":0.0,"monounsaturated_fat":0.0,"polyunsaturated_fat":0.0,"trans_fat":0.0,"cholesterol":0.0,"sodium":0.0,"potassium":0.0,"calcium":0.0,"iron":0.0,"magnesium":0.0,"zinc":0.0,"vitamin_a":0.0,"vitamin_c":0.0,"vitamin_d":0.0,"vitamin_b12":0.0,"vitamin_e":0.0,"vitamin_k":0.0,"folate":0.0,"omega_3":0.0,"unit_options":[]}
+    {"name":"...","calories":0,"protein":0.0,"carbs":0.0,"fat":0.0,"serving_size_grams":0.0,"emoji":"🍽️","confidence":"high","sugar":null,"added_sugar":null,"fiber":null,"saturated_fat":null,"monounsaturated_fat":null,"polyunsaturated_fat":null,"trans_fat":null,"cholesterol":null,"sodium":null,"potassium":null,"calcium":null,"iron":null,"magnesium":null,"zinc":null,"vitamin_a":null,"vitamin_c":null,"vitamin_d":null,"vitamin_b12":null,"vitamin_e":null,"vitamin_k":null,"folate":null,"omega_3":null,"unit_options":[]}
     """
 
     private static let foodAnalysisJSONShapeWithoutEmoji = """
-    {"name":"...","calories":0,"protein":0.0,"carbs":0.0,"fat":0.0,"serving_size_grams":0.0,"sugar":0.0,"added_sugar":0.0,"fiber":0.0,"saturated_fat":0.0,"monounsaturated_fat":0.0,"polyunsaturated_fat":0.0,"trans_fat":0.0,"cholesterol":0.0,"sodium":0.0,"potassium":0.0,"calcium":0.0,"iron":0.0,"magnesium":0.0,"zinc":0.0,"vitamin_a":0.0,"vitamin_c":0.0,"vitamin_d":0.0,"vitamin_b12":0.0,"vitamin_e":0.0,"vitamin_k":0.0,"folate":0.0,"omega_3":0.0,"unit_options":[]}
+    {"name":"...","calories":0,"protein":0.0,"carbs":0.0,"fat":0.0,"serving_size_grams":0.0,"confidence":"high","sugar":null,"added_sugar":null,"fiber":null,"saturated_fat":null,"monounsaturated_fat":null,"polyunsaturated_fat":null,"trans_fat":null,"cholesterol":null,"sodium":null,"potassium":null,"calcium":null,"iron":null,"magnesium":null,"zinc":null,"vitamin_a":null,"vitamin_c":null,"vitamin_d":null,"vitamin_b12":null,"vitamin_e":null,"vitamin_k":null,"folate":null,"omega_3":null,"unit_options":[]}
     """
 
     private static let nutritionLabelJSONShape = """
-    {"name":"Product Name","calories_per_100g":0.0,"protein_per_100g":0.0,"carbs_per_100g":0.0,"fat_per_100g":0.0,"serving_size_grams":0.0,"sugar_per_100g":0.0,"added_sugar_per_100g":0.0,"fiber_per_100g":0.0,"saturated_fat_per_100g":0.0,"monounsaturated_fat_per_100g":0.0,"polyunsaturated_fat_per_100g":0.0,"trans_fat_per_100g":0.0,"cholesterol_per_100g":0.0,"sodium_per_100g":0.0,"potassium_per_100g":0.0,"calcium_per_100g":0.0,"iron_per_100g":0.0,"magnesium_per_100g":0.0,"zinc_per_100g":0.0,"vitamin_a_per_100g":0.0,"vitamin_c_per_100g":0.0,"vitamin_d_per_100g":0.0,"vitamin_b12_per_100g":0.0,"vitamin_e_per_100g":0.0,"vitamin_k_per_100g":0.0,"folate_per_100g":0.0,"omega_3_per_100g":0.0,"unit_options":[]}
+    {"name":"Product Name","calories_per_100g":0.0,"protein_per_100g":0.0,"carbs_per_100g":0.0,"fat_per_100g":0.0,"serving_size_grams":0.0,"sugar_per_100g":null,"added_sugar_per_100g":null,"fiber_per_100g":null,"saturated_fat_per_100g":null,"monounsaturated_fat_per_100g":null,"polyunsaturated_fat_per_100g":null,"trans_fat_per_100g":null,"cholesterol_per_100g":null,"sodium_per_100g":null,"potassium_per_100g":null,"calcium_per_100g":null,"iron_per_100g":null,"magnesium_per_100g":null,"zinc_per_100g":null,"vitamin_a_per_100g":null,"vitamin_c_per_100g":null,"vitamin_d_per_100g":null,"vitamin_b12_per_100g":null,"vitamin_e_per_100g":null,"vitamin_k_per_100g":null,"folate_per_100g":null,"omega_3_per_100g":null,"unit_options":[]}
     """
 
-    private static let nutrientUnitsInstruction = "Calories are integers. Protein/carbs/fat are decimal gram values when needed. serving_size_grams is the estimated weight in grams. Nutrients are numbers: sugar/fiber/fats/omega_3 in grams; cholesterol/sodium/potassium/calcium/iron/magnesium/zinc/vitamin_c/vitamin_e in milligrams; vitamin_a/vitamin_d/vitamin_b12/vitamin_k/folate in micrograms."
+    private static let nutrientUnitsInstruction = """
+    Units for required fields: calories = integer kcal; protein, carbs, fat = decimal grams; serving_size_grams = total weight of the analyzed portion in grams.
+    Units for optional nutrients (use null when you cannot estimate — never 0 to mean unknown):
+    - Grams: sugar, added_sugar, fiber, saturated_fat, monounsaturated_fat, polyunsaturated_fat, trans_fat, omega_3
+    - Milligrams: cholesterol, sodium, potassium, calcium, iron, magnesium, zinc, vitamin_c, vitamin_e
+    - Micrograms: vitamin_a, vitamin_d, vitamin_b12, vitamin_k, folate
+    """
+
+    // Shared serving-unit rules. The detailed slice/piece/ml behaviour the serving-unit
+    // editor depends on must stay in every food prompt, so it lives in one constant.
+    private static let servingUnitInstruction = """
+    unit_options lists obvious non-gram serving units; leave it [] when none is apparent and never include g/grams.
+    Use slice/piece for pizza, cake, bread, cookies, fruit pieces; ml/cup/fl oz for drinks, milk, soup, smoothies, sauces; tbsp/tsp for spooned foods; can/packet/bar when packaged.
+    The quantity must describe the whole analyzed amount, not always 1. Do not copy any sample number; use the quantity stated or clearly implied.
+    """
+
+    // Estimation-quality signal used to show a "rough estimate" hint in the UI.
+    private static let confidenceInstruction = """
+    Set "confidence" to exactly one of:
+    - "high": a nutrition label is visible, an exact branded product is identified, or the food is clearly identifiable
+    - "medium": the food is identifiable but the portion size had to be estimated
+    - "low": the food is only partially visible, ingredients are uncertain, or the portion is highly uncertain
+    """
+
+    // Anti-fake-precision rule for estimates (NOT for label reads, which stay exact).
+    private static let roundingInstruction = """
+    Avoid unrealistic precision in estimates: round calories to the nearest 10 kcal and serving_size_grams to the nearest 5 g. Do not round values you read directly from a nutrition label.
+    """
+
+    /// One line of user context used ONLY to calibrate an unspecified portion size —
+    /// never to alter the nutrition of a stated amount. Falls back to a neutral adult.
+    private static func portionContextLine() -> String {
+        guard let profile = UserProfile.load() else {
+            return "User context: adult, moderately active."
+        }
+        let weight = Int(profile.weightKg.rounded())
+        return "User context: \(profile.gender.displayName.lowercased()), \(weight) kg, \(profile.activityLevel.displayName.lowercased()). Use this only to calibrate portion size when the amount is unspecified; never change nutrition because of it."
+    }
 
     // MARK: - Public API (unchanged interface)
 
@@ -321,13 +367,24 @@ struct GeminiService {
         #endif
 
         let prompt = """
-        Estimate the nutritional content for: \(description)
-        Parse any quantities, brands, and multiple items from the text. If a brand is mentioned, use that brand's known nutritional data. If multiple items are described, sum up the total nutrition.
+        You are a nutrition expert for a food tracking application.
+
+        Food description: \(description)
+
+        Rules:
+        - Return the food name in the same language the user used (e.g. if the user wrote in Russian, return the name in Russian).
+        - If the input is not a recognizable food, meal, beverage, ingredient, or supplement, return {"error":"not_food"} and nothing else.
+        - Parse quantities, brands, and multiple items, and sum the total nutrition across all items.
+        - For branded foods, use the brand's real data only when you are confident about the exact product; otherwise use the generic food category. Never invent branded nutrition facts.
+        - If no quantity is specified, assume a typical home or restaurant serving for an adult (not a diet portion); for whole fruits and vegetables assume a medium-large piece.
+        - \(Self.portionContextLine())
+
         Respond ONLY with JSON:
         \(Self.foodAnalysisJSONShape)
+        \(Self.confidenceInstruction)
         \(Self.nutrientUnitsInstruction)
-        The [] in unit_options above is only a JSON shape placeholder; replace it with options when a non-gram unit is obvious.
-        unit_options is required when the text names an obvious non-gram serving unit, and optional otherwise. Use slice/piece for pizza, cake, bread, cookies, fruit pieces, etc.; use ml/cup/fl oz for drinks, milk, soup, smoothies, sauces, etc.; use tbsp/tsp for spooned foods; use can/packet when packaged. Its quantity must describe the whole analyzed amount, not always 1. Do not copy any sample number; use the quantity stated or clearly implied by the meal. Use [] only when no non-gram unit is apparent. Do not include g/grams in unit_options.
+        \(Self.servingUnitInstruction)
+        \(Self.roundingInstruction)
         Include a single food emoji that best represents the food. Use null for any nutrient you cannot estimate.
         """
         let text = try await callAI(prompt: prompt, image: nil)
@@ -337,17 +394,27 @@ struct GeminiService {
 
     static func autoAnalyze(image: UIImage) async throws -> FoodAnalysis {
         let prompt = """
-        Analyze this image. It could be either a photo of food OR a nutrition facts label.
+        Analyze this image. It is either a photo of food, a nutrition facts label, or neither.
 
-        If it's a food photo: identify the food and estimate nutritional content for the serving shown.
-        If it's a nutrition label: read the values and calculate for one serving size as listed on the label.
+        If it's a FOOD PHOTO:
+        - Identify the food and estimate nutrition for the portion actually visible.
+        - Use a plate, bowl, cup, utensil, hand, can, bottle, or packaging for scale; a standard dinner plate is ~26 cm.
+        - Include toppings, sauces, and add-ons that are clearly visible; do not invent ingredients you cannot see, and omit anything you are unsure is present.
+
+        If it's a NUTRITION LABEL:
+        - Read the values as printed and return nutrition for one serving as listed; prefer printed values over estimation.
+        - Use the visible product or brand name.
+
+        If it contains NEITHER food nor a nutrition label, return {"error":"not_food"} and nothing else.
 
         Respond ONLY with JSON:
         \(Self.foodAnalysisJSONShapeWithoutEmoji)
+        \(Self.confidenceInstruction)
         \(Self.nutrientUnitsInstruction)
-        The [] in unit_options above is only a JSON shape placeholder; replace it with options when a non-gram unit is obvious.
-        unit_options is required for obvious non-gram units visible in the image or label. Use slice/piece for pizza, cake, bread, cookies, fruit pieces, etc.; use ml/cup/fl oz for drinks, milk, soup, smoothies, sauces, etc.; use tbsp/tsp for spooned foods; use can/packet when packaged. Its quantity must describe the whole analyzed amount, not always 1. For a whole or mostly-whole divisible food like cake, pie, or pizza, count the visible pieces/slices and derive grams_per_unit from serving_size_grams / quantity. If N slices are visible, return quantity N. Use quantity 1 only when a single piece/slice is actually the analyzed portion. Use [] only when no non-gram unit is apparent. Do not include g/grams in unit_options.
-        Use null for any nutrient you cannot estimate.
+        \(Self.servingUnitInstruction)
+        For a whole or mostly-whole divisible food (cake, pie, pizza), count the visible pieces/slices and derive grams_per_unit from serving_size_grams / quantity; if N slices are visible, return quantity N, using quantity 1 only when a single piece is the analyzed portion.
+        \(Self.roundingInstruction)
+        Return the food name in the language visible in the image, or English if unclear. Use null for any nutrient you cannot estimate.
         """
         let text = try await callAI(prompt: prompt, image: image)
         let analysis = try parseFoodAnalysis(from: text)
@@ -356,19 +423,28 @@ struct GeminiService {
 
     static func analyzeFood(image: UIImage, description: String? = nil) async throws -> FoodAnalysis {
         var prompt = """
-        Analyze this food image. Identify the food and estimate its nutritional content.
+        Analyze this food image. Identify the food and estimate its nutrition for the portion visible.
+
+        Rules:
+        - If the image does not contain food, return {"error":"not_food"} and nothing else.
+        - Use a plate, bowl, utensil, hand, beverage can, bottle, or packaging for scale; a standard dinner plate is ~26 cm.
+        - Include toppings, sauces, and add-ons that are clearly visible; do not invent ingredients you cannot see, and omit anything you are unsure is present.
+        - For a whole or mostly-whole divisible food (cake, pizza, pie, loaf), estimate the total visible amount rather than defaulting to one slice.
+        - Return the food name in the language of any text visible in the image, or English if unclear.
 
         Respond ONLY with a JSON object in this exact format, no other text:
         \(Self.foodAnalysisJSONShapeWithoutEmoji)
 
+        \(Self.confidenceInstruction)
         \(Self.nutrientUnitsInstruction)
-        The [] in unit_options above is only a JSON shape placeholder; replace it with options when a non-gram unit is obvious.
-        unit_options is required for obvious non-gram units visible in the food. Use slice/piece for pizza, cake, bread, cookies, fruit pieces, etc.; use ml/cup/fl oz for drinks, milk, soup, smoothies, sauces, etc.; use tbsp/tsp for spooned foods; use can/packet when packaged. Its quantity must describe the whole analyzed amount, not always 1. For a whole or mostly-whole divisible food like cake, pie, or pizza, count the visible pieces/slices and derive grams_per_unit from serving_size_grams / quantity. If N slices are visible, return quantity N. Use quantity 1 only when a single piece/slice is actually the analyzed portion. Use [] only when no non-gram unit is apparent. Do not include g/grams in unit_options.
-        Give your best estimate for the visible food amount shown in the image. For whole/mostly-whole cakes, pizzas, pies, loaves, or similar foods, estimate the total visible item/remaining item weight rather than defaulting to one slice. Use null for any nutrient you cannot estimate.
+        \(Self.servingUnitInstruction)
+        For divisible foods, count the visible pieces/slices and derive grams_per_unit from serving_size_grams / quantity; if N slices are visible, return quantity N.
+        \(Self.roundingInstruction)
+        Use null for any nutrient you cannot estimate.
         """
 
         if let description, !description.trimmingCharacters(in: .whitespaces).isEmpty {
-            prompt += "\n\nAdditional context from the user about this meal: \(description)\nUse this context to improve accuracy of identification, portion size, and nutrition estimates."
+            prompt += "\n\nUser's description of this meal: \(description)\nPrioritise this description for identifying the food and adjusting the portion — it overrides visual guesses when they conflict."
         }
 
         let text = try await callAI(prompt: prompt, image: image)
@@ -380,17 +456,24 @@ struct GeminiService {
         guard !images.isEmpty else { throw AnalysisError.imageConversionFailed }
 
         let prompt = """
-        Analyze these food-related images together. They may show the food/package from one angle and the nutrition facts label or another useful angle from another photo.
+        Analyze these images as a single food logging request. They may show the same food from different angles, or a food together with its package or nutrition label.
 
-        Use all images as one logging request. If a nutrition label is visible, prefer the label values for packaged foods and combine that with the visible serving/package context from the other image. If no label is visible, estimate the visible food amount from the photos.
+        Rules:
+        - Never double count: food that appears in more than one image is the same food, not extra servings.
+        - If a nutrition label is visible, use its values as the primary nutrition source and use the food photos only to judge the amount actually consumed relative to the label serving.
+        - If no label is visible, estimate from the photos; use a plate, hand, utensil, can, bottle, or packaging for scale.
+        - Include toppings and add-ons that are clearly visible; do not invent ingredients you cannot see.
+        - If the images contain neither food nor a nutrition label, return {"error":"not_food"} and nothing else.
+        - Return the food name in the language visible in the images, or English if unclear.
 
         Respond ONLY with a JSON object in this exact format, no other text:
         \(Self.foodAnalysisJSONShapeWithoutEmoji)
 
+        \(Self.confidenceInstruction)
         \(Self.nutrientUnitsInstruction)
-        The [] in unit_options above is only a JSON shape placeholder; replace it with options when a non-gram unit is obvious.
-        unit_options is required for obvious non-gram units visible in the food or label. Use slice/piece for pizza, cake, bread, cookies, fruit pieces, etc.; use ml/cup/fl oz for drinks, milk, soup, smoothies, sauces, etc.; use tbsp/tsp for spooned foods; use can/packet/bar when packaged. Its quantity must describe the whole analyzed amount, not always 1. Use [] only when no non-gram unit is apparent. Do not include g/grams in unit_options.
-        Give your best estimate for the actual amount shown or implied across the images. Use null for any nutrient you cannot estimate.
+        \(Self.servingUnitInstruction)
+        \(Self.roundingInstruction)
+        Use null for any nutrient you cannot estimate.
         """
 
         let text = try await callAI(prompt: prompt, images: images)
@@ -400,17 +483,20 @@ struct GeminiService {
 
     static func analyzeNutritionLabel(image: UIImage) async throws -> NutritionLabelAnalysis {
         let prompt = """
-        Read this nutrition label image. Extract the nutritional values per 100g (or per 100ml).
-        If the label shows per-serving values, convert them to per-100g using the serving size.
+        Read this nutrition label image and extract the nutritional values.
 
-        For the name, identify the product or brand name visible on the packaging or label.
-        If no name is visible, describe the food type (e.g. "Protein Bar", "Yogurt", "Cereal").
+        Rules:
+        - Convert all values to per 100 g (or per 100 ml for liquids). If the label shows per-serving values, convert using the serving size.
+        - Prefer the values exactly as printed over any estimation; do not infer nutrients that are not shown.
+        - For the name, use the product or brand name visible on the packaging. If no name is visible, describe the food type (e.g. "Protein Bar", "Yogurt", "Cereal").
+        - If the image is not a nutrition label, return {"error":"not_food"} and nothing else.
 
         Respond ONLY with JSON:
         \(Self.nutritionLabelJSONShape)
 
-        The [] in unit_options above is only a JSON shape placeholder; replace it with options when a non-gram unit is visible.
-        All values should be numbers. If serving size or any nutrient is not available, use null. unit_options is required when a non-gram label serving unit is visible, such as slice, piece, tbsp, cup, ml, fl oz, can, or packet. Do not copy any sample number; use the quantity shown on the label. Use [] only when no non-gram unit is visible. Do not include g/grams in unit_options.
+        All printed values are numbers; use null for any nutrient not shown on the label.
+        \(Self.servingUnitInstruction)
+        Use the serving unit and quantity shown on the label.
         """
         let text = try await callAI(prompt: prompt, image: image)
         let analysis = try parseNutritionLabel(from: text)
@@ -950,11 +1036,20 @@ struct GeminiService {
         return cleaned
     }
 
-    private static func parseFoodAnalysis(from text: String) throws -> FoodAnalysis {
+    // Internal (not private) so GeminiParsingTests can verify the not_food guard,
+    // confidence parsing, and null-nutrient handling without a network call.
+    static func parseFoodAnalysis(from text: String) throws -> FoodAnalysis {
         let jsonString = extractJSON(from: text)
         guard let data = jsonString.data(using: .utf8),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let name = json["name"] as? String,
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else { throw AnalysisError.invalidResponse }
+
+        // The model returns {"error":"not_food"} when the input isn't a recognizable
+        // food. Surface it as a typed error so the UI can show a helpful message
+        // instead of the generic "couldn't understand the response" alert.
+        if (json["error"] as? String) == "not_food" { throw AnalysisError.notFood }
+
+        guard let name = json["name"] as? String,
               let calories = (json["calories"] as? NSNumber)?.intValue,
               let protein = (json["protein"] as? NSNumber)?.doubleValue,
               let carbs = (json["carbs"] as? NSNumber)?.doubleValue,
@@ -970,6 +1065,7 @@ struct GeminiService {
             name: name, calories: calories, protein: protein, carbs: carbs, fat: fat,
             servingSizeGrams: servingSizeGrams,
             emoji: json["emoji"] as? String,
+            confidence: json["confidence"] as? String,
             sugar: double("sugar"),
             addedSugar: double("added_sugar"),
             fiber: double("fiber"),
