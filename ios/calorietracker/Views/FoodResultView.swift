@@ -38,6 +38,8 @@ struct FoodResultView: View {
     let baseFolate: Double?
     let baseOmega3: Double?
     let servingUnitOptions: [ServingUnitOption]
+    /// "high" / "medium" / "low" estimate quality from the AI; nil hides the badge.
+    let confidence: String?
 
     @State var name: String
     @State var servingSizeGrams: Double
@@ -126,6 +128,7 @@ struct FoodResultView: View {
         servingUnitOptions: [ServingUnitOption] = [],
         selectedServingUnit: String? = nil,
         selectedServingQuantity: Double? = nil,
+        confidence: String? = nil,
         logDate: Date = .now,
         onLog: @escaping (FoodEntry) -> Void
     ) {
@@ -167,6 +170,7 @@ struct FoodResultView: View {
         self.baseFolate = folate
         self.baseOmega3 = omega3
         self.servingUnitOptions = normalizedServingUnitOptions
+        self.confidence = confidence
         self._name = State(initialValue: name)
         self._servingSizeGrams = State(initialValue: servingSizeGrams)
         self._servingSizeText = State(initialValue: ServingUnitOption.initialQuantityText(
@@ -185,6 +189,19 @@ struct FoodResultView: View {
             return String(Int(value))
         }
         return String(format: "%.1f", value)
+    }
+
+    /// A gentle hint to double-check the serving when the AI was not fully confident.
+    /// "high" (and nil) show nothing — we only nudge the user when it matters.
+    private var confidenceBanner: (icon: String, color: Color, message: String)? {
+        switch confidence?.lowercased() {
+        case "medium":
+            return ("scalemass", .orange, "Estimated portion — adjust the serving size if it looks off.")
+        case "low":
+            return ("exclamationmark.triangle", .red, "Rough estimate — please double-check the food and serving size.")
+        default:
+            return nil
+        }
     }
 
     var body: some View {
@@ -213,6 +230,18 @@ struct FoodResultView: View {
                                 Spacer()
                             }
                             .listRowBackground(Color.clear)
+                        }
+                    }
+
+                    if let banner = confidenceBanner {
+                        Section {
+                            HStack(spacing: 10) {
+                                Image(systemName: banner.icon)
+                                    .foregroundStyle(banner.color)
+                                Text(banner.message)
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
 

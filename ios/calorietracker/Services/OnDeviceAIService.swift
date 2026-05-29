@@ -36,6 +36,9 @@ enum OnDeviceAIService {
         @Guide(description: "A single food emoji that best represents this item, e.g. 🍗")
         var emoji: String
 
+        @Guide(description: "Estimation confidence: 'high' if exactly known, 'medium' if portion was estimated, 'low' if uncertain")
+        var confidence: String
+
         @Guide(description: "Dietary fiber in grams, or null if unknown")
         var fiber: Double?
 
@@ -57,16 +60,27 @@ enum OnDeviceAIService {
         guard SystemLanguageModel.default.isAvailable else { return nil }
         do {
             let session = LanguageModelSession(instructions: """
-                You are a precise nutrition database assistant. \
-                Given a food description (with optional quantity), return accurate nutritional estimates \
-                based on standard data (USDA/NCCDB). Be concise. \
-                If quantity is not stated, assume a typical single serving.
+                You are a nutrition database assistant for a food tracking app. \
+                Estimate nutrition from standard data (USDA/NCCDB). Be precise and conservative — do not over-estimate. \
+                Return the food name in the same language the user used. \
+                If a quantity is given, use it; if not, assume a typical home serving for an adult (not a diet portion), \
+                and for whole fruits or vegetables assume a medium-large piece. \
+                Use a generic food unless an exact brand is clearly named; never invent branded nutrition values. \
+                Set confidence to 'medium' when you had to estimate the portion. \
+                If the input is not a recognizable food, set name to "unknown" and all numeric fields to 0.
                 """)
             let response = try await session.respond(
                 to: description,
                 generating: FoodResult.self
             )
             let result = response.content
+            // On-device guided generation always fills the struct, so it can't emit a
+            // not_food error object. The "unknown" sentinel means it didn't recognize a
+            // food — return nil so the caller falls back to the (stronger) network model.
+            // Note: don't gate on calories > 0 — water, black coffee and diet drinks are
+            // legitimate zero-calorie foods and must not be treated as "unrecognized".
+            let trimmedName = result.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmedName.isEmpty, trimmedName.lowercased() != "unknown" else { return nil }
             return GeminiService.FoodAnalysis(
                 name: result.name,
                 calories: result.calories,
@@ -75,6 +89,7 @@ enum OnDeviceAIService {
                 fat: result.fat,
                 servingSizeGrams: result.servingSizeGrams,
                 emoji: result.emoji,
+                confidence: result.confidence,
                 sugar: result.sugar,
                 fiber: result.fiber,
                 saturatedFat: result.saturatedFat,

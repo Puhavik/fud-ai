@@ -34,7 +34,13 @@ struct LogFoodIntent: AppIntent {
 
         // 2. Fall back to Gemini / network AI
         if analysis == nil {
-            analysis = try await GeminiService.analyzeTextInput(description: foodDescription)
+            do {
+                analysis = try await GeminiService.analyzeTextInput(description: foodDescription)
+            } catch GeminiService.AnalysisError.notFood {
+                // The model decided this isn't a food — give Siri a friendly reply
+                // instead of letting the error surface as a generic failure.
+                return .result(dialog: "That doesn't sound like a food or drink. Try saying what you ate, like \"a bowl of oatmeal\".")
+            }
         }
 
         guard let result = analysis else {

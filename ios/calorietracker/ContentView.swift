@@ -1259,6 +1259,7 @@ struct HomeView: View {
                             servingUnitOptions: result.servingUnitOptions,
                             selectedServingUnit: result.selectedServingUnit,
                             selectedServingQuantity: result.selectedServingQuantity,
+                            confidence: result.confidence,
                             logDate: logDateForSelectedDay,
                             onLog: { entry in
                                 foodStore.addEntry(entry)
